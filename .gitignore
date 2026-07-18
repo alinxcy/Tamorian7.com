@@ -1,0 +1,10 @@
+# ビルド生成物(scripts/build.sh で生成される)
+/portal/docs/
+/portal/config.json
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store

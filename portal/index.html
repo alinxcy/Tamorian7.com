@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Works Portal</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <h1 id="site-name">Works Portal</h1>
+      <p class="tagline" id="site-tagline"></p>
+      <nav class="site-nav">
+        <a href="index.html">カタログ</a>
+        <a href="docs/index.html">知識ノート</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <span class="count" id="count"></span>
+    </div>
+    <div id="catalog">
+      <p class="msg" id="loading">読み込み中…</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span id="footer-note"></span>
+    </div>
+  </footer>
+
+  <script>
+    // works.json をJSで読み込んで描画する。外部依存なし。
+    const STATUS_LABEL = { published: "公開中", wip: "制作中", planned: "構想中" };
+    // カテゴリの表示順(未定義のカテゴリは末尾に回る)
+    const CATEGORY_ORDER = ["engineering", "infra", "tooling", "web", "experiment"];
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => (
+        { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+      ));
+    }
+
+    function categoryRank(cat) {
+      const i = CATEGORY_ORDER.indexOf(cat);
+      return i === -1 ? CATEGORY_ORDER.length : i;
+    }
+
+    function renderCard(w) {
+      const badge = `<span class="badge ${esc(w.status)}">${esc(STATUS_LABEL[w.status] || w.status)}</span>`;
+      const emoji = w.emoji ? `<span class="card-emoji">${esc(w.emoji)}</span>` : "";
+      const tags = (w.tags || [])
+        .map(t => `<span class="tag">${esc(t)}</span>`).join("");
+      const links = [];
+      if (w.url) links.push(`<a href="${esc(w.url)}" target="_blank" rel="noopener">サイト ↗</a>`);
+      if (w.repo) links.push(`<a href="${esc(w.repo)}" target="_blank" rel="noopener">リポジトリ ↗</a>`);
+      const linksHtml = links.length ? `<div class="card-links">${links.join("")}</div>` : "";
+      return `
+        <article class="card">
+          <div class="card-head">
+            ${emoji}
+            <h3 class="card-title">${esc(w.title)}</h3>
+            ${badge}
+          </div>
+          <p class="card-desc">${esc(w.description)}</p>
+          ${linksHtml}
+          <div class="card-tags">${tags}</div>
+        </article>`;
+    }
+
+    function render(works) {
+      const catalog = document.getElementById("catalog");
+      document.getElementById("count").textContent = `全 ${works.length} 件`;
+
+      // カテゴリ別にグルーピング
+      const groups = {};
+      for (const w of works) {
+        (groups[w.category] = groups[w.category] || []).push(w);
+      }
+      const cats = Object.keys(groups).sort((a, b) => {
+        const r = categoryRank(a) - categoryRank(b);
+        return r !== 0 ? r : a.localeCompare(b);
+      });
+
+      catalog.innerHTML = cats.map(cat => {
+        const items = groups[cat]
+          .slice()
+          .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+        const cards = items.map(renderCard).join("");
+        return `
+          <details class="category" open>
+            <summary>${esc(cat)} <span class="cat-count">${items.length}</span></summary>
+            <div class="cards">${cards}</div>
+          </details>`;
+      }).join("");
+
+      if (!works.length) {
+        catalog.innerHTML = `<p class="msg">まだ作品がありません。</p>`;
+      }
+    }
+
+    async function main() {
+      // サイト名などの設定は config.json を単一の情報源として読む。
+      // 実体はリポジトリ直下 config.json で、ビルド時に portal/ へ複製される。
+      try {
+        const cfg = await fetch("config.json").then(r => r.ok ? r.json() : null);
+        if (cfg && cfg.site) {
+          document.title = cfg.site.name;
+          document.getElementById("site-name").textContent = cfg.site.name;
+          document.getElementById("site-tagline").textContent = cfg.site.tagline || "";
+          document.getElementById("footer-note").textContent =
+            `© ${new Date().getFullYear()} ${cfg.site.author || cfg.site.name}`;
+        }
+      } catch (_) { /* config が無くても致命ではない */ }
+
+      try {
+        const data = await fetch("works.json").then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        });
+        document.getElementById("loading").remove();
+        render(data.works || []);
+      } catch (e) {
+        document.getElementById("catalog").innerHTML =
+          `<p class="msg error">works.json を読み込めませんでした (${esc(e.message)})。<br>` +
+          `ローカルで開く場合は <code>file://</code> ではなく簡易サーバー（例: <code>python3 -m http.server</code>）経由で開いてください。</p>`;
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>

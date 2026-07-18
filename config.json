@@ -1,0 +1,14 @@
+{
+  "site": {
+    "name": "Works Portal",
+    "tagline": "AIと作ったもの・これから作るものの一覧と、制作で得た知識ノート",
+    "author": "Tamorian",
+    "domain": "example.com"
+  },
+  "paths": {
+    "works": "portal/works.json",
+    "schema": "works.schema.json",
+    "docs_src": "docs",
+    "docs_out": "portal/docs"
+  }
+}
