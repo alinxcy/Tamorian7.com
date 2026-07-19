@@ -1,0 +1,49 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { fmtDate } from '../../lib/util';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('garden');
+  return notes.map((note) => ({ params: { id: note.id }, props: { note } }));
+}
+
+const { note } = Astro.props;
+const { Content, headings } = await render(note);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const { title, emoji, tags, updated, created, kind, status, url, repo } = note.data;
+const statusLabel: Record<string, string> = { published: '公開中', wip: '制作中', planned: '構想中' };
+---
+<Base title={title} description={note.data.summary}>
+  <div class="with-toc">
+    <article class="article">
+      <h1 class="title">{emoji ? `${emoji} ` : ''}{title}</h1>
+      <div class="meta">
+        <span>updated {fmtDate(updated)}</span>
+        {created && <span>· created {fmtDate(created)}</span>}
+        {kind === 'work' && status && <span class={`badge ${status}`}>{statusLabel[status]}</span>}
+        {url && <span>· <a href={url} target="_blank" rel="noopener">サイト ↗</a></span>}
+        {repo && <span>· <a href={repo} target="_blank" rel="noopener">リポジトリ ↗</a></span>}
+      </div>
+      <div class="tags" style="margin-bottom:20px">
+        {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+      </div>
+      <div class="article-body" data-pagefind-body>
+        <Content />
+      </div>
+    </article>
+
+    {toc.length > 0 && (
+      <nav class="toc" aria-label="目次">
+        <h4>目次</h4>
+        <ul>
+          {toc.map((h) => (
+            <li class={h.depth === 3 ? 'h3' : 'h2'}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </div>
+</Base>

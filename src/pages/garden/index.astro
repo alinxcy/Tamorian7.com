@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getGarden, fmtDate } from '../../lib/util';
+
+const notes = await getGarden();
+---
+<Base title="常緑ノート">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px">常緑ノート</h1>
+    <p class="lead">トピック単位で育てる知見。更新の新しい順。</p>
+  </section>
+  <ul class="note-list">
+    {notes.map((note) => (
+      <li>
+        <div class="row">
+          <a class="title" href={`/garden/${note.id}/`}>
+            {note.data.emoji ? `${note.data.emoji} ` : ''}{note.data.title}
+          </a>
+          <span class="date">updated {fmtDate(note.data.updated)}</span>
+        </div>
+        {note.data.summary && <p class="summary">{note.data.summary}</p>}
+        <div class="tags" style="margin-top:6px">
+          {note.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+        </div>
+      </li>
+    ))}
+  </ul>
+</Base>

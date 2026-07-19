@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+// 全文検索は Pagefind(クライアント側・バックエンド不要)。
+// /pagefind/ 配下はビルド後に生成されるため、検索が効くのは
+// `npm run build` + `npm run preview`(または本番)時。`astro dev` では未生成。
+---
+<Base title="検索">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px">検索</h1>
+    <p class="lead">常緑ノート・ログを全文検索。</p>
+  </section>
+  <div class="search-box">
+    <div id="search"></div>
+    <p class="muted" id="search-note" style="margin-top:12px; font-size:0.85rem">
+      検索インデックスはビルド時に生成されます(<code>npm run build</code> 後の
+      <code>npm run preview</code> / 本番で有効)。
+    </p>
+  </div>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof PagefindUI !== 'undefined') {
+        new PagefindUI({ element: '#search', showSubResults: true, showImages: false });
+        const note = document.getElementById('search-note');
+        if (note) note.remove();
+      }
+    });
+  </script>
+</Base>

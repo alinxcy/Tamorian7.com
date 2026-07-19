@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getTagCounts } from '../../lib/util';
+
+const tags = [...(await getTagCounts()).entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+<Base title="タグ">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px">タグ</h1>
+    <p class="lead">常緑ノートとログを横断。件数の多い順。</p>
+  </section>
+  <div class="tags">
+    {tags.map(([tag, n]) => (
+      <a class="tag" href={`/tags/${tag}/`}>{tag}<span class="n">{n}</span></a>
+    ))}
+  </div>
+</Base>

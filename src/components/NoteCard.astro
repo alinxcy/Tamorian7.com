@@ -1,0 +1,22 @@
+---
+import type { GardenEntry } from '../lib/util';
+
+interface Props { note: GardenEntry; }
+const { note } = Astro.props;
+const { title, emoji, summary, tags, kind, status } = note.data;
+const href = `/garden/${note.id}/`;
+const statusLabel: Record<string, string> = { published: '公開中', wip: '制作中', planned: '構想中' };
+---
+<article class="card">
+  <div class="card-head">
+    {emoji && <span class="emoji">{emoji}</span>}
+    <h3 class="card-title"><a href={href}>{title}</a></h3>
+    {kind === 'work' && status && <span class={`badge ${status}`}>{statusLabel[status]}</span>}
+  </div>
+  {summary && <p class="card-desc">{summary}</p>}
+  <div class="card-meta">
+    <div class="tags">
+      {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import NoteCard from '../../components/NoteCard.astro';
+import { getGarden } from '../../lib/util';
+
+// 作品 = kind: work の常緑ノートの絞り込みビュー
+const works = (await getGarden()).filter((n) => n.data.kind === 'work');
+const order: Record<string, number> = { published: 0, wip: 1, planned: 2 };
+works.sort((a, b) => (order[a.data.status ?? 'planned'] ?? 3) - (order[b.data.status ?? 'planned'] ?? 3));
+---
+<Base title="作品">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px">作品</h1>
+    <p class="lead">「作った」系ノートの一覧(常緑ノートのうち <code>kind: work</code> を抽出)。</p>
+  </section>
+  <div class="cards">
+    {works.map((note) => <NoteCard note={note} />)}
+  </div>
+  {works.length === 0 && <p class="muted">まだ作品ノートがありません。</p>}
+</Base>

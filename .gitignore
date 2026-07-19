@@ -1,10 +1,15 @@
-# ビルド生成物(scripts/build.sh で生成される)
-/portal/docs/
-/portal/config.json
+# build output / deps
+dist/
+node_modules/
+.astro/
 
-# Python
-__pycache__/
-*.pyc
+# pagefind (生成物)
+public/pagefind/
+
+# env / logs
+.env
+.env.production
+npm-debug.log*
 
 # OS
 .DS_Store

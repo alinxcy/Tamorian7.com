@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getLog, fmtDate } from '../../lib/util';
+
+const logs = await getLog();
+---
+<Base title="ログ">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px">ログ</h1>
+    <p class="lead">日付順に流す作業ログ・雑記・ふりかえり。</p>
+  </section>
+  <ul class="note-list">
+    {logs.map((l) => (
+      <li>
+        <div class="row">
+          <a class="title" href={`/log/${l.id}/`}>{l.data.title}</a>
+          <span class="date">{fmtDate(l.data.date)}</span>
+        </div>
+        <div class="tags" style="margin-top:6px">
+          {l.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+        </div>
+      </li>
+    ))}
+  </ul>
+</Base>
