@@ -1,7 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { fmtDate } from '../../lib/util';
+import { fmtDate, getBacklinks, getRelated } from '../../lib/util';
+import { u } from '../../lib/url';
 
 export async function getStaticPaths() {
   const notes = await getCollection('garden');
@@ -13,6 +14,9 @@ const { Content, headings } = await render(note);
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const { title, emoji, tags, updated, created, kind, status, url, repo } = note.data;
 const statusLabel: Record<string, string> = { published: '公開中', wip: '制作中', planned: '構想中' };
+
+const backlinks = await getBacklinks(note.id);
+const related = await getRelated(note.id, tags, backlinks.filter((b) => b.kind === 'garden').map((b) => b.id));
 ---
 <Base title={title} description={note.data.summary}>
   <div class="with-toc">
@@ -26,11 +30,37 @@ const statusLabel: Record<string, string> = { published: '公開中', wip: '制�
         {repo && <span>· <a href={repo} target="_blank" rel="noopener">リポジトリ ↗</a></span>}
       </div>
       <div class="tags" style="margin-bottom:20px">
-        {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+        {tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
       </div>
       <div class="article-body" data-pagefind-body>
         <Content />
       </div>
+
+      {(backlinks.length > 0 || related.length > 0) && (
+        <section class="connections">
+          {backlinks.length > 0 && (
+            <div class="conn-block">
+              <h4>このノートを参照</h4>
+              <ul>
+                {backlinks.map((b) => (
+                  <li><a href={u(`/${b.kind}/${b.id}/`)}>{b.title}</a>
+                    <span class="muted"> · {b.kind === 'garden' ? '常緑' : 'ログ'}</span></li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {related.length > 0 && (
+            <div class="conn-block">
+              <h4>関連ノート(タグ共有)</h4>
+              <ul>
+                {related.map((r) => (
+                  <li><a href={u(`/garden/${r.id}/`)}>{r.title}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
     </article>
 
     {toc.length > 0 && (

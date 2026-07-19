@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { fmtDate } from '../../lib/util';
+import { u } from '../../lib/url';
 
 export async function getStaticPaths() {
   const logs = await getCollection('log');
@@ -18,7 +19,7 @@ const { title, date, tags } = entry.data;
     <div class="meta">
       <span>{fmtDate(date)}</span>
       <div class="tags">
-        {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+        {tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
       </div>
     </div>
     <div class="article-body" data-pagefind-body>

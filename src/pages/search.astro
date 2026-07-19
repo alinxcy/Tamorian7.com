@@ -1,8 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+import { u } from '../lib/url';
+
 // 全文検索は Pagefind(クライアント側・バックエンド不要)。
 // /pagefind/ 配下はビルド後に生成されるため、検索が効くのは
 // `npm run build` + `npm run preview`(または本番)時。`astro dev` では未生成。
+// base(サブパス配信)対応のため、アセット/バンドル/結果URLに base を前置する。
+const base = import.meta.env.BASE_URL; // 末尾スラッシュ付き
+const bundlePath = base.replace(/\/+$/, '') + '/pagefind/';
+const uiJs = u('/pagefind/pagefind-ui.js');
+const uiCss = u('/pagefind/pagefind-ui.css');
 ---
 <Base title="検索">
   <section class="section" style="margin-top:32px">
@@ -17,15 +24,27 @@ import Base from '../layouts/Base.astro';
     </p>
   </div>
 
-  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-  <script is:inline src="/pagefind/pagefind-ui.js"></script>
-  <script is:inline>
+  <link rel="stylesheet" href={uiCss} />
+  <script is:inline src={uiJs}></script>
+  <script is:inline define:vars={{ bundlePath, base }}>
     window.addEventListener('DOMContentLoaded', () => {
-      if (typeof PagefindUI !== 'undefined') {
-        new PagefindUI({ element: '#search', showSubResults: true, showImages: false });
-        const note = document.getElementById('search-note');
-        if (note) note.remove();
-      }
+      if (typeof PagefindUI === 'undefined') return;
+      const b = base.replace(/\/+$/, '');
+      new PagefindUI({
+        element: '#search',
+        bundlePath,
+        showSubResults: true,
+        showImages: false,
+        // インデックスは dist ルート基準のURL(/garden/...)を持つため base を前置
+        processResult: (result) => {
+          if (result && typeof result.url === 'string' && result.url.startsWith('/') && !result.url.startsWith(b + '/')) {
+            result.url = b + result.url;
+          }
+          return result;
+        },
+      });
+      const note = document.getElementById('search-note');
+      if (note) note.remove();
     });
   </script>
 </Base>

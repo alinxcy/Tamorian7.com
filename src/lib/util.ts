@@ -30,3 +30,37 @@ export async function getTagCounts(): Promise<Map<string, number>> {
   }
   return counts;
 }
+
+export type RefItem = { kind: 'garden' | 'log'; id: string; title: string };
+
+// バックリンク: 本文中で /garden/<targetId>/ を参照している他ノート/ログ
+export async function getBacklinks(targetId: string): Promise<RefItem[]> {
+  const [garden, log] = [await getCollection('garden'), await getCollection('log')];
+  const needle = `/garden/${targetId}/`;
+  const out: RefItem[] = [];
+  for (const e of garden) {
+    if (e.id === targetId) continue;
+    if ((e.body ?? '').includes(needle)) out.push({ kind: 'garden', id: e.id, title: e.data.title });
+  }
+  for (const e of log) {
+    if ((e.body ?? '').includes(needle)) out.push({ kind: 'log', id: e.id, title: e.data.title });
+  }
+  return out;
+}
+
+// 関連ノート: タグを共有する常緑ノート(共有数の多い順)。excludeIds は除外
+export async function getRelated(
+  targetId: string,
+  tags: string[],
+  excludeIds: string[] = [],
+): Promise<RefItem[]> {
+  const garden = await getCollection('garden');
+  const tagset = new Set(tags);
+  return garden
+    .filter((e) => e.id !== targetId && !excludeIds.includes(e.id))
+    .map((e) => ({ e, shared: e.data.tags.filter((t) => tagset.has(t)).length }))
+    .filter((x) => x.shared > 0)
+    .sort((a, b) => b.shared - a.shared || b.e.data.updated.getTime() - a.e.data.updated.getTime())
+    .slice(0, 5)
+    .map((x) => ({ kind: 'garden' as const, id: x.e.id, title: x.e.data.title }));
+}

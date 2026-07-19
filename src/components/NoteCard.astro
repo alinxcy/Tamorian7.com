@@ -1,10 +1,11 @@
 ---
 import type { GardenEntry } from '../lib/util';
+import { u } from '../lib/url';
 
 interface Props { note: GardenEntry; }
 const { note } = Astro.props;
 const { title, emoji, summary, tags, kind, status } = note.data;
-const href = `/garden/${note.id}/`;
+const href = u(`/garden/${note.id}/`);
 const statusLabel: Record<string, string> = { published: '公開中', wip: '制作中', planned: '構想中' };
 ---
 <article class="card">
@@ -16,7 +17,7 @@ const statusLabel: Record<string, string> = { published: '公開中', wip: '制�
   {summary && <p class="card-desc">{summary}</p>}
   <div class="card-meta">
     <div class="tags">
-      {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+      {tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
     </div>
   </div>
 </article>

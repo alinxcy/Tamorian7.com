@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import NoteCard from '../components/NoteCard.astro';
 import { SITE } from '../site.config';
 import { getGarden, getLog, getTagCounts, fmtDate } from '../lib/util';
+import { u } from '../lib/url';
 
 const garden = await getGarden();
 const log = await getLog();
@@ -20,11 +21,11 @@ const latestLog = log.slice(0, 5);         // 最新ログ
   <section class="section">
     <div class="section-head">
       <h2>タグで探す</h2>
-      <a class="muted" href="/tags/">すべてのタグ →</a>
+      <a class="muted" href={u('/tags/')}>すべてのタグ →</a>
     </div>
     <div class="tags">
       {tagCounts.map(([tag, n]) => (
-        <a class="tag" href={`/tags/${tag}/`}>{tag}<span class="n">{n}</span></a>
+        <a class="tag" href={u(`/tags/${tag}/`)}>{tag}<span class="n">{n}</span></a>
       ))}
     </div>
   </section>
@@ -32,7 +33,7 @@ const latestLog = log.slice(0, 5);         // 最新ログ
   <section class="section">
     <div class="section-head">
       <h2>育成中の常緑ノート</h2>
-      <a class="muted" href="/garden/">常緑ノート一覧 →</a>
+      <a class="muted" href={u('/garden/')}>常緑ノート一覧 →</a>
     </div>
     <div class="cards">
       {growing.map((note) => <NoteCard note={note} />)}
@@ -42,13 +43,13 @@ const latestLog = log.slice(0, 5);         // 最新ログ
   <section class="section">
     <div class="section-head">
       <h2>最新のログ</h2>
-      <a class="muted" href="/log/">ログ一覧 →</a>
+      <a class="muted" href={u('/log/')}>ログ一覧 →</a>
     </div>
     <ul class="note-list">
       {latestLog.map((l) => (
         <li>
           <div class="row">
-            <a class="title" href={`/log/${l.id}/`}>{l.data.title}</a>
+            <a class="title" href={u(`/log/${l.id}/`)}>{l.data.title}</a>
             <span class="date">{fmtDate(l.data.date)}</span>
           </div>
         </li>

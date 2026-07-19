@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getGarden, fmtDate } from '../../lib/util';
+import { u } from '../../lib/url';
 
 const notes = await getGarden();
 ---
@@ -13,14 +14,14 @@ const notes = await getGarden();
     {notes.map((note) => (
       <li>
         <div class="row">
-          <a class="title" href={`/garden/${note.id}/`}>
+          <a class="title" href={u(`/garden/${note.id}/`)}>
             {note.data.emoji ? `${note.data.emoji} ` : ''}{note.data.title}
           </a>
           <span class="date">updated {fmtDate(note.data.updated)}</span>
         </div>
         {note.data.summary && <p class="summary">{note.data.summary}</p>}
         <div class="tags" style="margin-top:6px">
-          {note.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+          {note.data.tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
         </div>
       </li>
     ))}

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { SITE } from '../site.config';
+import { u } from '../lib/url';
 
 interface Props {
   title?: string;
@@ -27,13 +28,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <body>
     <header class="site-header">
       <div class="wrap">
-        <a class="brand" href="/">🌱 {SITE.name}</a>
+        <a class="brand" href={u('/')}>🌱 {SITE.name}</a>
         <nav class="site-nav">
-          <a href="/garden/">常緑ノート</a>
-          <a href="/log/">ログ</a>
-          <a href="/works/">作品</a>
-          <a href="/tags/">タグ</a>
-          <a href="/search/">検索</a>
+          <a href={u('/garden/')}>常緑ノート</a>
+          <a href={u('/log/')}>ログ</a>
+          <a href={u('/works/')}>作品</a>
+          <a href={u('/tags/')}>タグ</a>
+          <a href={u('/search/')}>検索</a>
         </nav>
       </div>
     </header>

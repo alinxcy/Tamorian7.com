@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getLog, fmtDate } from '../../lib/util';
+import { u } from '../../lib/url';
 
 const logs = await getLog();
 ---
@@ -13,11 +14,11 @@ const logs = await getLog();
     {logs.map((l) => (
       <li>
         <div class="row">
-          <a class="title" href={`/log/${l.id}/`}>{l.data.title}</a>
+          <a class="title" href={u(`/log/${l.id}/`)}>{l.data.title}</a>
           <span class="date">{fmtDate(l.data.date)}</span>
         </div>
         <div class="tags" style="margin-top:6px">
-          {l.data.tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+          {l.data.tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
         </div>
       </li>
     ))}

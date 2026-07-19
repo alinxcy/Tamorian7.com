@@ -124,5 +124,12 @@ a.tag:hover { border-color: var(--accent); color: var(--accent); text-decoration
 .toc a:hover { color: var(--accent); text-decoration: none; }
 @media (max-width: 899px) { .toc { display: none; } }
 
+/* connections (backlinks / related) */
+.connections { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .connections { grid-template-columns: 1fr 1fr; } }
+.conn-block h4 { margin: 0 0 8px; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-muted); }
+.conn-block ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.conn-block li { font-size: 0.92rem; }
+
 /* search */
 .search-box { max-width: 620px; }
