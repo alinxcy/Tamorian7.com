@@ -28,10 +28,8 @@ jobs:
         run: npm ci
       - name: Build (Astro + Pagefind)
         run: npm run build
-      - name: Configure Pages (auto-enable if permitted)
+      - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
