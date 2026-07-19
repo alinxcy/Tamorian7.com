@@ -118,9 +118,9 @@ tags: [progress]         # 任意
 - 会話で知見が溜まったら、Claude が常緑ノート or ログを書き出し、frontmatter を
   付けて commit / push。ホストが自動デプロイする
 - 「md を 1 個置く → push → 反映」以上の手順を人間に要求しない
-- 将来この手順を **note-publisher スキル**として型化する(Phase 3)。旧
-  `work-publisher-skill-spec.md` は「作品専用」から「ノート/ログ全般の追記」へ
-  一般化して作り直す
+- 将来この手順を **garden-muse スキル**として型化する(Phase 3)。単なる登録に
+  留まらず「好奇心ドリブンの着火(面白い方向・繋がりの提案)」まで担う。
+  詳細は別紙 [`garden-muse-skill-spec.md`](garden-muse-skill-spec.md)
 
 ### 4. 見た目
 
@@ -161,8 +161,8 @@ tags: [progress]         # 任意
    - `[[wikilink]]` 記法(任意)
    - クラウド静的ホスト(Cloudflare Pages 推奨)に接続し git push 自動デプロイ。
      独自ドメインは任意で後付け
-3. **Phase 3 — 追記運用の型化**: note-publisher スキル実装。会話→ノート/ログ案生成
-   →承認→md 追記・commit を固定手順にする
+3. **Phase 3 — 追記運用の型化**: garden-muse スキル実装。会話→ノート/ログ案生成
+   →承認→md 追記・commit を固定手順にし、あわせて好奇心ドリブンの着火提案を担う
 4. **Phase 4 — デジタルガーデン強化**: 知識グラフ可視化、MOC(目次ノート)、
    RSS/OG の作り込み
 
