@@ -185,8 +185,13 @@ tags: [progress]         # 任意
 
 1. **garden-muse スキルを実体化**(Phase 3)。公開/保存の確認・着火・食い下がりを
    実装し、実際の知見を捕獲して運用ループを回す ← 次に着手予定
-2. **本番運用へ**: Cloudflare Pages 接続 + 独自ドメイン取得、`base` を `/` に。
-   併せて main へマージして main 運用に切り替え(現在は作業ブランチ運用)
+2. **本番運用へ**(リマインダ登録済み: 2026-08-01 頃): Cloudflare Pages 接続 +
+   独自ドメイン取得、`base` を `/` に。併せて main へマージして main 運用に切り替え
+   (現在は作業ブランチ運用)。
+   **⚠️ 忘れずに: garden-muse の反映ブランチを `main` に変更する。対象は2箇所——
+   `alinxcy/Tamorian7.com` と `alinxcy/claudePlayground`(main)の
+   `.claude/skills/garden-muse/SKILL.md` 冒頭の設定表。両方直さないと、片方が
+   古い作業ブランチに書き続ける**
 3. **見た目・サイト名の確定**: 実物ベースで配色・余白・トップ調整。仮名
    「Knowledge Garden」を確定
 4. **Phase 4 情報設計強化**: 知識グラフ可視化 / MOC / RSS・OG
