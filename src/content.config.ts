@@ -10,6 +10,8 @@ const garden = defineCollection({
     updated: z.coerce.date(),
     created: z.coerce.date().optional(),
     summary: z.string().optional(),
+    // false = 保存のみ(サイトのビルド/一覧/タグ/検索から除外)。省略時は公開
+    publish: z.boolean().default(true),
     kind: z.enum(['note', 'work']).default('note'),
     // kind: work のときだけ使う追加フィールド
     status: z.enum(['published', 'wip', 'planned']).optional(),
@@ -26,6 +28,8 @@ const log = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
+    // false = 保存のみ(サイトから除外)。省略時は公開
+    publish: z.boolean().default(true),
   }),
 });
 

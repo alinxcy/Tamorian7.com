@@ -5,8 +5,8 @@ import { fmtDate } from '../../lib/util';
 import { u } from '../../lib/url';
 
 export async function getStaticPaths() {
-  const garden = await getCollection('garden');
-  const log = await getCollection('log');
+  const garden = await getCollection('garden', (e) => e.data.publish !== false);
+  const log = await getCollection('log', (e) => e.data.publish !== false);
   const tags = new Set<string>();
   for (const e of [...garden, ...log]) for (const t of e.data.tags ?? []) tags.add(t);
 

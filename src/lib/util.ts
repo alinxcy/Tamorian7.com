@@ -7,21 +7,27 @@ export function fmtDate(d: Date): string {
 export type GardenEntry = Awaited<ReturnType<typeof getCollection<'garden'>>>[number];
 export type LogEntry = Awaited<ReturnType<typeof getCollection<'log'>>>[number];
 
-// 常緑ノートを更新日の新しい順で取得
+// publish: false(保存のみ)はサイトに出さない
+const isPublished = (e: { data: { publish?: boolean } }) => e.data.publish !== false;
+
+// 常緑ノートを更新日の新しい順で取得(公開分のみ)
 export async function getGarden(): Promise<GardenEntry[]> {
-  const notes = await getCollection('garden');
+  const notes = await getCollection('garden', isPublished);
   return notes.sort((a, b) => b.data.updated.getTime() - a.data.updated.getTime());
 }
 
-// ログを日付の新しい順で取得
+// ログを日付の新しい順で取得(公開分のみ)
 export async function getLog(): Promise<LogEntry[]> {
-  const logs = await getCollection('log');
+  const logs = await getCollection('log', isPublished);
   return logs.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
-// garden と log 全体からタグ→件数を集計
+// garden と log 全体からタグ→件数を集計(公開分のみ)
 export async function getTagCounts(): Promise<Map<string, number>> {
-  const [garden, log] = [await getCollection('garden'), await getCollection('log')];
+  const [garden, log] = [
+    await getCollection('garden', isPublished),
+    await getCollection('log', isPublished),
+  ];
   const counts = new Map<string, number>();
   for (const e of [...garden, ...log]) {
     for (const t of e.data.tags ?? []) {
@@ -33,9 +39,12 @@ export async function getTagCounts(): Promise<Map<string, number>> {
 
 export type RefItem = { kind: 'garden' | 'log'; id: string; title: string };
 
-// バックリンク: 本文中で /garden/<targetId>/ を参照している他ノート/ログ
+// バックリンク: 本文中で /garden/<targetId>/ を参照している他ノート/ログ(公開分のみ)
 export async function getBacklinks(targetId: string): Promise<RefItem[]> {
-  const [garden, log] = [await getCollection('garden'), await getCollection('log')];
+  const [garden, log] = [
+    await getCollection('garden', isPublished),
+    await getCollection('log', isPublished),
+  ];
   const needle = `/garden/${targetId}/`;
   const out: RefItem[] = [];
   for (const e of garden) {
@@ -54,7 +63,7 @@ export async function getRelated(
   tags: string[],
   excludeIds: string[] = [],
 ): Promise<RefItem[]> {
-  const garden = await getCollection('garden');
+  const garden = await getCollection('garden', isPublished);
   const tagset = new Set(tags);
   return garden
     .filter((e) => e.id !== targetId && !excludeIds.includes(e.id))
