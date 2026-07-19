@@ -103,11 +103,23 @@ Claude Code(リポジトリのある環境)と claude.ai(Chat)の両方に置く
 - 公開ガーデンなので、秘密情報・未公開にすべき内容は書かない/確認する
 - サブドメインや URL は一度公開したら変えない前提で慎重に(リンク切れ防止)
 
-## 配置(両環境)
+## 配置と「書き出し先の固定」
 
-- **Claude Code**: リポジトリの `.claude/skills/garden-muse/` に置く(commit/push まで担える)
-- **claude.ai**: 同名のユーザースキルとして置く(提案・下書きまで)
-- 中身(description・手順・ペルソナ)は共通。環境差は Step 3 の反映手段だけ
+このスキルは **どのリポジトリ/claude.ai から使ってもよい**。ゆえに書き出し先は
+「今いるリポジトリ」ではなく、**ナレッジガーデン本体リポジトリを URL ごと埋め込んで
+固定**する。SKILL.md 冒頭の設定表が唯一の情報源:
+
+- リポジトリ: `alinxcy/Tamorian7.com`(https://github.com/alinxcy/Tamorian7.com)
+- パス: `src/content/garden/<slug>.md` / `src/content/log/<YYYY-MM-DD>.md`
+- 反映ブランチ: 当面 `claude/code-handoff-phase-1-ruj6je`(本番移行後 `main`)
+
+配置先:
+- **ナレッジガーデン本体**: `.claude/skills/garden-muse/`(ローカル write→commit/push)
+- **別の作業リポジトリ**(例: claudePlayground): `.claude/skills/garden-muse/` に
+  同じ SKILL.md を置く。書き込みは GitHub 連携で固定リポジトリへ(clone or API)
+- **claude.ai**: 同名のユーザースキル。GitHub コネクタで固定リポジトリへ、または手渡し
+
+環境で変わるのは Step 3 の「どうやって固定リポジトリに書くか」だけ。中身は共通。
 
 ## Todo(スキル v1 スコープ外)
 
