@@ -74,4 +74,5 @@ kind: note
 **ベンチマークを設計できるかという問いと同じ形**をしていることだ。
 自動採点できる問いは外注もできる。逆もまた然り。
 
-関連: [AIに人格を持たせるなら、芯は「誠実さ」](/garden/ai-persona-honesty/)
+関連: [AIに人格を持たせるなら、芯は「誠実さ」](/garden/ai-persona-honesty/) /
+[可逆なものと不可逆なものを、同じコアに置かない](/garden/reversible-vs-irreversible/)
