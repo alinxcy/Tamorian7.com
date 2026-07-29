@@ -1,18 +1,23 @@
 ---
-import type { GardenEntry } from '../lib/util';
 import { u } from '../lib/url';
+import { STATUS_LABEL } from '../lib/util';
 
-interface Props { note: GardenEntry; }
-const { note } = Astro.props;
-const { title, emoji, summary, tags, kind, status } = note.data;
-const href = u(`/garden/${note.id}/`);
-const statusLabel: Record<string, string> = { published: '公開中', wip: '制作中', planned: '構想中' };
+// コレクション非依存のカード。Garden ノートにも Works にも使う。
+interface Props {
+  href: string;
+  title: string;
+  emoji?: string;
+  summary?: string;
+  tags?: string[];
+  status?: string;
+}
+const { href, title, emoji, summary, tags = [], status } = Astro.props;
 ---
 <article class="card">
   <div class="card-head">
     {emoji && <span class="emoji">{emoji}</span>}
     <h3 class="card-title"><a href={href}>{title}</a></h3>
-    {kind === 'work' && status && <span class={`badge ${status}`}>{statusLabel[status]}</span>}
+    {status && <span class={`badge ${status}`}>{STATUS_LABEL[status] ?? status}</span>}
   </div>
   {summary && <p class="card-desc">{summary}</p>}
   <div class="card-meta">

@@ -4,6 +4,7 @@ updated: 2026-07-19
 created: 2026-07-19
 tags: [pkm, digital-garden]
 summary: 知識を貯めるサイトには「流す」ブログ型と「育てる」wiki型があり、両方を分けて持つのが今回の結論。
+project: knowledge-garden
 ---
 
 個人の知識ベースには、大きく2つのスタイルがある。ここを取り違えると

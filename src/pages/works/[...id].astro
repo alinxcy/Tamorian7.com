@@ -1,0 +1,106 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { fmtDate, getWorks, getProjectItems, STATUS_LABEL } from '../../lib/util';
+import { u } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const works = await getWorks(); // 公開分のみ
+  return works.map((work) => ({ params: { id: work.id }, props: { work } }));
+}
+
+const { work } = Astro.props;
+const { Content, headings } = await render(work);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const { title, emoji, tags, updated, created, status, url, repo, chats } = work.data;
+
+// chats は作業中だけ生かす。published では出さない(腐ったリンクを公開に残さない)
+const showChats = status !== 'published' && chats.length > 0;
+// 本文の役割は status で入れ替わる
+const bodyRole =
+  status === 'published' ? '使い方' : status === 'wip' ? '作業場' : '構想';
+
+const { notes, logs } = await getProjectItems(work.id);
+---
+<Base title={title} description={work.data.summary}>
+  <div class="with-toc">
+    <article class="article">
+      <h1 class="title">{emoji ? `${emoji} ` : ''}{title}</h1>
+      <div class="meta">
+        <span class={`badge ${status}`}>{STATUS_LABEL[status]}</span>
+        <span>· updated {fmtDate(updated)}</span>
+        {created && <span>· created {fmtDate(created)}</span>}
+        {url && <span>· <a href={url} target="_blank" rel="noopener">サイト ↗</a></span>}
+        {repo && <span>· <a href={repo} target="_blank" rel="noopener">リポジトリ ↗</a></span>}
+      </div>
+      <div class="tags" style="margin-bottom:20px">
+        {tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
+      </div>
+
+      <p class="body-role muted">{bodyRole}</p>
+      <div class="article-body" data-pagefind-body>
+        <Content />
+      </div>
+
+      {(notes.length > 0 || logs.length > 0) && (
+        <section class="connections">
+          {notes.length > 0 && (
+            <div class="conn-block">
+              <h4>このプロジェクトから生まれたノート</h4>
+              <ul>
+                {notes.map((n) => (
+                  <li><a href={u(`/garden/${n.id}/`)}>{n.title}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {logs.length > 0 && (
+            <div class="conn-block">
+              <h4>作業ログ</h4>
+              <ul>
+                {logs.map((l) => (
+                  <li><a href={u(`/log/${l.id}/`)}>{l.title}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
+
+      {showChats && (
+        <details class="chats">
+          <summary>作業リンク(自分用) · {chats.length}</summary>
+          <p class="muted chats-note">
+            作業中だけのリンク。公開しても他人は開けない。
+            <strong>published にするときに消す</strong>——その前に log へ吐き出すこと。
+          </p>
+          <ul>
+            {chats.map((c) =>
+              c.kind === 'claude' && c.url ? (
+                <li><a href={c.url} target="_blank" rel="noopener">{c.label} ↗</a></li>
+              ) : (
+                <li>
+                  {c.label} · <code>claude --resume {c.session}</code>
+                  <span class="muted"> (同一マシンのみ)</span>
+                </li>
+              ),
+            )}
+          </ul>
+        </details>
+      )}
+    </article>
+
+    {toc.length > 0 && (
+      <nav class="toc" aria-label="目次">
+        <h4>目次</h4>
+        <ul>
+          {toc.map((h) => (
+            <li class={h.depth === 3 ? 'h3' : 'h2'}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </div>
+</Base>

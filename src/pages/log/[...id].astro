@@ -1,7 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { fmtDate, getLog } from '../../lib/util';
+import { fmtDate, getLog, getWorks } from '../../lib/util';
 import { u } from '../../lib/url';
 
 export async function getStaticPaths() {
@@ -11,13 +11,17 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, date, tags } = entry.data;
+const { title, date, tags, project } = entry.data;
+const parent = project ? (await getWorks()).find((w) => w.id === project) : undefined;
 ---
 <Base title={title}>
   <article class="article">
     <h1 class="title">{title}</h1>
     <div class="meta">
       <span>{fmtDate(date)}</span>
+      {parent && (
+        <span>· <a href={u(`/works/${parent.id}/`)}>{parent.data.emoji ?? ''} {parent.data.title}</a></span>
+      )}
       <div class="tags">
         {tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
       </div>

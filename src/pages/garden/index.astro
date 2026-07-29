@@ -5,18 +5,16 @@ import { u } from '../../lib/url';
 
 const notes = await getGarden();
 ---
-<Base title="常緑ノート">
+<Base title="Garden">
   <section class="section" style="margin-top:32px">
-    <h1 style="margin:0 0 4px">常緑ノート</h1>
-    <p class="lead">トピック単位で育てる知見。更新の新しい順。</p>
+    <h1 style="margin:0 0 4px">Garden</h1>
+    <p class="lead">主題ごとに育てる知見。プロジェクトをまたいで再利用されるもの。更新の新しい順。</p>
   </section>
   <ul class="note-list">
     {notes.map((note) => (
       <li>
         <div class="row">
-          <a class="title" href={u(`/garden/${note.id}/`)}>
-            {note.data.emoji ? `${note.data.emoji} ` : ''}{note.data.title}
-          </a>
+          <a class="title" href={u(`/garden/${note.id}/`)}>{note.data.title}</a>
           <span class="date">updated {fmtDate(note.data.updated)}</span>
         </div>
         {note.data.summary && <p class="summary">{note.data.summary}</p>}

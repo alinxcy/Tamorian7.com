@@ -1,7 +1,6 @@
 ---
 title: Knowledge Garden(このサイト)
 emoji: 🌱
-kind: work
 status: wip
 updated: 2026-07-19
 created: 2026-07-18

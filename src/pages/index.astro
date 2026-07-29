@@ -2,15 +2,17 @@
 import Base from '../layouts/Base.astro';
 import NoteCard from '../components/NoteCard.astro';
 import { SITE } from '../site.config';
-import { getGarden, getLog, getTagCounts, fmtDate } from '../lib/util';
+import { getGarden, getLog, getWorks, getTagCounts, fmtDate } from '../lib/util';
 import { u } from '../lib/url';
 
 const garden = await getGarden();
 const log = await getLog();
+const works = await getWorks();
 const tagCounts = [...(await getTagCounts()).entries()].sort((a, b) => b[1] - a[1]);
 
-const growing = garden.slice(0, 6);        // 育成中(最近更新)の常緑ノート
-const latestLog = log.slice(0, 5);         // 最新ログ
+const active = works.filter((w) => w.data.status !== 'published').slice(0, 6); // 作業中
+const growing = garden.slice(0, 6);
+const latestLog = log.slice(0, 5);
 ---
 <Base>
   <section class="section" style="margin-top:32px">
@@ -30,20 +32,48 @@ const latestLog = log.slice(0, 5);         // 最新ログ
     </div>
   </section>
 
+  {active.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <h2>いま作っているもの</h2>
+        <a class="muted" href={u('/works/')}>Works 一覧 →</a>
+      </div>
+      <div class="cards">
+        {active.map((w) => (
+          <NoteCard
+            href={u(`/works/${w.id}/`)}
+            title={w.data.title}
+            emoji={w.data.emoji}
+            summary={w.data.summary}
+            tags={w.data.tags}
+            status={w.data.status}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
   <section class="section">
     <div class="section-head">
-      <h2>育成中の常緑ノート</h2>
-      <a class="muted" href={u('/garden/')}>常緑ノート一覧 →</a>
+      <h2>育てているノート</h2>
+      <a class="muted" href={u('/garden/')}>Garden 一覧 →</a>
     </div>
     <div class="cards">
-      {growing.map((note) => <NoteCard note={note} />)}
+      {growing.map((note) => (
+        <NoteCard
+          href={u(`/garden/${note.id}/`)}
+          title={note.data.title}
+          summary={note.data.summary}
+          tags={note.data.tags}
+        />
+      ))}
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
       <h2>最新のログ</h2>
-      <a class="muted" href={u('/log/')}>ログ一覧 →</a>
+      <a class="muted" href={u('/log/')}>Log 一覧 →</a>
     </div>
     <ul class="note-list">
       {latestLog.map((l) => (

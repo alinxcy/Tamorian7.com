@@ -1,7 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { fmtDate, getGarden, getBacklinks, getRelated } from '../../lib/util';
+import { fmtDate, getGarden, getWorks, getBacklinks, getRelated, KIND_LABEL } from '../../lib/util';
 import { u } from '../../lib/url';
 
 export async function getStaticPaths() {
@@ -12,8 +12,10 @@ export async function getStaticPaths() {
 const { note } = Astro.props;
 const { Content, headings } = await render(note);
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
-const { title, emoji, tags, updated, created, kind, status, url, repo } = note.data;
-const statusLabel: Record<string, string> = { published: '公開中', wip: '制作中', planned: '構想中' };
+const { title, tags, updated, created, project } = note.data;
+
+// 所属プロジェクト(あれば)
+const parent = project ? (await getWorks()).find((w) => w.id === project) : undefined;
 
 const backlinks = await getBacklinks(note.id);
 const related = await getRelated(note.id, tags, backlinks.filter((b) => b.kind === 'garden').map((b) => b.id));
@@ -21,13 +23,13 @@ const related = await getRelated(note.id, tags, backlinks.filter((b) => b.kind =
 <Base title={title} description={note.data.summary}>
   <div class="with-toc">
     <article class="article">
-      <h1 class="title">{emoji ? `${emoji} ` : ''}{title}</h1>
+      <h1 class="title">{title}</h1>
       <div class="meta">
         <span>updated {fmtDate(updated)}</span>
         {created && <span>· created {fmtDate(created)}</span>}
-        {kind === 'work' && status && <span class={`badge ${status}`}>{statusLabel[status]}</span>}
-        {url && <span>· <a href={url} target="_blank" rel="noopener">サイト ↗</a></span>}
-        {repo && <span>· <a href={repo} target="_blank" rel="noopener">リポジトリ ↗</a></span>}
+        {parent && (
+          <span>· <a href={u(`/works/${parent.id}/`)}>{parent.data.emoji ?? ''} {parent.data.title}</a></span>
+        )}
       </div>
       <div class="tags" style="margin-bottom:20px">
         {tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
@@ -44,7 +46,7 @@ const related = await getRelated(note.id, tags, backlinks.filter((b) => b.kind =
               <ul>
                 {backlinks.map((b) => (
                   <li><a href={u(`/${b.kind}/${b.id}/`)}>{b.title}</a>
-                    <span class="muted"> · {b.kind === 'garden' ? '常緑' : 'ログ'}</span></li>
+                    <span class="muted"> · {KIND_LABEL[b.kind]}</span></li>
                 ))}
               </ul>
             </div>

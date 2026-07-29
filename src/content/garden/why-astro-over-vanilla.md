@@ -4,6 +4,7 @@ updated: 2026-07-19
 created: 2026-07-19
 tags: [astro, architecture]
 summary: 「何年後でも動く」を理由にゼロ依存の素HTMLで始めたが、欲しい完成度を自前で積むと結局フレームワークの再発明になると気づいて乗り換えた。
+project: knowledge-garden
 ---
 
 最初は「外部依存ゼロ・素の HTML/CSS/JS・自前の Markdown 変換」で作り始めた。

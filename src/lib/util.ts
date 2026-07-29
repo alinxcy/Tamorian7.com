@@ -6,11 +6,20 @@ export function fmtDate(d: Date): string {
 
 export type GardenEntry = Awaited<ReturnType<typeof getCollection<'garden'>>>[number];
 export type LogEntry = Awaited<ReturnType<typeof getCollection<'log'>>>[number];
+export type WorkEntry = Awaited<ReturnType<typeof getCollection<'works'>>>[number];
 
 // publish: false(保存のみ)はサイトに出さない
 const isPublished = (e: { data: { publish?: boolean } }) => e.data.publish !== false;
 
-// 常緑ノートを更新日の新しい順で取得(公開分のみ)
+// セクション表示名(日本語ラベルはここに集約)
+export const KIND_LABEL = { garden: 'Garden', log: 'Log', works: 'Works' } as const;
+export const STATUS_LABEL: Record<string, string> = {
+  published: '公開中',
+  wip: '制作中',
+  planned: '構想中',
+};
+
+// Garden ノートを更新日の新しい順で取得(公開分のみ)
 export async function getGarden(): Promise<GardenEntry[]> {
   const notes = await getCollection('garden', isPublished);
   return notes.sort((a, b) => b.data.updated.getTime() - a.data.updated.getTime());
@@ -22,29 +31,49 @@ export async function getLog(): Promise<LogEntry[]> {
   return logs.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
-// garden と log 全体からタグ→件数を集計(公開分のみ)
+// Works を 制作中 → 構想中 → 公開中 の順で取得(公開分のみ)。
+// 作業中のものを上に出す。ここが今いちばん動いている場所だから。
+const STATUS_ORDER: Record<string, number> = { wip: 0, planned: 1, published: 2 };
+export async function getWorks(): Promise<WorkEntry[]> {
+  const works = await getCollection('works', isPublished);
+  return works.sort(
+    (a, b) =>
+      (STATUS_ORDER[a.data.status] ?? 9) - (STATUS_ORDER[b.data.status] ?? 9) ||
+      b.data.updated.getTime() - a.data.updated.getTime(),
+  );
+}
+
+export type RefItem = { kind: 'garden' | 'log' | 'works'; id: string; title: string };
+
+// プロジェクト集約: project: <slug> を持つ Garden ノートとログを集める。
+// Works ページはこれで手作業ゼロのハブになる。
+export async function getProjectItems(
+  slug: string,
+): Promise<{ notes: RefItem[]; logs: RefItem[] }> {
+  const [garden, log] = [await getGarden(), await getLog()];
+  return {
+    notes: garden
+      .filter((e) => e.data.project === slug)
+      .map((e) => ({ kind: 'garden' as const, id: e.id, title: e.data.title })),
+    logs: log
+      .filter((e) => e.data.project === slug)
+      .map((e) => ({ kind: 'log' as const, id: e.id, title: e.data.title })),
+  };
+}
+
+// garden / log / works 全体からタグ→件数を集計(公開分のみ)
 export async function getTagCounts(): Promise<Map<string, number>> {
-  const [garden, log] = [
-    await getCollection('garden', isPublished),
-    await getCollection('log', isPublished),
-  ];
+  const all = [...(await getGarden()), ...(await getLog()), ...(await getWorks())];
   const counts = new Map<string, number>();
-  for (const e of [...garden, ...log]) {
-    for (const t of e.data.tags ?? []) {
-      counts.set(t, (counts.get(t) ?? 0) + 1);
-    }
+  for (const e of all) {
+    for (const t of e.data.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
   }
   return counts;
 }
 
-export type RefItem = { kind: 'garden' | 'log'; id: string; title: string };
-
-// バックリンク: 本文中で /garden/<targetId>/ を参照している他ノート/ログ(公開分のみ)
+// バックリンク: 本文中で /garden/<targetId>/ を参照している他ノート/ログ/Works
 export async function getBacklinks(targetId: string): Promise<RefItem[]> {
-  const [garden, log] = [
-    await getCollection('garden', isPublished),
-    await getCollection('log', isPublished),
-  ];
+  const [garden, log, works] = [await getGarden(), await getLog(), await getWorks()];
   const needle = `/garden/${targetId}/`;
   const out: RefItem[] = [];
   for (const e of garden) {
@@ -54,16 +83,19 @@ export async function getBacklinks(targetId: string): Promise<RefItem[]> {
   for (const e of log) {
     if ((e.body ?? '').includes(needle)) out.push({ kind: 'log', id: e.id, title: e.data.title });
   }
+  for (const e of works) {
+    if ((e.body ?? '').includes(needle)) out.push({ kind: 'works', id: e.id, title: e.data.title });
+  }
   return out;
 }
 
-// 関連ノート: タグを共有する常緑ノート(共有数の多い順)。excludeIds は除外
+// 関連ノート: タグを共有する Garden ノート(共有数の多い順)。excludeIds は除外
 export async function getRelated(
   targetId: string,
   tags: string[],
   excludeIds: string[] = [],
 ): Promise<RefItem[]> {
-  const garden = await getCollection('garden', isPublished);
+  const garden = await getGarden();
   const tagset = new Set(tags);
   return garden
     .filter((e) => e.id !== targetId && !excludeIds.includes(e.id))

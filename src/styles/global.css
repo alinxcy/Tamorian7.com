@@ -133,3 +133,19 @@ a.tag:hover { border-color: var(--accent); color: var(--accent); text-decoration
 
 /* search */
 .search-box { max-width: 620px; }
+
+/* works: 本文の役割ラベル(構想 / 作業場 / 使い方) */
+.body-role {
+  font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+  margin: 0 0 6px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+
+/* works: 作業リンク(自分用)。作業中だけ出る折りたたみ */
+.chats { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 14px; }
+.chats summary {
+  cursor: pointer; font-size: 0.82rem; color: var(--fg-muted);
+  letter-spacing: 0.03em;
+}
+.chats .chats-note { font-size: 0.8rem; margin: 10px 0 6px; }
+.chats ul { margin: 0; padding-left: 1.1em; font-size: 0.9rem; }
+.chats code { font-size: 0.85em; }

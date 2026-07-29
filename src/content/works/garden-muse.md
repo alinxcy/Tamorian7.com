@@ -1,7 +1,6 @@
 ---
 title: garden-muse スキル
 emoji: 🎭
-kind: work
 status: planned
 updated: 2026-07-19
 created: 2026-07-19

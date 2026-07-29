@@ -7,12 +7,16 @@ AIと何かを作りながら得た知見を、**育てて・繋げて・探せ�
 仕様の詳細は [`spec/`](spec/):
 
 - [`spec/knowledge-garden-spec.md`](spec/knowledge-garden-spec.md) — 全体仕様 (v2)
+- [`spec/content-pipeline-spec.md`](spec/content-pipeline-spec.md) — 運用パイプライン仕様
+  (4層モデル / Works の三態 / seed-catcher・devlog-writer・honest-gate・cartographer)
 - [`spec/garden-muse-skill-spec.md`](spec/garden-muse-skill-spec.md) — 追記/着火スキル仕様
 
 ## コンセプト
 
 - **主役は知見の蓄積**(セカンドブレイン)。作品カタログではない
-- コンテンツは2本立て: **常緑ノート(garden)**= 育てる / **ログ(log)**= 流す
+- コンテンツは3本立て: **Garden**= 主題で育てる / **Log**= 実録を流す / **Works**= プロジェクト
+  - Garden と Works は切り口が違う。Garden は主題の横串、Works はプロジェクトの縦串
+  - `project:` を書くと Works ページが Garden/Log を自動集約するハブになる
 - **情報設計が主役機能** — 検索・タグ・目次・ノート間リンクを核に据える
 
 ## 現状: Phase 1(ローカルで完結)
@@ -25,8 +29,9 @@ src/
   site.config.ts        サイト名・著者(単一の情報源)
   content.config.ts     garden / log の Content Collections(zodで検証)
   content/
-    garden/*.md         常緑ノート(kind: note | work)
-    log/*.md            ログ(日付順)
+    garden/*.md         Garden(主題単位・育てる)
+    log/*.md            Log(実録・日付順)
+    works/*.md          Works(プロジェクト単位・三態)
   layouts/Base.astro
   components/NoteCard.astro
   lib/util.ts           取得・タグ集計・日付整形
@@ -34,7 +39,7 @@ src/
     index.astro         構造化トップ(タグ / 育成中ノート / 最新ログ)
     garden/             一覧・詳細(目次つき)
     log/                一覧・詳細
-    works/              kind: work の抽出ビュー
+    works/              一覧・詳細(project 集約 + 作業リンク)
     tags/               タグ一覧・タグ別
     search.astro        Pagefind 全文検索
 ```
@@ -55,10 +60,12 @@ npm run preview   # ビルド結果を配信。検索もここで有効
 
 ## ノート/ログの追加
 
-- 常緑ノート: `src/content/garden/<slug>.md`(frontmatter: `title` `updated` `tags`
-  `kind`(note|work) ほか。work は `status` `url` `repo` `emoji` 任意)
-- ログ: `src/content/log/<YYYY-MM-DD>.md`(frontmatter: `title` `date` `tags`)
-- 本文中の `/garden/<slug>/` へのリンクでノート同士を繋げられる
+- Garden: `src/content/garden/<slug>.md`(`title` `updated` `tags` ほか)
+- Log: `src/content/log/<YYYY-MM-DD>.md`(`title` `date` `tags`)
+- Works: `src/content/works/<slug>.md`(`title` `status` ほか)。
+  テンプレートは [`.claude/templates/work.md`](.claude/templates/work.md)
+- Garden / Log に `project: <works の slug>` を書くと、Works ページに自動で集約される
+- 本文中の `/garden/<slug>/` へのリンクでノート同士を繋げられる(バックリンクに出る)
 
 将来は [garden-muse スキル](spec/garden-muse-skill-spec.md) で「提案→承認→追記」を
 型化する(Phase 3)。

@@ -1,20 +1,29 @@
 ---
 import Base from '../../layouts/Base.astro';
 import NoteCard from '../../components/NoteCard.astro';
-import { getGarden } from '../../lib/util';
+import { getWorks } from '../../lib/util';
+import { u } from '../../lib/url';
 
-// 作品 = kind: work の常緑ノートの絞り込みビュー
-const works = (await getGarden()).filter((n) => n.data.kind === 'work');
-const order: Record<string, number> = { published: 0, wip: 1, planned: 2 };
-works.sort((a, b) => (order[a.data.status ?? 'planned'] ?? 3) - (order[b.data.status ?? 'planned'] ?? 3));
+const works = await getWorks();
 ---
-<Base title="作品">
+<Base title="Works">
   <section class="section" style="margin-top:32px">
-    <h1 style="margin:0 0 4px">作品</h1>
-    <p class="lead">「作った」系ノートの一覧(常緑ノートのうち <code>kind: work</code> を抽出)。</p>
+    <h1 style="margin:0 0 4px">Works</h1>
+    <p class="lead">
+      プロジェクト単位。制作中は<strong>作業場</strong>、完成したら<strong>使い方</strong>に入れ替わる。
+    </p>
   </section>
   <div class="cards">
-    {works.map((note) => <NoteCard note={note} />)}
+    {works.map((w) => (
+      <NoteCard
+        href={u(`/works/${w.id}/`)}
+        title={w.data.title}
+        emoji={w.data.emoji}
+        summary={w.data.summary}
+        tags={w.data.tags}
+        status={w.data.status}
+      />
+    ))}
   </div>
-  {works.length === 0 && <p class="muted">まだ作品ノートがありません。</p>}
+  {works.length === 0 && <p class="muted">まだ Works がありません。</p>}
 </Base>

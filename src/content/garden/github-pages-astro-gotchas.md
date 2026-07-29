@@ -5,6 +5,7 @@ updated: 2026-07-19
 created: 2026-07-19
 publish: false
 summary: プロジェクトページの base サブパス、Pages の初回有効化、環境のブランチ保護で deploy が1秒で死ぬ罠。保存のみ。
+project: knowledge-garden
 ---
 
 > これは garden-muse の初キャプチャ。ユーザー判断で **保存のみ**(publish: false)。
