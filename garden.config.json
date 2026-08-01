@@ -1,0 +1,23 @@
+{
+  "$comment": "Tamorian7 運用の設定。Skill / Agent はここを最初に読む。値を SKILL.md 本文に書かないこと(二重管理の地雷になる)",
+  "repo": "alinxcy/Tamorian7.com",
+  "branch": "claude/code-handoff-phase-1-ruj6je",
+  "paths": {
+    "garden": "src/content/garden",
+    "log": "src/content/log",
+    "works": "src/content/works",
+    "seeds": "src/content/seeds",
+    "widgets": "public/widgets",
+    "scratch": "scratch"
+  },
+  "promotion": {
+    "seedThreshold": 3,
+    "staleDays": 30,
+    "mocMinTagCount": 5
+  },
+  "feeds": [],
+  "honestGate": {
+    "bannedPhrases": ["絶対", "必ず", "間違いなく", "完全に", "誰でも簡単に"],
+    "allowWithReason": true
+  }
+}

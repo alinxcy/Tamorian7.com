@@ -67,8 +67,10 @@ npm run preview   # ビルド結果を配信。検索もここで有効
 - Garden / Log に `project: <works の slug>` を書くと、Works ページに自動で集約される
 - 本文中の `/garden/<slug>/` へのリンクでノート同士を繋げられる(バックリンクに出る)
 
-将来は [garden-muse スキル](spec/garden-muse-skill-spec.md) で「提案→承認→追記」を
-型化する(Phase 3)。
+追記は Skill [`tamorian7`](.claude/skills/tamorian7/SKILL.md) が「一問→承認→追記」で
+型化する。棚卸し・外部探索・公開前レビューといった重い作業は
+[`.claude/agents/`](.claude/agents/) のサブエージェントに出す(会話を汚さないため)。
+設定は [`garden.config.json`](garden.config.json) が唯一の情報源。
 
 ## 今後(仕様書参照)
 
