@@ -2,7 +2,7 @@
 title: Knowledge Garden(このサイト)
 emoji: 🌱
 status: wip
-updated: 2026-07-19
+updated: 2026-08-02
 created: 2026-07-18
 tags: [astro, cloudflare, meta, digital-garden]
 summary: AIと作りながら得た知見を、育てて・繋げて・探せるようにする個人ナレッジガーデン。今まさに作っているこのサイト自身。
@@ -10,31 +10,41 @@ repo: https://github.com/alinxcy/Tamorian7.com
 ---
 
 AI と何かを作る過程で得た知見を、自分用に貯めていく **公開デジタルガーデン**。
-Astro でビルドし、クラウド静的ホストに git push で自動デプロイして完結させる。
+Astro でビルドし、git push で自動デプロイして完結させる。
 
-## 何が主役か
+コンテンツは4層。**seeds**(拾いもの)と **log**(実録)が原料、
+**garden**(主題ノート)と **works**(プロジェクト)が製品。
+原料は増える一方でよく、製品は数を絞って育てる。
 
-主役は **知見の蓄積(セカンドブレイン)** であって、作品カタログではない。
-作品は「作った経緯・学びを育てられるノート」の一種(`kind: work`)として扱い、
-[常緑ノート](/garden/) の中の1ビュー(`/works`)に置く。
+## いま動いているところ
 
-## 2本立てのコンテンツ
+- **garden / log / works の3層。** works は `project:` を書いたノートとログを
+  自動集約するハブになる(このページ下部がそれ)
+- **works の三態** — 構想 / 作業場 / 使い方 で本文の役割が入れ替わる。
+  いまこのページは「作業場」
+- **honest-gate の機械判定**(`npm run check`)が CI で回っている。
+  リンク切れ・base パス直書き・公開なのに残った作業リンク、を落とす
+- **Skill `tamorian7`** 1つと **Subagent 3体**。捕獲は Skill、加工は Agent
+- タグページが garden / log / works を横断する
 
-- **常緑ノート(garden)** — トピック単位で何度も育て、相互リンクで繋ぐ
-- **ログ(log)** — 日付順に流す作業記録・雑記
+## いま詰まっているところ
 
-なぜ分けるのかは [ストリーム型とガーデン型](/garden/stream-vs-garden/) に書いた。
+- **seeds 層がまだ無い。** 拾いものの器が無いので、会話で出た面白いものが
+  どこにも残らず流れている
+- **手元に Node が無く、ローカルでビルドできない。** 確認が CI 頼みで、
+  push しないと結果が見えない
+- **本番ホストが未着手。** いまも GitHub Pages の使い捨てサンプル。
+  Cloudflare Pages + 独自ドメインへの移行が残っている
+- **サイト名「Tamorian7」は暫定。** セクション名 Garden との衝突を避けて
+  置いただけで、確定ではない
+- ローカル LLM に Skill を下ろすためのルータが未着手
 
-## 情報設計が主役機能
+## 次の一手
 
-参考にした個人サイトの物足りなさは「探しにくい・構造が弱い」ことだった。
-だからこのサイトは **検索・タグ・目次・ノート間リンク** を飾りではなく核に据える。
-そこが凡庸だと、作る意味が薄れるので。
+1. **seeds コレクションを足す。** 会話の脱線から種を拾えるようにする
+2. `promotion-reviewer` を走らせて、在庫の棚卸しが機能するか見る
+3. 本番ホストへ移行する。そのとき `base` を `/` に戻す
 
-## スタック
-
-- Astro(Content Collections + zod で frontmatter を検証)
-- Pagefind(クライアント側の全文検索・バックエンド不要)
-- Cloudflare Pages もしくは GitHub Pages に自動デプロイ(予定)
-
-技術選定の背景は [なぜ素HTMLではなくAstroか](/garden/why-astro-over-vanilla/) を参照。
+なぜ2本立てから4層になったかは
+[ストリーム型とガーデン型](/garden/stream-vs-garden/)、
+技術選定は [なぜ素HTMLではなくAstroか](/garden/why-astro-over-vanilla/) に。
