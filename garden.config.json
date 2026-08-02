@@ -17,7 +17,24 @@
   },
   "feeds": [],
   "honestGate": {
-    "bannedPhrases": ["絶対", "必ず", "間違いなく", "完全に", "誰でも簡単に"],
-    "allowWithReason": true
+    "bannedPhrases": [
+      "絶対",
+      "必ず",
+      "間違いなく",
+      "完全に",
+      "誰でも簡単に"
+    ],
+    "allowWithReason": true,
+    "bannedPhraseExceptions": [
+      "絶対パス",
+      "絶対リンク",
+      "絶対値",
+      "絶対座標",
+      "絶対温度",
+      "絶対時間",
+      "絶対参照",
+      "絶対URL"
+    ],
+    "$comment": "bannedPhrases は誇張の検出用。技術用語(絶対パス等)は bannedPhraseExceptions で除外する"
   }
 }

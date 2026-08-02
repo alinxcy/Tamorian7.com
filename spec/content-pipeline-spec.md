@@ -593,12 +593,20 @@ Works 詳細ページに `project` 一致のノート・ログが自動で出る
 
 1. ✅ **`garden.config.json` を作る**、Skill をこれを読む形に移行。
    2リポジトリ二重管理の地雷をここで潰す(Phase 0 で完了)
-2. **記録の仕込み** — `CLAUDE.md` に wip コミット規約と `scratch/` 運用を明記。
-   **最優先。遅らせるほど過去の実録が復元不能になる**
-3. **honest-gate (a) 機械判定** — `npm run check` + GitHub Actions。
-   既存ノートに対して走らせ、実際に何件落ちるかを確認する
+2. ✅ **記録の仕込み** — `CLAUDE.md` に wip コミット規約と `scratch/` 運用を明記
+3. ✅ **honest-gate (a) 機械判定** — `npm run check` + `npm test`(fixture) +
+   GitHub Actions(`check.yml` / deploy 前)
 
-**完了条件**: 既存8ノートに対し `npm run check` が通る (または落ちた理由が説明できる)。
+**完了条件**: ✅ 達成。error 0 / warn 1(意図的な断定)。
+
+> **初回実行で Phase 0 の見落としが3件出た。** works を garden から移設したとき、
+> 本文中の `/garden/knowledge-garden/` 等のリンクを直し忘れていた。ビルドは通り、
+> 目視でも気づかなかった。**機械判定は導入初日に自分の元を取っている。**
+>
+> あわせて**素朴な語マッチの偽陽性**も判明した。「絶対パス」の「絶対」に反応する。
+> 誇張の検出という目的に対し、技術用語は除外が要る
+> (`honestGate.bannedPhraseExceptions`)。禁止語リストは、
+> **運用しながら例外を足していく前提**で持つべきものだった。
 
 ### Phase 2 — 流すラインを作る
 

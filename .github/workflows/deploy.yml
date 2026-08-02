@@ -26,6 +26,8 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
+      - name: honest-gate 機械判定 (error があればデプロイしない)
+        run: npm run check
       - name: Build (Astro + Pagefind)
         run: npm run build
       - name: Configure Pages

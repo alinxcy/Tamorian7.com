@@ -1,0 +1,7 @@
+{
+  "honestGate": {
+    "bannedPhrases": ["絶対"],
+    "allowWithReason": true,
+    "bannedPhraseExceptions": ["絶対パス"]
+  }
+}

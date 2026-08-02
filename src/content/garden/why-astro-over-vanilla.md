@@ -32,4 +32,4 @@ Astro に乗ると、これらが既製部品で速く・堅く手に入る。�
 > 教訓: 「依存を減らす」は目的ではなく手段。**再発明のコスト**が
 > 依存のコストを上回るなら、乗った方が長く楽できる。
 
-関連: [Knowledge Garden](/garden/knowledge-garden/)
+関連: [Knowledge Garden](/works/knowledge-garden/)

@@ -1,0 +1,28 @@
+name: Check
+
+# honest-gate (a) の機械判定。error があればマージさせない。
+# 判断が要る指摘(言いすぎ / 未確認)は honest-reviewer サブエージェントの担当で、
+# ここには入れない——CI で LLM を呼ぶと判定がぶれてマージがランダムに詰まるため。
+on:
+  push:
+    branches-ignore: []
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: 検査スクリプト自体のテスト(fixture)
+        run: npm test
+      - name: honest-gate 機械判定
+        run: npm run check
+      - name: frontmatter 検証 (zod via astro build)
+        run: npm run build

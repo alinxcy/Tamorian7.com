@@ -39,4 +39,4 @@ project: garden-muse
 主観に振り回されないよう、うるささは「静かにして/もっと攻めて」で会話内調整。
 食い下がりは「一度だけ」で固定。これで "熱いけど信用できる" に着地する。
 
-関連: [garden-muse スキル](/garden/garden-muse-skill/)
+関連: [garden-muse スキル](/works/garden-muse/)

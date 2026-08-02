@@ -32,4 +32,4 @@ project: knowledge-garden
 - 流す記録 → **ログ**
 
 理由は更新リズムも見せ方(タグ回遊 vs 時系列)も違うから。混ぜると両方が
-中途半端になる。詳しくは [Knowledge Garden](/garden/knowledge-garden/) に。
+中途半端になる。詳しくは [Knowledge Garden](/works/knowledge-garden/) に。
