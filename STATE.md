@@ -1,13 +1,13 @@
 ---
 schema_version: 1
-last_updated: 2026-08-13T10:26+09:00
+last_updated: 2026-08-13T10:34+09:00
 current_focus: "状態ハブ(STATE/DECISIONS)を新設し、Phase 2 ブランチで試験運用する"
 projects:
   - slug: state-hub
     status: active
-    progress: 0.6
-    next_action: "update_state スキルを書く"
-    next_action_at: ".claude/skills/"
+    progress: 0.85
+    next_action: "update-state を実運用し、スキーマの過不足を洗う"
+    next_action_at: "STATE.md"
   - slug: life-os
     status: paused
     progress: 0.0
@@ -46,9 +46,11 @@ pending:
 
 ## 2. 次のアクション
 
-### state-hub — `update_state` スキルを書く
+### state-hub — 実運用してスキーマの過不足を洗う
 
-`scripts/state.mjs`（検証）は実装済み。次はそれを使う側。
+`scripts/state.mjs`（検証）と `.claude/skills/update-state/`（更新手順）は実装済み。
+残っているのは「使ってみて足りないものを見つける」段階。
+スキーマを増やしたくなったら、描画側（life-os）とセットで直す。
 
 - **直前に試したこと**: スキーマの正本を zod (`src/content.config.ts`) に置こうとした。
 - **ダメだった理由**: `STATE.md` はリポジトリ直下にあり content collection の**外**。
