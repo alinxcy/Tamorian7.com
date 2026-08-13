@@ -1,13 +1,13 @@
 ---
 schema_version: 1
-last_updated: 2026-08-13T10:11+09:00
+last_updated: 2026-08-13T10:26+09:00
 current_focus: "状態ハブ(STATE/DECISIONS)を新設し、Phase 2 ブランチで試験運用する"
 projects:
   - slug: state-hub
     status: active
-    progress: 0.35
-    next_action: "STATE.md のスキーマ検証を check.mjs に足す"
-    next_action_at: "scripts/check.mjs"
+    progress: 0.6
+    next_action: "update_state スキルを書く"
+    next_action_at: ".claude/skills/"
   - slug: life-os
     status: paused
     progress: 0.0
@@ -46,19 +46,21 @@ pending:
 
 ## 2. 次のアクション
 
-### state-hub — STATE.md の検証を `scripts/check.mjs` に足す
+### state-hub — `update_state` スキルを書く
 
-- **直前に試したこと**: スキーマの正本を zod (`src/content.config.ts`) に置く前提で
-  進めようとした。
-- **ダメだった理由**: `STATE.md` はリポジトリ直下にあり、Astro の content collection の
-  **外**にある。zod スキーマは `glob({ base: './src/content/...' })` で読まれるファイルにしか
-  効かないので、`astro build` では検証されない。
-- **次の一手**: `scripts/check.mjs` に STATE.md 検証を足す。ここは依存ゼロ
-  (`node:fs` / `node:path` のみ) で、`check.yml` が既に CI で回している。
-- **注意**: `check.mjs` の frontmatter パーサは正規表現ベースの浅いもので、
-  `projects[]` のようなネストを読めない。厳密な YAML サブセットを決めて
-  小さなパーサを別ファイル (`scripts/state.mjs`) に切り出し、
-  `scripts/check.test.mjs` と同じ fixture 方式でテストする。
+`scripts/state.mjs`（検証）は実装済み。次はそれを使う側。
+
+- **直前に試したこと**: スキーマの正本を zod (`src/content.config.ts`) に置こうとした。
+- **ダメだった理由**: `STATE.md` はリポジトリ直下にあり content collection の**外**。
+  zod は `glob({ base: './src/content/...' })` の対象にしか効かず、
+  `astro build` では検証されない。→ `scripts/state.mjs` に置いた。
+- **YAML ライブラリを使わなかった理由**: npm 依存を足すと `package-lock.json` の
+  再生成が要り、手元に node が無いので CI の `npm ci` がロック不一致で落ちる。
+  受け付ける記法をサブセットに絞った自前パーサにした（外れた記法は error にする）。
+- **スキルに持たせること**: STATE.md を読む → フロントマターを規定スキーマで更新 →
+  本文を上書き → `node scripts/state.mjs` で検証してから書く →
+  `last_updated` を実時刻に → 自動コミット。
+  ただし `public/` への変更が含まれる場合は commit せず人間に確認。
 
 ### life-os — 着手前
 

@@ -12,6 +12,7 @@
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative, basename } from 'node:path';
+import { checkStateFile } from './state.mjs';
 
 const ROOT = process.argv[2] ?? process.cwd();
 const cfgPath = join(ROOT, 'garden.config.json');
@@ -128,6 +129,10 @@ for (const { c, f } of files) {
     }
   });
 }
+
+// STATE.md のスキーマ検証。content collection の外にあり zod が効かないので、
+// 検証はここが唯一の場所になる(詳細は state.mjs)
+issues.push(...checkStateFile(ROOT));
 
 // --- 出力 ---
 const errors = issues.filter((i) => i.level === 'error');

@@ -28,6 +28,10 @@ const expected = [
   ['生きたリンクを誤検出しない', () => !/ok\.md.*内部リンク切れ/s.test(out)],
   ['技術用語(絶対パス)を誤検出しない', () => !/ok\.md:6/.test(out)],
   ['理由コメント付きの断定を通す', () => !/ok\.md:8/.test(out)],
+  // STATE.md 検証が check.mjs から呼ばれていること(配線の確認)。
+  // 個々の判定は state.test.mjs の担当
+  ['STATE.md の未知キーを検出', () => /STATE\.md.*未知のトップレベルキー: owner/s.test(out)],
+  ['STATE.md の不正な status を検出', () => /STATE\.md.*status が不正: ongoing/s.test(out)],
 ];
 
 let failed = 0;
