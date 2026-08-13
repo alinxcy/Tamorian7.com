@@ -1,0 +1,148 @@
+---
+// STATE.md をビルド時に読んで描画する。life-os の最小ページ。
+//
+// パーサは scripts/state.mjs のものを再利用する。ここで書き直すと、
+// 検証(check)と描画(このページ)で解釈がズレたときに気づけなくなるため。
+// STATE.md は content collection の外にあるので getCollection では取れない。
+// ?raw で読む。fs + import.meta.url は使わない —— astro build は .astro の
+// フロントマターを dist/.prerender/chunks/ にバンドルしてから実行するため、
+// import.meta.url がソースではなくチャンクの位置を指し、相対パスが dist を向く。
+// ?raw はビルド時にソース位置基準で解決され、dev では変更が反映される。
+import Base from '../layouts/Base.astro';
+import { u } from '../lib/url';
+import { parseYamlSubset, splitFrontmatter } from '../../scripts/state.mjs';
+import src from '../../STATE.md?raw';
+
+const split = splitFrontmatter(src);
+// フロントマターが壊れていればビルドを止める。黙って空を描くと、
+// 「更新されていない」のか「読めていない」のか人間が区別できない。
+if (!split) throw new Error('STATE.md にフロントマターが無い（npm run check を先に通す）');
+const { data } = parseYamlSubset(split.fm);
+
+const projects = Array.isArray(data.projects) ? data.projects : [];
+const pending = Array.isArray(data.pending) ? data.pending : [];
+
+// overall は STATE.md に持たない(二重管理になる)。ここで導出する。
+const overall = projects.length
+  ? projects.reduce((a, p) => a + (typeof p.progress === 'number' ? p.progress : 0), 0) / projects.length
+  : 0;
+
+const pct = (n: unknown) => Math.round((typeof n === 'number' ? n : 0) * 100);
+
+const STATUS_LABEL: Record<string, string> = {
+  active: '進行中',
+  paused: '停止中',
+  blocked: '詰まり',
+  done: '完了',
+};
+
+// last_updated からの経過。更新漏れに人間が気づけるように出す
+const updated = new Date(String(data.last_updated));
+const days = Math.floor((Date.now() - updated.getTime()) / 86400000);
+const stale = days > 14;
+---
+<Base title="State" description="いま何をやっているかのスナップショット">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px; font-size:1.9rem">State</h1>
+    <p class="lead">{data.current_focus}</p>
+    <p class="muted" style="font-size:0.82rem; margin:10px 0 0">
+      更新 {String(data.last_updated)}
+      <span class={stale ? 'stale' : 'muted'}>
+        （{days === 0 ? '今日' : `${days} 日前`}{stale ? ' — 更新漏れの可能性' : ''}）
+      </span>
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>全体</h2>
+      <span class="muted" style="font-size:0.82rem">projects の平均から導出</span>
+    </div>
+    <div class="bar bar-lg"><span style={`width:${pct(overall)}%`}></span></div>
+    <p class="muted" style="font-size:0.82rem; margin:8px 0 0">
+      {pct(overall)}% · {projects.length} プロジェクト
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>プロジェクト</h2>
+    <ul class="proj-list">
+      {projects.map((p: any) => (
+        <li>
+          <div class="proj-head">
+            <span class="proj-slug">{p.slug}</span>
+            <span class={`badge st-${p.status}`}>{STATUS_LABEL[p.status] ?? p.status}</span>
+            <span class="proj-pct">{pct(p.progress)}%</span>
+          </div>
+          <div class="bar"><span class={`st-${p.status}`} style={`width:${pct(p.progress)}%`}></span></div>
+          <p class="proj-next">{p.next_action}</p>
+          <p class="proj-at"><code>{p.next_action_at}</code></p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {pending.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <h2>未確定</h2>
+        <span class="muted" style="font-size:0.82rem">人間の判断待ち</span>
+      </div>
+      <ul class="note-list">
+        {pending.map((q: any) => (
+          <li>
+            <div class="row">
+              <span class="title"><code>{q.id}</code></span>
+              <span class="date">{String(q.raised)}</span>
+            </div>
+            <p class="summary">{q.question}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section class="section">
+    <p class="muted" style="font-size:0.85rem">
+      このページは <code>STATE.md</code> のフロントマターだけを描画している。
+      作業中の暗黙知や経緯は
+      <a href="https://github.com/alinxcy/Tamorian7.com/blob/main/STATE.md">STATE.md</a> 本文と
+      <a href="https://github.com/alinxcy/Tamorian7.com/blob/main/DECISIONS.md">DECISIONS.md</a> にある。
+    </p>
+  </section>
+</Base>
+
+<style>
+  .stale { color: var(--wip); }
+
+  .bar {
+    height: 6px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-lg { height: 10px; }
+  .bar > span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+
+  .proj-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 22px; }
+  .proj-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+  .proj-slug { font-family: var(--mono); font-size: 0.95rem; font-weight: 600; }
+  .proj-pct { margin-left: auto; color: var(--fg-muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+  .proj-next { margin: 8px 0 0; font-size: 0.92rem; }
+  .proj-at { margin: 3px 0 0; font-size: 0.82rem; color: var(--fg-muted); }
+
+  /* status ごとの色。badge と bar で同じ語彙を使う */
+  .badge.st-active { background: rgba(110,168,254,0.15); color: var(--accent); }
+  .badge.st-paused { background: rgba(138,148,166,0.15); color: var(--planned); }
+  .badge.st-blocked { background: rgba(240,180,41,0.15); color: var(--wip); }
+  .badge.st-done { background: rgba(52,199,89,0.15); color: var(--published); }
+  .bar > span.st-paused { background: var(--planned); }
+  .bar > span.st-blocked { background: var(--wip); }
+  .bar > span.st-done { background: var(--published); }
+</style>

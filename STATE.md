@@ -1,18 +1,18 @@
 ---
 schema_version: 1
-last_updated: 2026-08-13T10:48+09:00
-current_focus: "状態ハブ(STATE/DECISIONS)を Phase 2 ブランチで実運用し、スキーマの過不足を洗う"
+last_updated: 2026-08-13T11:05+09:00
+current_focus: "life-os の描画側ができた。実データで state-hub のスキーマの過不足を見る"
 projects:
   - slug: state-hub
     status: active
-    progress: 0.9
-    next_action: "update-state を実運用し、スキーマの過不足を洗う"
-    next_action_at: "STATE.md"
+    progress: 0.95
+    next_action: "pending 2件に決着条件を書けるか人間と詰める。スキーマ変更の要否はそこで決まる"
+    next_action_at: "STATE.md の pending[]"
   - slug: life-os
-    status: paused
-    progress: 0.0
-    next_action: "STATE.md を読んで進捗バーを描く最小ページを作る"
-    next_action_at: "src/pages/"
+    status: active
+    progress: 0.3
+    next_action: "ページを実際に使い、本文の「作業中の暗黙知」も描画すべきか判断する"
+    next_action_at: "src/pages/state.astro"
   - slug: knowledge-garden
     status: paused
     progress: 0.8
@@ -34,34 +34,45 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **state-hub** — `STATE.md` / `DECISIONS.md` / `update-state` スキル。
-   実装と検証は済んだ。今は Phase 2 ブランチ (`claude/state-hub-phase-2`) で
-   実際に回してみて、スキーマの過不足を洗う段階。
-2. **life-os** — Astro 上に自分用ダッシュボード。`STATE.md` のフロントマターを
-   データソースにする。state-hub のスキーマが固まるまで着手しない。
+1. **life-os** — `/state/` が動いた。`STATE.md` のフロントマターを読んで
+   進捗バーを描く最小ページ (`src/pages/state.astro`)。公開する（[DECISIONS.md](DECISIONS.md)）。
+2. **state-hub** — 実装・検証は済み。描画側ができたので、実データで
+   スキーマの過不足が見えるようになった。残りは `pending` の扱いの詰め。
 3. **knowledge-garden** — 器とパイプラインは Phase 1 で概ね動いている。
    main への集約が残っている。
 
+state-hub と life-os が互いに待ち合っていた（「スキーマが固まるまで着手しない」×
+「使ってみないと固まらない」）。描画側を先に作って断った。
+
 ## 2. 次のアクション
 
-### state-hub — 実運用してスキーマの過不足を洗う
+### life-os — 描画対象を広げるか決める
 
-`scripts/state.mjs`（検証・35テスト PASS）と `.claude/skills/update-state/`（更新手順）は
-実装済み。残っているのは「使ってみて足りないものを見つける」段階。
-スキーマを増やしたくなったら、描画側（life-os）とセットで直す。
+`/state/` はフロントマター（`current_focus` / `projects[]` / `pending[]`）だけを描く。
+`overall` は `projects[].progress` の平均から**ページ側で導出**している
+（STATE.md には持たない。二重管理を避けるため）。
 
-- **直前に試したこと**: スキーマの正本を zod (`src/content.config.ts`) に置こうとした。
-- **ダメだった理由**: `STATE.md` はリポジトリ直下にあり content collection の**外**。
-  zod は `glob({ base: './src/content/...' })` の対象にしか効かず、
-  `astro build` では検証されない。→ `scripts/state.mjs` に置いた。
-- **次に効きそうな観察点**: `next_action_at` が文字列1個で足りるか（複数箇所に
-  またがる作業を表せない）。`pending[]` に「誰が答えるべきか」が要るか。
-  実際に困るまで足さない。
+- **直前に試したこと**: `readFileSync(new URL('../../STATE.md', import.meta.url))`。
+- **ダメだった理由**: `astro build` はフロントマターを `dist/.prerender/chunks/` に
+  バンドルしてから実行するので、`import.meta.url` が**チャンクの位置**を指し、
+  `dist/STATE.md` を探して ENOENT。→ `import src from '../../STATE.md?raw'` に変更。
+  `?raw` はソース位置基準で解決される。**`astro dev` では前者でも動く**ので、
+  ローカルの dev だけでは気づけない。
+- **次の判断**: 本文（作業中の暗黙知）も描画するか。ただし描画対象を
+  `scratch/` など非公開寄りのものへ広げるなら、公開の決定を取り直す必要がある。
 
-### life-os — 着手前
+### state-hub — pending の扱いを詰める
 
-- state-hub のスキーマが `schema_version: 1` で固まってから。
-- 非公開データを扱うので GitHub Pages には載せない。`astro dev` でのローカル実行が最小構成。
+描画側を作って分かったのは、**足りないのは `projects[]` ではなく `pending[]` の方**。
+
+- **観察できたこと**: `next_action_at` は文字列1個で足りた。今回の作業は
+  `src/pages/state.astro` と `src/layouts/Base.astro` の2箇所に及んだが、
+  **着手する場所は1つ**で表せる。増やさなくてよい。
+- **困ったこと**: `pending[]` に「何が揃えば決められるか / 誰が答えるか」が無い。
+  ページには「人間の判断待ち」と出るが、待っている対象が読み手に分からない。
+  下の2件が両方これで止まっている。
+- **ただしフィールドは足していない。** 決着条件は `question` の文字列に
+  書き込めるので、まずそれで足りるか試す。足りないと分かってからキーを足す。
 
 ### knowledge-garden — main への集約
 
@@ -69,6 +80,8 @@ pending:
   - `.github/workflows/deploy.yml` の `push.branches`
   - `garden.config.json` の `branch`（現在は `claude/state-hub-phase-2`）
 - `CLAUDE.md` は「squash して歴史を綺麗にしない」方針なので、マージは squash しない。
+- **マージすると `/state/` が公開サイトに載る。** 中身は既に public な STATE.md なので
+  新たな開示は無いが、集約前に一度自分で見ておくこと。
 
 ## 3. 作業中の暗黙知
 
@@ -85,6 +98,17 @@ pending:
   全ブランチで発火する。`deploy.yml` は handoff ブランチのみをトリガにしているので、
   **Phase 2 へ push しても公開サイトは動かない**。試験運用として安全。
 
+### Astro 側の注意
+
+- **`.astro` のフロントマターで `import.meta.url` を基準に相対パスを解くと壊れる。**
+  ビルド時は `dist/.prerender/chunks/` にバンドルされてから実行されるため。
+  `src/` の外のファイルを読むなら `import x from '../../y?raw'` を使う。
+- **`src/pages/` に置いたものは必ず公開される。** static 出力なので例外は無い。
+  `_` 接頭辞は dev でもルートにならないので「ローカル専用ページ」には使えない。
+- スキーマの正本は `scripts/state.mjs`（`parseYamlSubset` / `splitFrontmatter` /
+  `validateState` を export）。**描画側で YAML を読み直さない。**
+  パーサが2つあると、検証が通す記法と描画が読める記法がズレても気づけない。
+
 ### リポジトリの構造について分かったこと
 
 - **main と作業ブランチが乖離している。** main は1コミット (`Add files via upload`) で
@@ -92,9 +116,11 @@ pending:
   default branch は main だが、CI も deploy も main では動かない。
 - **リポジトリは public。** `private=false` を GitHub API で確認済み。
   全21コミットを横断して機密スキャン済み、検出ゼロ。`.env` は履歴上も存在しない。
-- `publish: z.boolean().default(true)` が公開制御。ただし **default が true**（公開寄り）。
-  そして `publish: false` はサイト表示の制御であって、**機密の防壁ではない**
-  — リポジトリが public な以上、ソースは読める。
+- `publish: z.boolean().default(true)` が公開制御（`src/content.config.ts:5`）。
+  ただし **default が true**（公開寄り）。そして `publish: false` はサイト表示の制御であって、
+  **機密の防壁ではない** — リポジトリが public な以上、ソースは読める。
+  なお `publish` が効くのは `src/content/` 配下のコレクションだけで、
+  **`/state/` のような素のページには効かない**。
 - `public/` は Astro の予約語（無加工で配信される）。既に `public/pagefind/`（生成物）と
   `public/widgets/`（配信物）で使用中。ここに「公開承認済み文書の置き場」という
   第三の意味を重ねると事故る。
@@ -106,4 +132,5 @@ pending:
 - `npm run check` が warn を1件出す:
   `src/content/garden/reversible-vs-irreversible.md:60` の「必ず」。
   今回の変更とは無関係の既存コンテンツ。判断が要るので機械では消さない。
+  **main へ集約する前に片付けること。**
 - `npm audit` に指摘がある（`npm ci` 時に表示）。未調査。
