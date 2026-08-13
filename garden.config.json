@@ -1,7 +1,7 @@
 {
   "$comment": "Tamorian7 運用の設定。Skill / Agent はここを最初に読む。値を SKILL.md 本文に書かないこと(二重管理の地雷になる)",
   "repo": "alinxcy/Tamorian7.com",
-  "branch": "claude/code-handoff-phase-1-ruj6je",
+  "branch": "claude/state-hub-phase-2",
   "paths": {
     "garden": "src/content/garden",
     "log": "src/content/log",
