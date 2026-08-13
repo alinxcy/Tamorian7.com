@@ -1,6 +1,6 @@
 ---
 schema_version: 1
-last_updated: 2026-08-13T11:05+09:00
+last_updated: 2026-08-13T11:39+09:00
 current_focus: "life-os の描画側ができた。実データで state-hub のスキーマの過不足を見る"
 projects:
   - slug: state-hub
@@ -129,8 +129,13 @@ state-hub と life-os が互いに待ち合っていた（「スキーマが固�
 
 ### 既知の未処理
 
-- `npm run check` が warn を1件出す:
-  `src/content/garden/reversible-vs-irreversible.md:60` の「必ず」。
-  今回の変更とは無関係の既存コンテンツ。判断が要るので機械では消さない。
-  **main へ集約する前に片付けること。**
+- `npm run check` は **error 0 / warn 0**。`reversible-vs-irreversible.md:60` の「必ず」は
+  文章を変えず `<!-- reason: -->` で意図を明示した（観測の一般化ではなく、
+  分割を選ぶときに自分が課す条件。根拠は直前の段落にある）。
+  **判定を通すために断定を薄めるのはやらない。** 意図的な断定は理由を添えて残す。
 - `npm audit` に指摘がある（`npm ci` 時に表示）。未調査。
+- `astro dev` はデーモンとして起動する（`astro dev stop` で停止、`astro dev status` で確認）。
+  `npm run dev` がすぐ exit 0 で戻るのはそのため。落ちたわけではない。
+- **headless Firefox でのスクリーンショットは取れない。** 既存の Firefox プロセスと衝突し、
+  別プロファイル（`--no-remote --profile`）でも画像を出力せず終了する。
+  見た目の確認は `astro dev` + 実ブラウザで行う。
