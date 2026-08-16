@@ -40,9 +40,6 @@ pending:
   - id: publish-default-flip
     question: "publish の default を true から false へ反転させるか(デフォルト非公開)"
     raised: 2026-08-13
-  - id: atelier-lab-visibility
-    question: "atelier-lab を public にするか。private のままだとこのページのリンクが公開側から 404 になる"
-    raised: 2026-08-16
 ---
 
 # 現在の状態
@@ -153,7 +150,8 @@ state-hub と life-os が互いに待ち合っていた（「スキーマが固�
   `publish` が効くのは `src/content/` 配下だけで、`/state/` のような素のページには効かない。
 - `public/` は Astro の予約語（無加工で配信される）。ここに「公開承認済み文書の置き場」
   という第三の意味を重ねると事故る。
-- **`atelier-lab` は private。** このページからのリンクは、本人以外には 404 に見える。
+- **`atelier-lab` は private のままにすると決めた**（[DECISIONS.md](DECISIONS.md)）。
+  このページからのリンクは**本人以外には 404 に見える**。既知の状態として許容している。
 
 ### 既知の未処理
 
