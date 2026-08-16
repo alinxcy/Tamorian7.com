@@ -20,7 +20,7 @@ const showChats = status !== 'published' && chats.length > 0;
 const bodyRole =
   status === 'published' ? '使い方' : status === 'wip' ? '作業場' : '構想';
 
-const { notes, logs } = await getProjectItems(work.id);
+const { notes, logs, seeds } = await getProjectItems(work.id);
 ---
 <Base title={title} description={work.data.summary}>
   <div class="with-toc">
@@ -42,7 +42,7 @@ const { notes, logs } = await getProjectItems(work.id);
         <Content />
       </div>
 
-      {(notes.length > 0 || logs.length > 0) && (
+      {(notes.length > 0 || logs.length > 0 || seeds.length > 0) && (
         <section class="connections">
           {notes.length > 0 && (
             <div class="conn-block">
@@ -60,6 +60,16 @@ const { notes, logs } = await getProjectItems(work.id);
               <ul>
                 {logs.map((l) => (
                   <li><a href={u(`/log/${l.id}/`)}>{l.title}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {seeds.length > 0 && (
+            <div class="conn-block">
+              <h4>関連する種</h4>
+              <ul>
+                {seeds.map((seed) => (
+                  <li><a href={u(`/seeds/${seed.id}/`)}>{seed.title}</a></li>
                 ))}
               </ul>
             </div>

@@ -3,6 +3,8 @@ import { glob } from 'astro/loaders';
 
 // 公開レベル: false = 保存のみ(ビルド/一覧/タグ/検索から除外)。省略時は公開
 const publish = z.boolean().default(true);
+// Seeds は生の拾いものなので、省略時は公開しない
+const seedPublish = z.boolean().default(false);
 // 所属プロジェクト(works の slug)。無いノート/ログがあってよい
 const project = z.string().optional();
 
@@ -28,6 +30,23 @@ const log = defineCollection({
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     publish,
+    project,
+  }),
+});
+
+// Seeds — 拾いもの。why を添えて流し、残すか昇格させるかを後で判断する
+const seeds = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/seeds' }),
+  schema: z.object({
+    title: z.string(),
+    found: z.coerce.date(),
+    url: z.string().url(),
+    why: z.string().trim().min(1),
+    status: z.enum(['inbox', 'kept', 'promoted', 'dropped']),
+    source: z.string().default('manual'),
+    tags: z.array(z.string()).default([]),
+    promotedTo: z.string().optional(),
+    publish: seedPublish,
     project,
   }),
 });
@@ -62,4 +81,4 @@ const works = defineCollection({
   }),
 });
 
-export const collections = { garden, log, works };
+export const collections = { garden, log, seeds, works };

@@ -6,13 +6,14 @@ export function fmtDate(d: Date): string {
 
 export type GardenEntry = Awaited<ReturnType<typeof getCollection<'garden'>>>[number];
 export type LogEntry = Awaited<ReturnType<typeof getCollection<'log'>>>[number];
+export type SeedEntry = Awaited<ReturnType<typeof getCollection<'seeds'>>>[number];
 export type WorkEntry = Awaited<ReturnType<typeof getCollection<'works'>>>[number];
 
 // publish: false(保存のみ)はサイトに出さない
 const isPublished = (e: { data: { publish?: boolean } }) => e.data.publish !== false;
 
 // セクション表示名(日本語ラベルはここに集約)
-export const KIND_LABEL = { garden: 'Garden', log: 'Log', works: 'Works' } as const;
+export const KIND_LABEL = { garden: 'Garden', log: 'Log', seeds: 'Seeds', works: 'Works' } as const;
 export const STATUS_LABEL: Record<string, string> = {
   published: '公開中',
   wip: '制作中',
@@ -31,6 +32,12 @@ export async function getLog(): Promise<LogEntry[]> {
   return logs.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
+// Seeds を拾った日の新しい順で取得(公開分のみ)
+export async function getSeeds(): Promise<SeedEntry[]> {
+  const seeds = await getCollection('seeds', isPublished);
+  return seeds.sort((a, b) => b.data.found.getTime() - a.data.found.getTime());
+}
+
 // Works を 制作中 → 構想中 → 公開中 の順で取得(公開分のみ)。
 // 作業中のものを上に出す。ここが今いちばん動いている場所だから。
 const STATUS_ORDER: Record<string, number> = { wip: 0, planned: 1, published: 2 };
@@ -43,14 +50,14 @@ export async function getWorks(): Promise<WorkEntry[]> {
   );
 }
 
-export type RefItem = { kind: 'garden' | 'log' | 'works'; id: string; title: string };
+export type RefItem = { kind: 'garden' | 'log' | 'seeds' | 'works'; id: string; title: string };
 
-// プロジェクト集約: project: <slug> を持つ Garden ノートとログを集める。
+// プロジェクト集約: project: <slug> を持つ Garden ノート、ログ、Seeds を集める。
 // Works ページはこれで手作業ゼロのハブになる。
 export async function getProjectItems(
   slug: string,
-): Promise<{ notes: RefItem[]; logs: RefItem[] }> {
-  const [garden, log] = [await getGarden(), await getLog()];
+): Promise<{ notes: RefItem[]; logs: RefItem[]; seeds: RefItem[] }> {
+  const [garden, log, seeds] = [await getGarden(), await getLog(), await getSeeds()];
   return {
     notes: garden
       .filter((e) => e.data.project === slug)
@@ -58,12 +65,20 @@ export async function getProjectItems(
     logs: log
       .filter((e) => e.data.project === slug)
       .map((e) => ({ kind: 'log' as const, id: e.id, title: e.data.title })),
+    seeds: seeds
+      .filter((e) => e.data.project === slug)
+      .map((e) => ({ kind: 'seeds' as const, id: e.id, title: e.data.title })),
   };
 }
 
-// garden / log / works 全体からタグ→件数を集計(公開分のみ)
+// garden / log / seeds / works 全体からタグ→件数を集計(公開分のみ)
 export async function getTagCounts(): Promise<Map<string, number>> {
-  const all = [...(await getGarden()), ...(await getLog()), ...(await getWorks())];
+  const all = [
+    ...(await getGarden()),
+    ...(await getLog()),
+    ...(await getSeeds()),
+    ...(await getWorks()),
+  ];
   const counts = new Map<string, number>();
   for (const e of all) {
     for (const t of e.data.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);

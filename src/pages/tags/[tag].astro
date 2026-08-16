@@ -1,14 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { fmtDate, getGarden, getLog, getWorks, KIND_LABEL } from '../../lib/util';
+import { fmtDate, getGarden, getLog, getSeeds, getWorks, KIND_LABEL } from '../../lib/util';
 import { u } from '../../lib/url';
 
-// タグページは Garden / Log / Works を混ぜて出す。
+// タグページは Garden / Log / Seeds / Works を混ぜて出す。
 // 「この話題で自分は何を持っているか」が一望できることが、このサイトの核。
 export async function getStaticPaths() {
-  const [garden, log, works] = [await getGarden(), await getLog(), await getWorks()];
+  const [garden, log, seeds, works] = [await getGarden(), await getLog(), await getSeeds(), await getWorks()];
   const tags = new Set<string>();
-  for (const e of [...garden, ...log, ...works]) for (const t of e.data.tags ?? []) tags.add(t);
+  for (const e of [...garden, ...log, ...seeds, ...works]) for (const t of e.data.tags ?? []) tags.add(t);
 
   return [...tags].map((tag) => {
     const items = [
@@ -18,6 +18,9 @@ export async function getStaticPaths() {
       ...log
         .filter((l) => l.data.tags.includes(tag))
         .map((l) => ({ kind: 'log' as const, id: l.id, title: l.data.title, date: l.data.date, emoji: undefined as string | undefined })),
+      ...seeds
+        .filter((s) => s.data.tags.includes(tag))
+        .map((s) => ({ kind: 'seeds' as const, id: s.id, title: s.data.title, date: s.data.found, emoji: undefined as string | undefined })),
       ...works
         .filter((w) => w.data.tags.includes(tag))
         .map((w) => ({ kind: 'works' as const, id: w.id, title: w.data.title, date: w.data.updated, emoji: w.data.emoji })),

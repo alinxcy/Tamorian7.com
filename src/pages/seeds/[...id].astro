@@ -1,0 +1,41 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { fmtDate, getSeeds } from '../../lib/util';
+import { u } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const seeds = await getSeeds(); // 公開分のみ(publish:false は除外)
+  return seeds.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, url, found, why, tags, status, promotedTo } = entry.data;
+const promotedHref = promotedTo
+  ? promotedTo.startsWith('/')
+    ? u(promotedTo)
+    : promotedTo
+  : undefined;
+---
+<Base title={title}>
+  <article class="article">
+    <h1 class="title">{title}</h1>
+    <div class="meta">
+      <span>{fmtDate(found)}</span>
+      <span>· {status}</span>
+      <span>· <a href={url} target="_blank" rel="noopener">出典 ↗</a></span>
+      {promotedHref && <span>· <a href={promotedHref}>昇格先</a></span>}
+    </div>
+    <div class="tags" style="margin-bottom:20px">
+      {tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
+    </div>
+    <section>
+      <h2>Why</h2>
+      <p>{why}</p>
+    </section>
+    <div class="article-body" data-pagefind-body>
+      <Content />
+    </div>
+  </article>
+</Base>
