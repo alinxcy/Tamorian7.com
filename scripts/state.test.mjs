@@ -13,15 +13,16 @@ const has = (issues, level, re) =>
 
 const fm = (body) => `---\n${body}\n---\n\n# 本文\n\ngood-project のこと\n`;
 
-const VALID = fm(`schema_version: 1
+const VALID = fm(`schema_version: 2
 last_updated: 2026-08-13T10:11+09:00
 current_focus: "テスト"
 projects:
   - slug: good-project
     status: active
-    progress: 0.5
+    summary: "テスト用のプロジェクト"
     next_action: "何かする"
     next_action_at: "scripts/state.mjs"
+    link: "/state/"
 pending: []`);
 
 const cases = [
@@ -32,7 +33,7 @@ const cases = [
     () => has(validateState('# 本文だけ\n', { now: NOW }), 'error', /フロントマターが無い/)],
 
   ['未知のトップレベルキーを error',
-    () => has(validateState(VALID.replace('schema_version: 1', 'schema_version: 1\nowner: alinxcy'),
+    () => has(validateState(VALID.replace('schema_version: 2', 'schema_version: 2\nowner: alinxcy'),
       { now: NOW }), 'error', /未知のトップレベルキー: owner/)],
 
   ['必須キー欠落を error',
@@ -40,8 +41,8 @@ const cases = [
       'error', /必須キーが無い: current_focus/)],
 
   ['schema_version 違いを error',
-    () => has(validateState(VALID.replace('schema_version: 1', 'schema_version: 2'), { now: NOW }),
-      'error', /schema_version が 2/)],
+    () => has(validateState(VALID.replace('schema_version: 2', 'schema_version: 1'), { now: NOW }),
+      'error', /schema_version が 1/)],
 
   ['ISO 8601 でない last_updated を error',
     () => has(validateState(VALID.replace('2026-08-13T10:11+09:00', '2026/08/13'), { now: NOW }),
@@ -55,13 +56,22 @@ const cases = [
     () => has(validateState(VALID.replace('status: active', 'status: ongoing'), { now: NOW }),
       'error', /status が不正: ongoing/)],
 
-  ['範囲外の progress を error',
-    () => has(validateState(VALID.replace('progress: 0.5', 'progress: 1.5'), { now: NOW }),
-      'error', /progress が 0.0-1.0/)],
+  ['空の summary を error',
+    () => has(validateState(VALID.replace('summary: "テスト用のプロジェクト"', 'summary: ""'),
+      { now: NOW }), 'error', /summary が空/)],
 
-  ['数値でない progress を error',
-    () => has(validateState(VALID.replace('progress: 0.5', 'progress: half'), { now: NOW }),
-      'error', /progress が 0.0-1.0/)],
+  ['相対パスの link を error',
+    () => has(validateState(VALID.replace('link: "/state/"', 'link: "state/"'), { now: NOW }),
+      'error', /link が不正/)],
+
+  ['外部 URL の link は通す',
+    () => !has(validateState(VALID.replace('link: "/state/"', 'link: "https://example.com/"'),
+      { now: NOW }), 'error', /link が不正/)],
+
+  // v2 で progress を廃止した。v1 のまま残っているファイルをここで落とす
+  ['v1 の progress が残っていたら error',
+    () => has(validateState(VALID.replace('    status: active', '    status: active\n    progress: 0.5'),
+      { now: NOW }), 'error', /projects\[\] の未知のキー: progress/)],
 
   ['projects[] の未知のキーを error',
     () => has(validateState(VALID.replace('    status: active', '    status: active\n    owner: me'),
@@ -71,9 +81,10 @@ const cases = [
     () => {
       const dup = VALID.replace('pending: []', `  - slug: good-project
     status: paused
-    progress: 0.1
+    summary: "重複したほう"
     next_action: "重複"
     next_action_at: "x"
+    link: "/state/"
 pending: []`);
       return has(validateState(dup, { now: NOW }), 'error', /slug の重複/);
     }],
@@ -123,9 +134,9 @@ pending: []`);
 
   ['リスト項目をオブジェクトとして読む',
     () => {
-      const { data, errors } = parseYamlSubset('projects:\n  - slug: a\n    progress: 0.2\n');
+      const { data, errors } = parseYamlSubset('projects:\n  - slug: a\n    n: 0.2\n');
       return errors.length === 0 && data.projects.length === 1
-        && data.projects[0].slug === 'a' && data.projects[0].progress === 0.2;
+        && data.projects[0].slug === 'a' && data.projects[0].n === 0.2;
     }],
 ];
 

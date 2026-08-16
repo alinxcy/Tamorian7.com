@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-08-16T15:27+09:00
-current_focus: "/state/ を公開サイトに出した。次はハブとして使えるか — 各プロジェクトへ飛べるかを見る"
+last_updated: 2026-08-17T00:52+09:00
+current_focus: "seeds 層が入って4層が揃った。次は器ではなく中身 — 会話の脱線から実際に種を拾う"
 projects:
   - slug: state-hub
     status: active
@@ -16,10 +16,10 @@ projects:
     next_action_at: "src/pages/state.astro"
     link: "/state/"
   - slug: knowledge-garden
-    status: paused
+    status: active
     summary: "このサイトそのもの。4層モデル(seeds/log/garden/works)で育てる Astro の器"
-    next_action: "main へ集約するか、試験運用を続けるかを決める(pending: main-merge-timing)"
-    next_action_at: ".github/workflows/deploy.yml"
+    next_action: "器はできたので中身を入れる。会話の脱線から種を1件、自分の言葉で拾う"
+    next_action_at: "src/content/seeds/"
     link: "/works/knowledge-garden/"
   - slug: fugu-lab
     status: active
@@ -38,8 +38,11 @@ pending:
     question: "main へのマージをいつ行うか。試験運用の区切りをどう判断するか"
     raised: 2026-08-13
   - id: publish-default-flip
-    question: "publish の default を true から false へ反転させるか(デフォルト非公開)"
+    question: "publish の default を true から false へ反転させるか(デフォルト非公開)。seeds だけは既に false で入った"
     raised: 2026-08-13
+  - id: seed-inventory-pressure
+    question: "未昇格の種の在庫をどこで見せるか。仕様はトップと言うが publish 既定 false と噛み合わない。check の warn にする案もある"
+    raised: 2026-08-17
 ---
 
 # 現在の状態
@@ -49,15 +52,17 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **life-os** — `/state/` が公開サイトに出た。進捗バーをやめ、
+1. **knowledge-garden** — seeds 層が入り、**4層が揃った**。器はもう無い言い訳。
+   次は中身で、これは人間しかできない。
+2. **life-os** — `/state/` が公開サイトに出た。進捗バーをやめ、
    **各プロジェクトの要約と飛び先を持つハブ**に作り替えた。
-2. **state-hub** — 実装・検証は済み。残りは `pending` の扱いの詰め。
-3. **fugu-lab** / **atelier-lab** — このページから辿れるようになった。
+3. **state-hub** — 実装・検証は済み。残りは `pending` の扱いの詰め。
+4. **fugu-lab** / **atelier-lab** — このページから辿れるようになった。
    どちらも「作ったが、まだ溜まっていない」段階。
-4. **knowledge-garden** — 器は動いている。main への集約だけが残っている。
 
-state-hub と life-os が互いに待ち合っていた（「スキーマが固まるまで着手しない」×
-「使ってみないと固まらない」）。描画側を先に作って断った。
+**今どのプロジェクトも同じ形の詰まり方をしている。** 器はある、データが無い。
+fugu-lab は使用実績が1件、atelier-lab は部品が未注文、seeds は0件。
+作るのをやめて使う側に回らないと、どれも判断材料が出てこない。
 
 ## 2. 次のアクション
 
@@ -100,6 +105,17 @@ state-hub と life-os が互いに待ち合っていた（「スキーマが固�
 - **落ちた瞬間のデータが取れない問題**が未解決。監視装置が同じ回路にあると、
   ブレーカーが落ちた瞬間に ESP32 も死ぬ。一番欲しい「落ちる直前」がまさに取れない。
 - 住所・賃料・不動産会社の連絡先は**このリポジトリにも atelier-lab にも書かない**。
+
+### knowledge-garden — 器から中身へ
+
+- **seeds 層を Codex（Windows ノート PC）に外注して入った**（`258ccf3`）。
+  仕様が `spec/content-pipeline-spec.md` に frontmatter まで書いてあったので、
+  判断の要らない作業として切り出せた。**渡せたのは仕様が先にあったから。**
+- **`/seeds/` の一覧とナビは作らない。** 種はストックではなくフロー。
+  一覧を作ると実質ブログになり、「garden が主役」という設計がぶれる。
+- **seeds だけ `publish` の既定が false。** 生の切り抜きが勝手に公開されないように。
+  副作用として**在庫の件数を静的サイト側で数えられない**（`pending: seed-inventory-pressure`）。
+- 残りは中身。**種が0件**で、入っている1件は動作確認用の fixture。
 
 ### knowledge-garden — main への集約
 
@@ -144,6 +160,21 @@ state-hub と life-os が互いに待ち合っていた（「スキーマが固�
 - **リンクは必ず `/` から始めるか `http(s)://` にする。** サブパス配信なので、
   相対パスは base の下で壊れる。検証側でも弾いている。
 
+### 他の AI に外注するとき（2026-08-16 に Codex へ seeds を渡して分かったこと）
+
+- **渡せるのは仕様が先にある作業だけ。** seeds は `spec/` に frontmatter まで
+  書いてあったから切り出せた。仕様の無いものを渡すと、判断ごと外注することになる。
+- **プロンプトに「触るな」を列挙しておくと守る。** `STATE.md` / `DECISIONS.md` /
+  `CLAUDE.md` / `package-lock.json` を明示したら、実際に触らず**報告だけ返してきた**。
+  こちらのテスト破壊を踏んだときも、直さずに理由を書いて残した。これが正しい。
+- **別マシンなら push させる。** 「push しない」は同一マシンの作法であって、
+  他所で動かすと成果が取り出せなくなる。作業ブランチへの push は安全
+  （`deploy.yml` のトリガーは `claude/code-handoff-phase-1-ruj6je` の方）。
+- **Windows の罠は3つ**（Codex の実測、`scratch/2026-08-16.md`）:
+  clone 時点で CRLF に変換されるので `core.autocrlf false` は clone 後だと手遅れ /
+  portable Node は `npm.cmd` を絶対パスで起動しても子プロセスの PATH に
+  `node.exe` が無く install script が落ちる / PowerShell の `>` は UTF-16 を吐く。
+
 ### 公開範囲
 
 - **リポジトリは public。** `publish: false` はサイト表示の制御であって機密の防壁ではない。
@@ -158,6 +189,12 @@ state-hub と life-os が互いに待ち合っていた（「スキーマが固�
 - `npm run check` は **error 0 / warn 0**。`reversible-vs-irreversible.md:60` の「必ず」は
   文章を変えず `<!-- reason: -->` で意図を明示した。
   **判定を通すために断定を薄めるのはやらない。**
-- `npm audit` に指摘がある（`npm ci` 時に表示）。未調査。
+- **`npm audit` は 3件**（high: js-yaml `GHSA-5p4m-2wfm-xmqj` / nanoid `GHSA-2v37-7h3g-55p8`、
+  moderate: postcss `GHSA-fxqj-rqcc-2cmp`）。すべて `npm audit fix` で消えると出ている。未実施。
+  **これは Linux 側でやる。** CI が ubuntu で `npm ci` するので、Windows で
+  lockfile を再生成すると linux 用の optional dependency が落ちてデプロイが壊れうる。
+- **`scripts/state.test.mjs` を schema v2 に追随させ忘れていた**（08-16 に混入、08-17 に修正）。
+  `npm test` は赤かったが、**`deploy.yml` は `check` と `build` しか回さない**ので
+  CI も気づかない。テストは手で回すしか無い状態になっている。
 - `astro dev` はデーモンとして起動する（`astro dev stop` / `astro dev status`）。
   `npm run dev` がすぐ exit 0 で戻るのはそのため。落ちたわけではない。
