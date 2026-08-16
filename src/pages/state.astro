@@ -12,6 +12,7 @@ import Base from '../layouts/Base.astro';
 import { u } from '../lib/url';
 import { parseYamlSubset, splitFrontmatter } from '../../scripts/state.mjs';
 import src from '../../STATE.md?raw';
+import config from '../../garden.config.json';
 
 const split = splitFrontmatter(src);
 // フロントマターが壊れていればビルドを止める。黙って空を描くと、
@@ -22,12 +23,10 @@ const { data } = parseYamlSubset(split.fm);
 const projects = Array.isArray(data.projects) ? data.projects : [];
 const pending = Array.isArray(data.pending) ? data.pending : [];
 
-// overall は STATE.md に持たない(二重管理になる)。ここで導出する。
-const overall = projects.length
-  ? projects.reduce((a, p) => a + (typeof p.progress === 'number' ? p.progress : 0), 0) / projects.length
-  : 0;
-
-const pct = (n: unknown) => Math.round((typeof n === 'number' ? n : 0) * 100);
+// GitHub の blob URL は main ではなく作業ブランチを指す。
+// main は1コミットしか無く、STATE.md も DECISIONS.md も存在しない(404 になる)。
+const repo = `https://github.com/${config.repo}`;
+const blob = (f: string) => `${repo}/blob/${config.branch}/${f}`;
 
 const STATUS_LABEL: Record<string, string> = {
   active: '進行中',
@@ -35,6 +34,13 @@ const STATUS_LABEL: Record<string, string> = {
   blocked: '詰まり',
   done: '完了',
 };
+
+// サイト内リンクだけ base を前置する。外部 URL はそのまま
+const href = (l: unknown) => {
+  const s = String(l ?? '');
+  return s.startsWith('/') ? u(s) : s;
+};
+const isExternal = (l: unknown) => /^https?:\/\//.test(String(l ?? ''));
 
 // last_updated からの経過。更新漏れに人間が気づけるように出す
 const updated = new Date(String(data.last_updated));
@@ -55,27 +61,21 @@ const stale = days > 14;
 
   <section class="section">
     <div class="section-head">
-      <h2>全体</h2>
-      <span class="muted" style="font-size:0.82rem">projects の平均から導出</span>
+      <h2>プロジェクト</h2>
+      <span class="muted" style="font-size:0.82rem">{projects.length} 件</span>
     </div>
-    <div class="bar bar-lg"><span style={`width:${pct(overall)}%`}></span></div>
-    <p class="muted" style="font-size:0.82rem; margin:8px 0 0">
-      {pct(overall)}% · {projects.length} プロジェクト
-    </p>
-  </section>
-
-  <section class="section">
-    <h2>プロジェクト</h2>
     <ul class="proj-list">
       {projects.map((p: any) => (
-        <li>
+        <li class="proj">
           <div class="proj-head">
-            <span class="proj-slug">{p.slug}</span>
+            <a class="proj-slug" href={href(p.link)} target={isExternal(p.link) ? '_blank' : undefined}
+               rel={isExternal(p.link) ? 'noopener' : undefined}>
+              {p.slug}{isExternal(p.link) && <span class="ext" aria-hidden="true"> ↗</span>}
+            </a>
             <span class={`badge st-${p.status}`}>{STATUS_LABEL[p.status] ?? p.status}</span>
-            <span class="proj-pct">{pct(p.progress)}%</span>
           </div>
-          <div class="bar"><span class={`st-${p.status}`} style={`width:${pct(p.progress)}%`}></span></div>
-          <p class="proj-next">{p.next_action}</p>
+          <p class="proj-summary">{p.summary}</p>
+          <p class="proj-next"><span class="k">次の1手</span>{p.next_action}</p>
           <p class="proj-at"><code>{p.next_action_at}</code></p>
         </li>
       ))}
@@ -106,8 +106,8 @@ const stale = days > 14;
     <p class="muted" style="font-size:0.85rem">
       このページは <code>STATE.md</code> のフロントマターだけを描画している。
       作業中の暗黙知や経緯は
-      <a href="https://github.com/alinxcy/Tamorian7.com/blob/main/STATE.md">STATE.md</a> 本文と
-      <a href="https://github.com/alinxcy/Tamorian7.com/blob/main/DECISIONS.md">DECISIONS.md</a> にある。
+      <a href={blob('STATE.md')}>STATE.md</a> 本文と
+      <a href={blob('DECISIONS.md')}>DECISIONS.md</a> にある。
     </p>
   </section>
 </Base>
@@ -115,34 +115,36 @@ const stale = days > 14;
 <style>
   .stale { color: var(--wip); }
 
-  .bar {
-    height: 6px;
-    background: var(--bg-elev);
+  .proj-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 26px; }
+
+  .proj-head { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+  .proj-slug {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .proj-slug:hover { text-decoration: underline; }
+  .ext { font-size: 0.78em; opacity: 0.65; }
+
+  .proj-summary { margin: 0; font-size: 0.95rem; }
+  .proj-next { margin: 8px 0 0; font-size: 0.9rem; }
+  /* 「次の1手」であることを一目で分かるようにする。要約と混ざらないように */
+  .proj-next .k {
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    color: var(--fg-muted);
     border: 1px solid var(--border);
-    border-radius: 999px;
-    overflow: hidden;
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-right: 7px;
+    vertical-align: 1px;
   }
-  .bar-lg { height: 10px; }
-  .bar > span {
-    display: block;
-    height: 100%;
-    background: var(--accent);
-    border-radius: 999px;
-  }
+  .proj-at { margin: 4px 0 0; font-size: 0.8rem; color: var(--fg-muted); }
 
-  .proj-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 22px; }
-  .proj-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
-  .proj-slug { font-family: var(--mono); font-size: 0.95rem; font-weight: 600; }
-  .proj-pct { margin-left: auto; color: var(--fg-muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
-  .proj-next { margin: 8px 0 0; font-size: 0.92rem; }
-  .proj-at { margin: 3px 0 0; font-size: 0.82rem; color: var(--fg-muted); }
-
-  /* status ごとの色。badge と bar で同じ語彙を使う */
+  /* status ごとの色 */
   .badge.st-active { background: rgba(110,168,254,0.15); color: var(--accent); }
   .badge.st-paused { background: rgba(138,148,166,0.15); color: var(--planned); }
   .badge.st-blocked { background: rgba(240,180,41,0.15); color: var(--wip); }
   .badge.st-done { background: rgba(52,199,89,0.15); color: var(--published); }
-  .bar > span.st-paused { background: var(--planned); }
-  .bar > span.st-blocked { background: var(--wip); }
-  .bar > span.st-done { background: var(--published); }
 </style>

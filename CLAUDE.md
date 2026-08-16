@@ -46,12 +46,14 @@
 | `current_focus` | string | 本文「今やっていること」と食い違わせない |
 | `projects[].slug` | string | 本文の見出しと 1:1 |
 | `projects[].status` | `active`\|`paused`\|`blocked`\|`done` | |
-| `projects[].progress` | 0.0–1.0 | |
+| `projects[].summary` | string | 何をやっているものかを一文で。次の1手とは別物 |
 | `projects[].next_action` | string | 次の1手を一文で |
 | `projects[].next_action_at` | string | 着手するファイル/場所 |
+| `projects[].link` | string | 飛び先。`/` 始まりか `http(s)://` のみ |
 | `pending[].id` / `.question` / `.raised` | string / string / date | 未確定・確認待ち |
 
-- `overall_progress` は置かない。`projects[].progress` から導出できる(二重管理を避ける)
+- **進捗率は持たない**(v2 で廃止)。誰も見ないまま二重管理になっていた。
+  状態は `status` で表し、中身は `summary` で説明する
 - 未確定は `pending[]` にだけ書き、本文には書かない
 - 「直前に何を試して何がダメだったか」は本文の**作業中の暗黙知**へ。`slug` で紐づける
 

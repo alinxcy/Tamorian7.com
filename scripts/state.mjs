@@ -24,9 +24,12 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const STATUSES = ['active', 'paused', 'blocked', 'done'];
-export const SCHEMA_VERSION = 1;
+// v2 (2026-08-16): projects[] から progress を外し、summary と link を足した。
+// 進捗率は誰も見ておらず、二重管理になっていた。代わりに「何をやっているものか」と
+// 「どこへ飛べるか」を持たせて、このページをハブとして使えるようにした。
+export const SCHEMA_VERSION = 2;
 const TOP_KEYS = ['schema_version', 'last_updated', 'current_focus', 'projects', 'pending'];
-const PROJECT_KEYS = ['slug', 'status', 'progress', 'next_action', 'next_action_at'];
+const PROJECT_KEYS = ['slug', 'status', 'summary', 'next_action', 'next_action_at', 'link'];
 const PENDING_KEYS = ['id', 'question', 'raised'];
 // last_updated がこれ以上古ければ warn。更新漏れに人間が気づけるように
 const STALE_DAYS = 14;
@@ -201,12 +204,18 @@ export function validateState(src, { file = 'STATE.md', now = new Date() } = {})
     if ('status' in p && !STATUSES.includes(p.status)) {
       add('error', line, `status が不正: ${p.status}`, `使えるのは ${STATUSES.join(' | ')}`);
     }
-    if ('progress' in p) {
-      const n = p.progress;
-      if (typeof n !== 'number' || Number.isNaN(n) || n < 0 || n > 1) {
-        add('error', line, `progress が 0.0-1.0 の数値でない: ${p.progress}`);
-      } else if (p.status === 'done' && n !== 1) {
-        add('warn', line, `status が done なのに progress が ${n}`);
+    // summary は「何をやっているものか」を一文で。次の1手(next_action)とは別物。
+    // 進捗率を廃したので、状態の説明はここが唯一の担い手になる。
+    if ('summary' in p && (typeof p.summary !== 'string' || !p.summary.trim())) {
+      add('error', line, `summary が空: ${p.slug}`, '何をやっているものかを一文で');
+    }
+    // link は飛び先。サイト内の絶対パスか、http(s) の外部 URL のみ許す。
+    // 相対パスを許すと base(サブパス配信)の下で壊れるため。
+    if ('link' in p) {
+      const l = String(p.link);
+      if (!/^(\/|https?:\/\/)/.test(l)) {
+        add('error', line, `link が不正: ${l}`,
+          'サイト内なら / から始める。外部なら http(s):// から始める');
       }
     }
   }
