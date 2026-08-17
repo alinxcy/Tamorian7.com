@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-08-17T00:52+09:00
-current_focus: "seeds 層が入って4層が揃った。次は器ではなく中身 — 会話の脱線から実際に種を拾う"
+last_updated: 2026-08-17T21:58+09:00
+current_focus: "fugu-lab の見取り図を works に置いた。記録が1件しか無い原因も判明。次は溜め直す"
 projects:
   - slug: state-hub
     status: active
@@ -24,9 +24,9 @@ projects:
   - slug: fugu-lab
     status: active
     summary: "Sakana Fugu を月額契約すべきか判断するための計測環境。チャットで使い、使用データを溜める"
-    next_action: "chat/ を日常的に使ってデータを溜める。判断材料は使用実績しか無い"
-    next_action_at: "https://github.com/alinxcy/fugu-lab"
-    link: "https://github.com/alinxcy/fugu-lab"
+    next_action: "chat アプリを起動してから外注する。落ちていると記録が残らないと判明した"
+    next_action_at: "fugu-lab/tools/fugu_offload.py"
+    link: "/works/fugu-lab/"
   - slug: atelier-lab
     status: active
     summary: "アトリエ(作業場)の計測と制御。20A の天井の中で何を動かせるかを実測で決める"
@@ -92,10 +92,16 @@ fugu-lab は使用実績が1件、atelier-lab は部品が未注文、seeds は0
 
 - ダッシュボードは動く。だが**読み込めた実データは1件**で、そこから
   「表470 / 裏0 / 裏率0%」を出しているだけ。母数が話にならない。
-- **律速はビルドではなくデータ蓄積。** `chat/` を起動して日常的に使う以外に道が無い。
-- 未処理: `ttft_s` が `null` の行を `record.py` が弾く。スキーマ側を
-  `number | null` にするのが筋だが、**schema は唯一の結合点**なので
-  `chat/` と `dashboard/` をセットで直す必要がある。未着手。
+- **1件しか無い理由が判明した(2026-08-17)。** `tools/fugu_offload.py` は
+  **既定で chat アプリ経由**で叩き、アプリが落ちていると直接 API に
+  フォールバックする。**フォールバック時は記録されない**(警告は stderr に出る)。
+  外注は10回近くやったが、アプリが起きていたのは1回だけだった。
+  → **運用だけで直る。外注の前に `chat/` を起動する。**
+- **`ttft_s` の宿題は、この問題そのものだった。** 直接 API は非ストリーミングなので
+  `ttft_s` が取れず、スキーマが必須の number と定めているため**書けない**。
+  `number | null` にすれば、フォールバック経路でも記録が残せる。
+  **schema は唯一の結合点**なので `chat/` と `dashboard/core/record.py` をセットで直す。
+- 見取り図を [/works/fugu-lab/](/works/fugu-lab/) に置いた。構造と外注ルールはそちら。
 
 ### atelier-lab — まだ何も買っていない
 
