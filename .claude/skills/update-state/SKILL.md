@@ -39,8 +39,14 @@ Q2 に答えられないなら暗黙知が失われている。それは本文�
 
 - `last_updated` は**実時刻**に。`date +"%Y-%m-%dT%H:%M%:z"` の出力をそのまま使う。
   ここを更新し忘れると、人間が「止まっている」ことに気づけなくなる
-- `progress` は 0.0–1.0。`status` は `active` / `paused` / `blocked` / `done`
+- `status` は `active` / `paused` / `blocked` / `done`。
+  **実装が済んで判断材料待ちなら `paused`、物待ちなら `blocked`。**
+  全部 `active` にすると「今何をすべき」が読めなくなる
+- **`progress` は v2 で廃止した。** 書くと `check` が「未知のキー」で error にする。
+  状態は `status` で表し、中身は `summary` で説明する
+- `summary` は「何をやっているものか」を一文で。**`next_action` とは別物**
 - `next_action` は次の1手を一文で。`next_action_at` に着手する場所（ファイルパス等）
+- `link` は飛び先。**`/` から始めるか `http(s)://` のみ**。相対パスは error
 - 未確定は `pending[]` にだけ書く。**本文には書かない**（二重管理になる）
 
 ### 3. 本文を上書きする
