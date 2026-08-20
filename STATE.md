@@ -243,6 +243,6 @@ pending:
   赤くなっても誰も止まらないので、**手で回すしか無い。**
 - `astro dev` はデーモンとして起動する（`astro dev stop` / `astro dev status`）。
   `npm run dev` がすぐ exit 0 で戻るのはそのため。落ちたわけではない。
-- **`.claude/skills/update-state/SKILL.md` が v1 のまま。** `progress` を 0.0–1.0 で
-  書けと指示しているが、**v2 で廃止済み**のキーで、書くと `check` が error にする。
-  スキルの方を直す必要がある。
+- **スキーマを変えたらスキルも直す。** `update-state` の SKILL.md が v1 のまま
+  `progress` を書けと指示していた（08-20 に修正）。**`CLAUDE.md` の表だけ直しても、
+  スキルを素直に読んだ人が踏む。**
