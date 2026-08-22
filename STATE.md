@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-08-20T10:29+09:00
-current_focus: "Q3PE のドライバが動いた。器も道具も揃ったので、残りは物理の調達とデータを溜めること"
+last_updated: 2026-08-22T19:53+09:00
+current_focus: "クロコの窓口を自前アプリに移す仕様が実測の上で固まった。Phase 0 を渡すか、先に LAN を振り直すかを決める段階"
 projects:
   - slug: state-hub
     status: active
@@ -39,6 +39,12 @@ projects:
     next_action: "PZEM-004T v3.0(TTL版) と ESP32-DevKitC を注文する。まだ何も買っていない"
     next_action_at: "https://github.com/alinxcy/atelier-lab"
     link: "https://github.com/alinxcy/atelier-lab"
+  - slug: kuroko-chat
+    status: active
+    summary: "常時起動セッション(クロコ)の窓口を自前のローカルアプリに移す。実装は Antigravity"
+    next_action: "Phase 0(読む窓)を Antigravity に渡すか、先に LAN 振り直しをするか決める"
+    next_action_at: "~/kuroko-chat/SPEC.md"
+    link: "/state/"
   - slug: peak-shifter
     status: blocked
     summary: "JEPX の価格差に負荷を寄せる。取り分の8割が LED栽培棚で、その棚がまだ無い"
@@ -61,6 +67,9 @@ pending:
   - id: peakshift-before-shelf
     question: "栽培棚が無いままピークシフター v1 を作るか。棚を除くと取り分が年5000円強から1000円強に落ちる"
     raised: 2026-08-20
+  - id: kuroko-chat-order
+    question: "kuroko-chat の Phase 0(読む窓)を先に Antigravity へ渡すか、先に LAN 振り直し+Tailscale をやるか。Phase 1 に入るとスマホから触れなくなるので順番が効く"
+    raised: 2026-08-22
 ---
 
 # 現在の状態
@@ -70,19 +79,36 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **knowledge-garden** — 器は揃った。**中身が要る。**
+1. **kuroko-chat** — 仕様が固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
+   実装は Antigravity に出すので、こちらの手は空く。
+2. **knowledge-garden** — 器は揃った。**中身が要る。**
    いま一番書ける材料は Q3PE の実録で、`scratch/2026-08-19.md` に4セクション分の原料がある。
-2. **q3pe-recorder** — ドライバは動いた。**残りは買い物だけ**で、手を動かす作業が無い。
-3. **fugu-lab** / **atelier-lab** — どちらも「作ったが、まだ溜まっていない」。
+3. **q3pe-recorder** — ドライバは動いた。**残りは買い物だけ**で、手を動かす作業が無い。
+4. **fugu-lab** / **atelier-lab** — どちらも「作ったが、まだ溜まっていない」。
    fugu は常駐化、atelier は注文。**どちらも判断ではなく手続き。**
-4. **peak-shifter** — 計算は終わっている。**作る対象が存在しない**ので止まっている。
-5. **state-hub** / **life-os** — 実装は済み。使ってから決める段階。
+5. **peak-shifter** — 計算は終わっている。**作る対象が存在しない**ので止まっている。
+6. **state-hub** / **life-os** — 実装は済み。使ってから決める段階。
 
-**詰まり方が2種類に分かれた。**
+**詰まり方が3種類に分かれた。**
 `knowledge-garden` は書けば進む。`q3pe-recorder` と `atelier-lab` は物が届くまで動けない。
-**書ける方を先に消化するのが自然。**
+`kuroko-chat` は**人間が順番を決めれば動く**。**判断1つで進む方が一番安い。**
 
 ## 2. 次のアクション
+
+### kuroko-chat — 順番を決める（判断1つで動く）
+
+- **仕様は `~/kuroko-chat/SPEC.md`。実測は `probes/` 5本。** 推測で書いた行は無い。
+- **選ぶのは2つのうちどちらを先にやるか。**
+  - **A. Phase 0（読む窓）を Antigravity に渡す** — 今日から動ける。
+    transcript を読むだけなので**既存の Remote Control を壊さない**
+  - **B. 先に LAN 振り直し + Tailscale** — 退路を作ってから全部やる。作業中ネットが落ちる
+- **なぜ順番が効くか**: `/remote-control` は `--print` で拒否される（実測）。
+  **アプリがセッションを持った瞬間、スマホからクロコに触れなくなる。**
+  実装で回避できないので、Tailscale は Phase 1 の**前**に要る。
+- **引き継ぐべきセッションを取り違えていた。** スマホで「常時起動プロセス・接続済み」と
+  出ているのは `kind:"background"` の方。`pts/0` の `tamorian7-com-da`（`interactive`）は
+  **2日前から idle**。仕様書は修正済み。
+- **`~/kuroko-chat` は private。** `config/` に File Bridge の許可ルートが入るため。
 
 ### knowledge-garden — Q3PE を log に起こす
 
@@ -176,6 +202,20 @@ pending:
   **headless Firefox は使えない。**
 - **手起動したサーバは再起動で消える。** Q3PE の作業でコールドブートを繰り返したので、
   常駐させたいものは `systemd --user` に載せる。
+
+### Claude Code のセッション（2026-08-22 に実測。詳細は `~/kuroko-chat/SPEC.md` §2）
+
+- **セッションには3種別ある**: `interactive` / **`Remote Control`** / `cloud`。
+  `claude agents --json` と `ListAgents` で見分けられる。**別物なので混ぜない。**
+- **日常の会話相手は `kind:"background"` の方。** スマホで「常時起動プロセス」と
+  出ているのがそれ。`pts/0` の `tamorian7-com-da` は `interactive` で **idle のまま**。
+- **`claude -p --input-format stream-json --output-format stream-json --verbose` が
+  自作クライアントの口。** `--verbose` が無いと起動時エラー。stdin を開けたままなら常駐する。
+- **`ScheduleWakeup` は headless でも発火する。** `/loop` を載せ替えても死なない。
+- **`/remote-control` は `--print` では使えない。** headless の
+  `terminal_slash_commands` は `["doctor","color"]` の2つだけ。
+- **`rate_limit_event` はストリームにしか流れず、transcript には残らない。**
+  残枠情報が要るなら**セッションを自分で持つしかない**。後から取り返せない。
 
 ### PX-Q3PE（2026-08-19 に判明。再訪時にゼロから調べ直さないため）
 
