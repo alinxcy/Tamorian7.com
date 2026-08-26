@@ -12,7 +12,7 @@ import src from '../../../INVENTORY.md?raw';
 import config from '../../../garden.config.json';
 
 type Item = { name: string; meta: string; desc: string; dead: boolean };
-type Group = { title: string; n: number; items: Item[] };
+type Group = { title: string; id: string; n: number; items: Item[] };
 
 // INVENTORY.md は `- **名前**（属性）— 説明` の羅列。**ここで書式を仮定する**ので、
 // 生成側を変えたらここも直す。読めなかったらビルドを止める(黙って空を描かない)
@@ -22,7 +22,12 @@ for (const line of src.split('\n')) {
   const h1 = line.match(/^#\s+(.*)$/);
   if (h1) { stamp = h1[1].replace(/^道具の棚卸し\s*/, '').trim(); continue; }
   const h2 = line.match(/^##\s+(.*?)\s*\((\d+)\)\s*$/);
-  if (h2) { groups.push({ title: h2[1], n: Number(h2[2]), items: [] }); continue; }
+  if (h2) {
+    // **見出しの文字をそのまま id にしない。** 「常駐（systemd --user）」のように
+    // 空白と全角が混ざると、href 側のエンコードと噛み合わなくなる
+    groups.push({ title: h2[1], id: `g${groups.length}`, n: Number(h2[2]), items: [] });
+    continue;
+  }
   const it = line.match(/^-\s+\*\*(.+?)\*\*(?:（(.*?)）)?\s*—\s*(.*)$/);
   if (it && groups.length) {
     groups[groups.length - 1].items.push({
@@ -54,14 +59,14 @@ const repo = `https://github.com/${config.repo}`;
 
   <nav class="jump">
     {groups.map((g) => (
-      <a href={`#${encodeURIComponent(g.title)}`}>{g.title}<span class="n">{g.items.length}</span></a>
+      <a href={`#${g.id}`}>{g.title}<span class="n">{g.items.length}</span></a>
     ))}
   </nav>
 
   {groups.map((g) => (
     <section class="section">
       <div class="section-head">
-        <h2 id={g.title}>{g.title}</h2>
+        <h2 id={g.id}>{g.title}</h2>
         <span class="muted" style="font-size:0.82rem">{g.items.length} 件</span>
       </div>
       <ul class="tool-list">
