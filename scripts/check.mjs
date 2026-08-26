@@ -30,11 +30,13 @@ const issues = [];
 const add = (level, file, line, msg, hint) =>
   issues.push({ level, file, line, msg, hint });
 
-function walk(dir) {
+// 既定は .md。**拡張子を引数にする**のは、`.astro` を渡したのに空が返り、
+// 空のループが「問題なし」を返した事故があったため(2026-08-27)
+function walk(dir, ext = '.md') {
   if (!existsSync(dir)) return [];
   return readdirSync(dir).flatMap((n) => {
     const p = join(dir, n);
-    return statSync(p).isDirectory() ? walk(p) : p.endsWith('.md') ? [p] : [];
+    return statSync(p).isDirectory() ? walk(p, ext) : p.endsWith(ext) ? [p] : [];
   });
 }
 
@@ -152,6 +154,45 @@ for (const { c, f } of files) {
 // STATE.md のスキーマ検証。content collection の外にあり zod が効かないので、
 // 検証はここが唯一の場所になる(詳細は state.mjs)
 issues.push(...checkStateFile(ROOT));
+
+// --- CSS 変数の未定義 ---
+// **未定義の var() はエラーにならず、色が消えるだけ。**
+// 文字が背景と同じ色になって読めなくてもビルドは通る。目で見つけるしかない
+// 種類なので、機械で落とす(2026-08-27 に追加)。
+{
+  const cssPath = join(ROOT, 'src/styles/global.css');
+  if (existsSync(cssPath)) {
+    const css = readFileSync(cssPath, 'utf8');
+    const defined = new Set(
+      [...css.matchAll(/^\s*(--[\w-]+)\s*:/gm)].map((m) => m[1]),
+    );
+    const astro = walk(join(ROOT, 'src'), '.astro');
+    if (astro.length === 0) {
+      // **対象が0件なら、検査したことにしない。** 空のループは常に通る
+      add('error', 'scripts/check.mjs', 1, '.astro が1つも見つからない',
+        'walk の拡張子が噛み合っていない可能性');
+    }
+    // ページ内の <style> で自前定義しているものも定義済みとして扱う
+    for (const f of astro) {
+      for (const m of readFileSync(f, 'utf8').matchAll(/^\s*(--[\w-]+)\s*:/gm)) {
+        defined.add(m[1]);
+      }
+    }
+    for (const f of astro) {
+      const src = readFileSync(f, 'utf8');
+      const lines = src.split('\n');
+      lines.forEach((ln, i) => {
+        for (const m of ln.matchAll(/var\((--[\w-]+)/g)) {
+          if (!defined.has(m[1])) {
+            add('error', relative(ROOT, f), i + 1,
+              `未定義の CSS 変数: ${m[1]}`,
+              '色が消えるだけで、ビルドは通ってしまう');
+          }
+        }
+      });
+    }
+  }
+}
 
 // --- 出力 ---
 const errors = issues.filter((i) => i.level === 'error');
