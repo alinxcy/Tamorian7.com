@@ -1,7 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { fmtDate, getLog, getWorks } from '../../lib/util';
+import { fmtDate, fmtDateTime, getLog, getWorks } from '../../lib/util';
 import { u } from '../../lib/url';
 
 export async function getStaticPaths() {
@@ -11,14 +11,21 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, date, tags, project } = entry.data;
+const { title, date, until, tags, project } = entry.data;
+
+// **いつやったかを出す。** 一晩をまたぐ回だと、本文の「朝になって分かった」
+// のような記述が、時刻なしでは読めない
+const sameDay = until && fmtDate(until) === fmtDate(date);
+const when = until
+  ? `${fmtDateTime(date)} 〜 ${sameDay ? fmtDateTime(until).slice(11) : fmtDateTime(until)}`
+  : fmtDateTime(date);
 const parent = project ? (await getWorks()).find((w) => w.id === project) : undefined;
 ---
 <Base title={title}>
   <article class="article">
     <h1 class="title">{title}</h1>
     <div class="meta">
-      <span>{fmtDate(date)}</span>
+      <span>{when}</span>
       {parent && (
         <span>· <a href={u(`/works/${parent.id}/`)}>{parent.data.emoji ?? ''} {parent.data.title}</a></span>
       )}

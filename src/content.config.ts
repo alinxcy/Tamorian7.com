@@ -27,7 +27,11 @@ const log = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/log' }),
   schema: z.object({
     title: z.string(),
+    // **時刻まで書いてよい**（`2026-08-27T01:00+09:00`）。日付だけなら日付だけ出す。
+    // 一晩をまたぐ作業だと「いつやったか」が本文の意味を変えるため
     date: z.coerce.date(),
+    // 作業の終わり。**日付をまたぐ回でだけ書く。** 無ければ出さない
+    until: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     publish,
     project,

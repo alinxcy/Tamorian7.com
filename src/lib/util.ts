@@ -1,7 +1,24 @@
 import { getCollection } from 'astro:content';
 
+// **JST で切る。** toISOString() は UTC なので、時刻つきの日付を渡すと
+// 日本時間の朝方が前日になる（2026-08-27T01:00+09:00 → "2026-08-26"）。
+// 日付だけを渡している間は露見しないが、時刻を足した瞬間に1日ずれる。
+const JST_DATE = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Tokyo' });
+const JST_TIME = new Intl.DateTimeFormat('ja-JP', {
+  timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hour12: false,
+});
+
 export function fmtDate(d: Date): string {
-  return d.toISOString().slice(0, 10);
+  return JST_DATE.format(d);
+}
+
+/** 時刻を持っている日付だけ「日付 HH:MM」にする。持っていなければ日付だけ。
+ *
+ * **判定は UTC 側で行う。** `2026-08-27` は UTC 0時として読まれるので、
+ * JST に直すと 09:00 になり「時刻がある」と誤判定する。 */
+export function fmtDateTime(d: Date): string {
+  const bare = d.getUTCHours() === 0 && d.getUTCMinutes() === 0;
+  return bare ? fmtDate(d) : `${fmtDate(d)} ${JST_TIME.format(d)}`;
 }
 
 export type GardenEntry = Awaited<ReturnType<typeof getCollection<'garden'>>>[number];
