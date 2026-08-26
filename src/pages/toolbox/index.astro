@@ -1,0 +1,109 @@
+---
+// 道具の一覧。**INVENTORY.md を描くだけ。手で書かない。**
+//
+// 22本あって増え続けるので、手で書くと必ず古くなる。生成は
+// weekly_inventory.sh（木曜 01:15）が回し、ここは描くだけを担当する。
+// **生成器とページは必ずセットで置く**（denki.html が6日間止まった教訓）。
+//
+// ?raw で読む理由は state.astro の注記と同じ。
+import Base from '../../layouts/Base.astro';
+import { u } from '../../lib/url';
+import src from '../../../INVENTORY.md?raw';
+import config from '../../../garden.config.json';
+
+type Item = { name: string; meta: string; desc: string; dead: boolean };
+type Group = { title: string; n: number; items: Item[] };
+
+// INVENTORY.md は `- **名前**（属性）— 説明` の羅列。**ここで書式を仮定する**ので、
+// 生成側を変えたらここも直す。読めなかったらビルドを止める(黙って空を描かない)
+const groups: Group[] = [];
+let stamp = '';
+for (const line of src.split('\n')) {
+  const h1 = line.match(/^#\s+(.*)$/);
+  if (h1) { stamp = h1[1].replace(/^道具の棚卸し\s*/, '').trim(); continue; }
+  const h2 = line.match(/^##\s+(.*?)\s*\((\d+)\)\s*$/);
+  if (h2) { groups.push({ title: h2[1], n: Number(h2[2]), items: [] }); continue; }
+  const it = line.match(/^-\s+\*\*(.+?)\*\*(?:（(.*?)）)?\s*—\s*(.*)$/);
+  if (it && groups.length) {
+    groups[groups.length - 1].items.push({
+      name: it[1],
+      meta: it[2] ?? '',
+      desc: it[3].replace(/\*\*/g, ''),
+      dead: /動いていない/.test(it[3]),
+    });
+  }
+}
+if (groups.length === 0) {
+  throw new Error('INVENTORY.md を読めなかった（inventory.py の書式が変わった？）');
+}
+
+const total = groups.reduce((s, g) => s + g.items.length, 0);
+const repo = `https://github.com/${config.repo}`;
+---
+<Base title="Toolbox" description="Skill・サブエージェント・フック・道具・常駐の一覧。手で書かず、棚卸しから自動生成する。">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px">Toolbox</h1>
+    <p class="lead">
+      このガーデンを回している道具の一覧。<strong>手で書いていない。</strong>
+      週に一度の棚卸し（木曜 01:15）が書き出したものを、そのまま描いている。
+    </p>
+    <p class="muted" style="font-size:0.8rem; margin:10px 0 0">
+      棚卸し {stamp} 時点 · {total} 件
+    </p>
+  </section>
+
+  <nav class="jump">
+    {groups.map((g) => (
+      <a href={`#${encodeURIComponent(g.title)}`}>{g.title}<span class="n">{g.items.length}</span></a>
+    ))}
+  </nav>
+
+  {groups.map((g) => (
+    <section class="section">
+      <div class="section-head">
+        <h2 id={g.title}>{g.title}</h2>
+        <span class="muted" style="font-size:0.82rem">{g.items.length} 件</span>
+      </div>
+      <ul class="tool-list">
+        {g.items.map((it) => (
+          <li class={it.dead ? 'dead' : ''}>
+            <div class="row">
+              <code class="tool-name">{it.name}</code>
+              {it.meta && <span class="tool-meta">{it.meta}</span>}
+            </div>
+            {it.desc && <p class="summary">{it.desc}</p>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+
+  <section class="section">
+    <p class="muted" style="font-size:0.85rem">
+      中身は <a href={`${repo}/blob/${config.branch}/INVENTORY.md`}>INVENTORY.md</a>。
+      判断の中身（Skill の本体）は載せていない — 具体的すぎて、他人には文脈が要りすぎる。
+      考え方の方は <a href={u('/garden/')}>Garden</a> にある。
+    </p>
+  </section>
+</Base>
+
+<style>
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+  .jump a {
+    font-size: 0.82rem; text-decoration: none;
+    border: 1px solid var(--border); border-radius: 999px; padding: 3px 12px;
+  }
+  .jump a:hover { border-color: var(--accent); }
+  .jump .n {
+    font-family: var(--mono); font-size: 0.72rem;
+    color: var(--fg-muted); margin-left: 7px;
+  }
+
+  .tool-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+  .tool-list .row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .tool-name { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; }
+  .tool-meta { font-size: 0.76rem; color: var(--fg-muted); }
+  .tool-list .summary { margin: 4px 0 0; font-size: 0.9rem; }
+  /* 止まっているものは目で分かるようにする。**一覧が嘘をつくのが一番困る** */
+  .dead .tool-name { color: var(--wip); }
+</style>

@@ -29,14 +29,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <header class="site-header">
       <div class="wrap">
         <a class="brand" href={u('/')}>🌱 {SITE.name}</a>
+        <!--
+          **6本に固定する。** 上が動くと毎回置き場所が変わって覚えられなくなる
+          （2026-07-31 の設計より）。Tags と State はトップの下段から飛べる。
+        -->
         <nav class="site-nav">
           <a href={u('/garden/')}>Garden</a>
           <a href={u('/log/')}>Log</a>
           <a href={u('/works/')}>Works</a>
           <a href={u('/seeds/')}>Seeds</a>
-          <a href={u('/tags/')}>Tags</a>
+          <a href={u('/toolbox/')}>Toolbox</a>
           <a href={u('/search/')}>Search</a>
-          <a href={u('/state/')}>State</a>
         </nav>
       </div>
     </header>
