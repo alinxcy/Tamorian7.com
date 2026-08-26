@@ -1,89 +1,236 @@
 ---
+// トップ = ダッシュボード（spec/site-v3.md）。
+//
+// **自分用に振り切る。** 上から「現在地 → 次の1手 → 未確定 → 最近の動き」。
+// 他人が最初に読むのは Log か Garden なので、そこへの導線は下に置く。
+//
+// 縦の軸(プロジェクト)は STATE.md から機械が作り、
+// 横の軸(記事)は人が書く。**片方を機械、片方を人が持つ**のが v3 の要点。
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import NoteCard from '../components/NoteCard.astro';
 import { SITE } from '../site.config';
-import { getGarden, getLog, getWorks, getTagCounts, fmtDate } from '../lib/util';
+import {
+  getGarden, getLog, getWorks, getProjectItems, fmtDate, KIND_LABEL,
+  type RefItem,
+} from '../lib/util';
+import { state, staleness, byUrgency, type Project } from '../lib/state';
 import { u } from '../lib/url';
 
 const garden = await getGarden();
 const log = await getLog();
 const works = await getWorks();
-const tagCounts = [...(await getTagCounts()).entries()].sort((a, b) => b[1] - a[1]);
 
-const active = works.filter((w) => w.data.status !== 'published').slice(0, 6); // 作業中
-const growing = garden.slice(0, 6);
-const latestLog = log.slice(0, 5);
+// 種の在庫。**publish で絞らない** — 手元にいくつ寝ているかを見るための数
+const allSeeds = await getCollection('seeds');
+const seedsShown = allSeeds.filter((s) => s.data.publish).length;
+
+const { days, stale } = staleness();
+const projects = byUrgency();
+
+// **縦の軸(プロジェクト)と横の軸(記事)の交点。** slug ごとに集めておく。
+// JSX の中で await できないのでここで解いておく
+const itemsBySlug = new Map<string, RefItem[]>();
+for (const p of projects) {
+  const { notes, logs, seeds } = await getProjectItems(p.slug);
+  itemsBySlug.set(p.slug, [...notes, ...logs, ...seeds]);
+}
+
+// works に本文があるプロジェクトはそこへ、無ければ STATE.md の link へ
+const workIds = new Set(works.map((w) => w.id));
+const projHref = (p: Project) => {
+  if (workIds.has(p.slug)) return u(`/works/${p.slug}/`);
+  const l = String(p.link ?? '');
+  return l.startsWith('/') ? u(l) : l;
+};
+const isExternal = (p: Project) =>
+  !workIds.has(p.slug) && /^https?:\/\//.test(String(p.link ?? ''));
+
+const STATUS_LABEL: Record<string, string> = {
+  active: '進行中', paused: '停止中', blocked: '詰まり', done: '完了',
+};
+
+// 最近の動き。log と garden を1本の時系列に混ぜる。**書いた順に見たい**ので混ぜる
+type Recent = { kind: 'log' | 'garden'; id: string; title: string; at: Date };
+const recent: Recent[] = [
+  ...log.map((e) => ({ kind: 'log' as const, id: e.id, title: e.data.title, at: e.data.date })),
+  ...garden.map((e) => ({ kind: 'garden' as const, id: e.id, title: e.data.title, at: e.data.updated })),
+].sort((a, b) => b.at.getTime() - a.at.getTime()).slice(0, 8);
+
+const hrefOf = (r: Recent) => u(`/${r.kind}/${r.id}/`);
 ---
-<Base>
-  <section class="section" style="margin-top:32px">
-    <h1 style="margin:0 0 4px; font-size:1.9rem">{SITE.name}</h1>
-    <p class="lead">{SITE.tagline}</p>
+<Base description={state.current_focus}>
+  <section class="section hero">
+    <p class="eyebrow">いまやっていること</p>
+    <h1>{state.current_focus}</h1>
+    <p class="stamp">
+      STATE.md 更新 {state.last_updated}
+      <span class={stale ? 'stale' : ''}>
+        （{days === 0 ? '今日' : `${days} 日前`}{stale ? ' — 更新漏れの可能性' : ''}）
+      </span>
+    </p>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <h2>タグで探す</h2>
-      <a class="muted" href={u('/tags/')}>すべてのタグ →</a>
+      <h2>プロジェクト</h2>
+      <span class="muted" style="font-size:0.82rem">
+        {projects.length} 件 · 詰まりから順に
+      </span>
     </div>
-    <div class="tags">
-      {tagCounts.map(([tag, n]) => (
-        <a class="tag" href={u(`/tags/${tag}/`)}>{tag}<span class="n">{n}</span></a>
-      ))}
-    </div>
+    <ul class="proj-list">
+      {projects.map((p) => {
+        const items = itemsBySlug.get(p.slug) ?? [];
+        return (
+          <li class="proj">
+            <div class="proj-head">
+              <a class="proj-slug" href={projHref(p)}
+                 target={isExternal(p) ? '_blank' : undefined}
+                 rel={isExternal(p) ? 'noopener' : undefined}>
+                {p.slug}{isExternal(p) && <span class="ext" aria-hidden="true"> ↗</span>}
+              </a>
+              <span class={`badge st-${p.status}`}>{STATUS_LABEL[p.status] ?? p.status}</span>
+            </div>
+            <p class="proj-summary">{p.summary}</p>
+            {p.next_action && (
+              <p class="proj-next"><span class="k">次の1手</span>{p.next_action}</p>
+            )}
+            {p.next_action_at && <p class="proj-at"><code>{p.next_action_at}</code></p>}
+            {items.length > 0 && (
+              <p class="proj-notes">
+                {items.map((it) => (
+                  <a class="chip" href={u(`/${it.kind}/${it.id}/`)}>
+                    <span class="chip-k">{KIND_LABEL[it.kind]}</span>{it.title}
+                  </a>
+                ))}
+              </p>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   </section>
 
-  {active.length > 0 && (
+  {state.pending.length > 0 && (
     <section class="section">
       <div class="section-head">
-        <h2>いま作っているもの</h2>
-        <a class="muted" href={u('/works/')}>Works 一覧 →</a>
+        <h2>未確定</h2>
+        <span class="muted" style="font-size:0.82rem">
+          {state.pending.length} 件 · 人間の判断待ち
+        </span>
       </div>
-      <div class="cards">
-        {active.map((w) => (
-          <NoteCard
-            href={u(`/works/${w.id}/`)}
-            title={w.data.title}
-            emoji={w.data.emoji}
-            summary={w.data.summary}
-            tags={w.data.tags}
-            status={w.data.status}
-          />
+      <ul class="note-list">
+        {state.pending.map((q) => (
+          <li>
+            <div class="row">
+              <span class="title"><code>{q.id}</code></span>
+              <span class="date">{String(q.raised)}</span>
+            </div>
+            <p class="summary">{q.question}</p>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )}
 
   <section class="section">
     <div class="section-head">
-      <h2>育てているノート</h2>
-      <a class="muted" href={u('/garden/')}>Garden 一覧 →</a>
-    </div>
-    <div class="cards">
-      {growing.map((note) => (
-        <NoteCard
-          href={u(`/garden/${note.id}/`)}
-          title={note.data.title}
-          summary={note.data.summary}
-          tags={note.data.tags}
-        />
-      ))}
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="section-head">
-      <h2>最新のログ</h2>
+      <h2>最近の動き</h2>
       <a class="muted" href={u('/log/')}>Log 一覧 →</a>
     </div>
     <ul class="note-list">
-      {latestLog.map((l) => (
+      {recent.map((r) => (
         <li>
           <div class="row">
-            <a class="title" href={u(`/log/${l.id}/`)}>{l.data.title}</a>
-            <span class="date">{fmtDate(l.data.date)}</span>
+            <a class="title" href={hrefOf(r)}>
+              <span class="chip-k">{KIND_LABEL[r.kind]}</span>{r.title}
+            </a>
+            <span class="date">{fmtDate(r.at)}</span>
           </div>
         </li>
       ))}
     </ul>
   </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>在庫</h2>
+      <span class="muted" style="font-size:0.82rem">{SITE.name}</span>
+    </div>
+    <div class="stock">
+      <a class="stock-cell" href={u('/log/')}>
+        <b>{log.length}</b><span>実録</span>
+      </a>
+      <a class="stock-cell" href={u('/garden/')}>
+        <b>{garden.length}</b><span>わかったこと</span>
+      </a>
+      <a class="stock-cell" href={u('/works/')}>
+        <b>{works.length}</b><span>作っているもの</span>
+      </a>
+      <a class="stock-cell" href={u('/seeds/')}>
+        <b>{seedsShown}<i>/{allSeeds.length}</i></b><span>種（公開/手元）</span>
+      </a>
+    </div>
+    <p class="muted" style="font-size:0.85rem; margin-top:14px">
+      詳しい状態は <a href={u('/state/')}>State</a>、
+      探すなら <a href={u('/search/')}>Search</a> か <a href={u('/tags/')}>Tags</a>。
+    </p>
+  </section>
 </Base>
+
+<style>
+  .hero { margin-top: 32px; }
+  .eyebrow {
+    margin: 0 0 6px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--fg-muted);
+  }
+  .hero h1 { margin: 0; font-size: 1.55rem; line-height: 1.45; text-wrap: balance; }
+  .stamp { margin: 12px 0 0; font-size: 0.8rem; color: var(--fg-muted); }
+  .stale { color: var(--wip); }
+
+  .proj-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 26px; }
+  .proj-head { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+  .proj-slug { font-family: var(--mono); font-size: 1rem; font-weight: 600; text-decoration: none; }
+  .proj-slug:hover { text-decoration: underline; }
+  .ext { font-size: 0.78em; opacity: 0.65; }
+  .proj-summary { margin: 0; font-size: 0.95rem; }
+  .proj-next { margin: 8px 0 0; font-size: 0.9rem; }
+  /* 「次の1手」であることを一目で分かるようにする。要約と混ざらないように */
+  .proj-next .k {
+    font-size: 0.72rem; font-family: var(--mono); color: var(--fg-muted);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 5px; margin-right: 7px; vertical-align: 1px;
+  }
+  .proj-at { margin: 4px 0 0; font-size: 0.8rem; color: var(--fg-muted); }
+
+  /* プロジェクトに紐づく記事。**横の軸との交点**なのでここに出す */
+  .proj-notes { margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 0.78rem; text-decoration: none;
+    border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip-k {
+    font-family: var(--mono); font-size: 0.68rem; color: var(--fg-muted);
+    margin-right: 6px;
+  }
+
+  .badge.st-active { background: rgba(110,168,254,0.15); color: var(--accent); }
+  .badge.st-paused { background: rgba(138,148,166,0.15); color: var(--planned); }
+  .badge.st-blocked { background: rgba(240,180,41,0.15); color: var(--wip); }
+  .badge.st-done { background: rgba(52,199,89,0.15); color: var(--published); }
+
+  .stock { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 560px) { .stock { grid-template-columns: repeat(2, 1fr); } }
+  .stock-cell {
+    display: flex; flex-direction: column; gap: 3px;
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 12px; text-decoration: none;
+  }
+  .stock-cell:hover { border-color: var(--accent); }
+  .stock-cell b { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+  .stock-cell i { font-style: normal; font-size: 0.9rem; color: var(--fg-muted); }
+  .stock-cell span { font-size: 0.78rem; color: var(--fg-muted); }
+</style>

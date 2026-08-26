@@ -24,7 +24,9 @@ const promotedHref = promotedTo
     <div class="meta">
       <span>{fmtDate(found)}</span>
       <span>· {status}</span>
-      <span>· <a href={url} target="_blank" rel="noopener">出典 ↗</a></span>
+      {url
+        ? <span>· <a href={url} target="_blank" rel="noopener">出典 ↗</a></span>
+        : <span>· <span class="muted">会話から</span></span>}
       {promotedHref && <span>· <a href={promotedHref}>昇格先</a></span>}
     </div>
     <div class="tags" style="margin-bottom:20px">

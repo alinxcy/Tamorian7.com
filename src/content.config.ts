@@ -40,7 +40,10 @@ const seeds = defineCollection({
   schema: z.object({
     title: z.string(),
     found: z.coerce.date(),
-    url: z.string().url(),
+    // **URL は必須にしない。** 種の入口は2つある(references/seeds.md):
+    // 外から拾ったもの(url あり)と、自分の会話から出てきたもの(url なし)。
+    // 必須のままだと後者が1本も入らなかった(2026-08-26)
+    url: z.string().url().optional(),
     why: z.string().trim().min(1),
     status: z.enum(['inbox', 'kept', 'promoted', 'dropped']),
     source: z.string().default('manual'),

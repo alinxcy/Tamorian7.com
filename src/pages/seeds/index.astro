@@ -1,0 +1,49 @@
+---
+// 種の一覧。**トップから飛べる先が無かった**ので作った(2026-08-26)。
+//
+// 種の入口は2つある。外から拾ったもの(url あり)と、自分の会話から
+// 出てきたもの(url なし)。**どちらから来たかが分かるように出す。**
+import Base from '../../layouts/Base.astro';
+import { getSeeds, fmtDate } from '../../lib/util';
+import { u } from '../../lib/url';
+
+const seeds = await getSeeds();
+
+const STATUS_LABEL: Record<string, string> = {
+  inbox: '未処理', kept: '残す', promoted: '昇格済み', dropped: '捨てた',
+};
+---
+<Base title="Seeds" description="拾いもの。まだ自分では試していないもの。">
+  <section class="section" style="margin-top:32px">
+    <h1 style="margin:0 0 4px">Seeds</h1>
+    <p class="lead">
+      他人の成果と、会話から出てきた気になる語。<strong>まだ自分では試していない。</strong>
+      拾った理由（why）だけ添えて置き、育てるかどうかは後で決める。
+    </p>
+  </section>
+  {seeds.length === 0 ? (
+    <p class="muted">公開している種はまだ無い。</p>
+  ) : (
+    <ul class="note-list">
+      {seeds.map((s) => (
+        <li>
+          <div class="row">
+            <a class="title" href={u(`/seeds/${s.id}/`)}>{s.data.title}</a>
+            <span class="date">{fmtDate(s.data.found)}</span>
+          </div>
+          <p class="summary">{s.data.why}</p>
+          <div class="tags" style="margin-top:6px">
+            <span class="tag src">{s.data.url ? '拾いもの' : '会話から'}</span>
+            <span class="tag">{STATUS_LABEL[s.data.status] ?? s.data.status}</span>
+            {s.data.tags.map((t) => <a class="tag" href={u(`/tags/${t}/`)}>{t}</a>)}
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</Base>
+
+<style>
+  /* 出どころは分類ではなく出自なので、タグと同じ見た目にしない */
+  .tag.src { font-family: var(--mono); font-size: 0.72rem; opacity: 0.85; }
+</style>
