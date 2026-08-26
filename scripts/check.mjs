@@ -61,8 +61,21 @@ const fmHasItems = (fm, key) => {
 
 // 実在する id の集合(リンク切れ検査用)
 const ids = {};
+const unpublished = {};
 for (const c of COLLECTIONS) {
   ids[c] = new Set(walk(dirOf(c)).map((f) => basename(f, '.md')));
+  // **公開されていないものを別に持つ。** ファイルがあっても publish: false なら
+  // ビルド後は404になる。存在だけ見ていた頃はこれを見逃していた(2026-08-26)
+  unpublished[c] = new Set(
+    walk(dirOf(c))
+      .filter((f) => {
+        const head = readFileSync(f, 'utf8').slice(0, 900);
+        const m = head.match(/^publish:\s*(\w+)/m);
+        // seeds は既定が false、それ以外は既定が true
+        return m ? m[1] === 'false' : c === 'seeds';
+      })
+      .map((f) => basename(f, '.md')),
+  );
 }
 
 const files = COLLECTIONS.flatMap((c) => walk(dirOf(c)).map((f) => ({ c, f })));
@@ -82,7 +95,10 @@ for (const { c, f } of files) {
     }
   });
 
-  // 2. 内部リンク切れ
+  // 2. 内部リンク切れ + 非公開ノートへのリンク
+  // **自分が非公開なら、非公開を指しても問題ない**（どちらもビルドに出ない）
+  const pubM = fm.match(/^publish:\s*(\w+)/m);
+  const selfUnpublished = pubM ? pubM[1] === 'false' : c === 'seeds';
   const linkRe = /\]\((\/(garden|log|works|seeds)\/([^)/#]+)\/?[^)]*)\)/g;
   bodyLines.forEach((l, i) => {
     for (const m of l.matchAll(linkRe)) {
@@ -90,6 +106,9 @@ for (const { c, f } of files) {
       if (!ids[coll]?.has(slug)) {
         add('error', rel, at(i), `内部リンク切れ: ${href}`,
           `${coll}/${slug}.md が存在しない`);
+      } else if (unpublished[coll]?.has(slug) && !selfUnpublished) {
+        add('error', rel, at(i), `非公開のノートへリンクしている: ${href}`,
+          `${coll}/${slug}.md は publish: false。**ビルド後は404になる**`);
       }
     }
   });

@@ -4,6 +4,7 @@ tags: [ai, llm, design]
 updated: 2026-08-26
 created: 2026-08-26
 publish: true
+project: fugu-lab
 summary: 安いモデルの出来が悪いとき、まずモデルを疑いたくなる。だが実測すると、差はプロンプトの1行にあった。「固有名詞を残せ」と頼むと6.2%しか残らず、機械で抜いて渡すと87%残った。
 ---
 
