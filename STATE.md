@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-08-26T23:27+09:00
-current_focus: "サイト v3 の形を決め、記事を4本書いた。9/5 の PC 移設まで、LAN 振り直しが律速"
+last_updated: 2026-08-27T00:03+09:00
+current_focus: "サイト v3 を実装した(ダッシュボード/Seeds/Toolbox)。9/5 の PC 移設まで、LAN 振り直しが律速"
 projects:
   - slug: state-hub
     status: active
@@ -18,8 +18,8 @@ projects:
   - slug: knowledge-garden
     status: active
     summary: "このサイトそのもの。4層モデル(seeds/log/garden/works)で育てる Astro の器"
-    next_action: "spec/site-v3.md を実装する。works は9本に揃えた"
-    next_action_at: "spec/site-v3.md と src/pages/"
+    next_action: "/works/ を /projects/ に改名するか決める。リンクが動くので本人の確認が要る"
+    next_action_at: "src/pages/works/ と spec/site-v3.md"
     link: "/works/knowledge-garden/"
   - slug: q3pe-recorder
     status: blocked
@@ -30,7 +30,7 @@ projects:
   - slug: fugu-lab
     status: active
     summary: "Sakana Fugu を月額契約すべきか判断するための計測環境。チャットで使い、使用データを溜める"
-    next_action: "ローカルLLMで同じ索引が作れるか試す。届けば契約の根拠が消える"
+    next_action: "枠の上限を点で押さえる。5時間で48万は通り58万で落ちた。ローカルLLM比較はその後"
     next_action_at: "LM Studio と ~/.claude/handoffs/tools/make_index.py"
     link: "/works/fugu-lab/"
   - slug: atelier-lab
@@ -70,6 +70,12 @@ pending:
   - id: home-router-add
     question: "自宅のルータは壁埋め込みで触れない。自分のルータを1台足して 192.168.x を作るか。Tailscale は 100.64.1.x のままでは入れられない"
     raised: 2026-08-26
+  - id: works-to-projects
+    question: "/works/ を /projects/ に改名するか。既存リンクが動くのと、works の手書き本文を projects の本文として生かすかがセットで決まる"
+    raised: 2026-08-27
+  - id: seed-url-optional
+    question: "seeds の url を必須から外した(会話由来の種を入れるため)。既存の拾いものと同じ一覧に混ぜてよいか、分けるか"
+    raised: 2026-08-27
   - id: kuroko-chat-order
     question: "kuroko-chat の Phase 0(読む窓)を先に Antigravity へ渡すか、先に LAN 振り直し+Tailscale をやるか。Phase 1 に入るとスマホから触れなくなるので順番が効く"
     raised: 2026-08-22
@@ -114,15 +120,19 @@ pending:
   **2日前から idle**。仕様書は修正済み。
 - **`~/kuroko-chat` は private。** `config/` に File Bridge の許可ルートが入るため。
 
-### knowledge-garden — Q3PE は起こした。次は seeds
+### knowledge-garden — v3 は動いた。残るは改名の判断
 
-- **`log/2026-08-19.md` を書いた**（2026-08-26）。check は error 0 / warn 0。
-- **判断ミスが1つ解けた**: 「2 は数字が要るので電波が来るまで書けない」と思っていたが、
-  型の指定は「数字**には**単位と測定条件」であって、**数字を書けとは言っていない**。
-  `lsusb` に出るかで世代が分かる、PCIe リセットを無視する —— **質的な実測だけで 2 は埋まった。**
-- B-CAS の復号手順は書いていない。**内蔵リーダーがスタブという事実だけに留めた。**
-- **次は seeds の在庫。** `pending: seed-inventory-pressure` と絡むので、
-  棚卸しと同時に「どこで見せるか」を決められる。
+- **トップをダッシュボードにした**（2026-08-27）。STATE.md を機械が描き、
+  記事は人が書く。プロジェクトごとに紐づく記事をチップで出す（2軸の交点）。
+- **`/seeds/` の一覧が存在していなかった。** 詳細ページだけあってリンク先が無い状態。
+- **`/toolbox/` を作った。** INVENTORY.md を描くだけで、手では書かない。
+  読めなかったらビルドを止める（黙って空を描くと古いのか壊れたのか分からない）。
+- **ナビを6本に固定した**（Garden / Log / Works / Seeds / Toolbox / Search）。
+  上が動くと置き場所を覚えられなくなる。Tags と State はトップの下段から。
+- **seeds の `url` を必須から外した。** 種の入口は2つあるのに、必須のままだと
+  会話由来のものが1本も入らない。→ `pending: seed-url-optional`
+- **残っているのは判断1つ**: `/works/` を `/projects/` に改名するか
+  （`pending: works-to-projects`）。**リンクが動くので勝手にやらない。**
 
 ### q3pe-recorder — 買い物待ち。ドライバ側は完成
 
@@ -148,8 +158,13 @@ pending:
   **コールドブートで消える。** ログは正常終了のまま終わっていた。
 - Q3PE の作業でマシンを2回落としたので、**手起動の運用はもう保たない**。
   `systemd --user` のサービスにして `enable --now` するのが筋。
-- **記録が残らない仕組みは変わっていない**: `tools/fugu_offload.py` は既定で chat 経由、
-  アプリが落ちていると直接 API にフォールバックし、**その経路は記録されない**。
+- **フォールバックは動いていなかった**（2026-08-27 に判明）。鍵をサービスだけが
+  環境変数で渡していて、CLI から呼ぶと届かない。**一度も成功したことがなかった。**
+  `~/.claude/secrets/sakana-api-key` を直接読むよう直し、一段目を殺して確認済み。
+  なお**枠切れの受け皿にはならない**（枠はアカウント単位）。効くのはアプリが落ちたときだけ。
+- **枠は日次ではなく5時間窓**（2026-08-27 実測）。最初の1回で窓が開く。
+  **48万トークンは通り、58万で落ちた。** 大きいバッチは窓の頭に置く。
+  → `garden/five-hour-window.md`
 - `ttft_s` を `number | null` にする件は `pending: fugu-ttft-null` へ移した。
 
 ### atelier-lab — まだ何も買っていない
@@ -277,6 +292,15 @@ pending:
 - **`atelier-lab` は private のままにすると決めた**（[DECISIONS.md](DECISIONS.md)）。
   このページからのリンクは**本人以外には 404 に見える**。既知の状態として許容している。
 - **自動車関係は本人の承認まで載せない**（`CLAUDE.md`）。Q3PE の録画サーバは対象外。
+
+### 導出ファイルの書き出し（2026-08-27 に痛い目を見た）
+
+- **委託先の枠が切れて判定が全滅し、`SEED-POOL.md` を空で上書きした。**
+  スクリプトは終了コード0で、ファイルを書き、前の90件を消した。
+- **`~/.claude/handoffs/tools/safe_write.py` を通す。** 前より半分未満になるなら書かない。
+  `tmp` へ書いて `os.replace` するので、途中で落ちても半端なファイルが残らない。
+- **道具を job の tmp に置かない。** ジョブと一緒に消える。`tools/` へ移す。
+- **systemd のユニットは `tools/` に控えがある。** 毎日動くものが手元にしか無かった。
 
 ### 既知の未処理
 
