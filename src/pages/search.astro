@@ -30,7 +30,7 @@ const uiCss = u('/pagefind/pagefind-ui.css');
     window.addEventListener('DOMContentLoaded', () => {
       if (typeof PagefindUI === 'undefined') return;
       const b = base.replace(/\/+$/, '');
-      new PagefindUI({
+      const ui = new PagefindUI({
         element: '#search',
         bundlePath,
         showSubResults: true,
@@ -45,6 +45,11 @@ const uiCss = u('/pagefind/pagefind-ui.css');
       });
       const note = document.getElementById('search-note');
       if (note) note.remove();
+
+      // **?q= で検索を URL にする。** 検索結果を他所からリンクできないと、
+      // 「探せば出る」と書いても辿り着けない(2026-08-27)
+      const q = new URLSearchParams(location.search).get('q');
+      if (q) ui.triggerSearch(q);
     });
   </script>
 </Base>
