@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-08-26T13:23+09:00
-current_focus: "会話ログの取り込み経路が通った。9/5 の PC 移設まで、LAN 振り直しが2つのプロジェクトの律速"
+last_updated: 2026-08-26T23:27+09:00
+current_focus: "サイト v3 の形を決め、記事を4本書いた。9/5 の PC 移設まで、LAN 振り直しが律速"
 projects:
   - slug: state-hub
     status: active
@@ -18,8 +18,8 @@ projects:
   - slug: knowledge-garden
     status: active
     summary: "このサイトそのもの。4層モデル(seeds/log/garden/works)で育てる Astro の器"
-    next_action: "seeds の在庫を棚卸しする。log は Q3PE を起こして一区切りついた"
-    next_action_at: "src/content/seeds/"
+    next_action: "spec/site-v3.md を実装する。works は9本に揃えた"
+    next_action_at: "spec/site-v3.md と src/pages/"
     link: "/works/knowledge-garden/"
   - slug: q3pe-recorder
     status: blocked
@@ -30,8 +30,8 @@ projects:
   - slug: fugu-lab
     status: active
     summary: "Sakana Fugu を月額契約すべきか判断するための計測環境。チャットで使い、使用データを溜める"
-    next_action: "chat アプリを常駐化する。手起動だと再起動のたびに消え、記録が残らない"
-    next_action_at: "fugu-lab/chat/ を systemd user service にする"
+    next_action: "ローカルLLMで同じ索引が作れるか試す。届けば契約の根拠が消える"
+    next_action_at: "LM Studio と ~/.claude/handoffs/tools/make_index.py"
     link: "/works/fugu-lab/"
   - slug: atelier-lab
     status: active
