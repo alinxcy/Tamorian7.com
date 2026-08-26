@@ -14,10 +14,21 @@ const uiCss = u('/pagefind/pagefind-ui.css');
 <Base title="検索">
   <section class="section" style="margin-top:32px">
     <h1 style="margin:0 0 4px">検索</h1>
-    <p class="lead">常緑ノート・ログを全文検索。</p>
+    <p class="lead">常緑ノート・ログ・道具を全文検索。</p>
   </section>
   <div class="search-box">
     <div id="search"></div>
+    <!--
+      **索引側が漢字の複合語を切る。** 「冷蔵庫」は 冷蔵 + 庫 に分かれるため、
+      複合語のまま引くと本文に当たらない（「冷蔵」なら7件、「冷蔵庫」だと1件）。
+      根治は Pagefind の言語設定を見に行く話になるので、まず使える形にした。
+      2026-08-27
+    -->
+    <p class="muted tip" style="margin-top:10px; font-size:0.82rem">
+      漢字の複合語が出ないときは、<strong>短く区切って</strong>みてください
+      （<a href="?q=冷蔵庫">冷蔵庫</a> より <a href="?q=冷蔵">冷蔵</a> の方が多く出ます）。
+      索引が語を分けて持っているためです。
+    </p>
     <p class="muted" id="search-note" style="margin-top:12px; font-size:0.85rem">
       検索インデックスはビルド時に生成されます(<code>npm run build</code> 後の
       <code>npm run preview</code> / 本番で有効)。
