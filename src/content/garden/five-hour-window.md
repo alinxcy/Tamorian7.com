@@ -2,7 +2,7 @@
 title: 枠は日次ではない — 「最初の1回」で5時間が始まる
 tags: [ai, measurement, cost]
 project: fugu-lab
-updated: 2026-08-26
+updated: 2026-08-27
 created: 2026-08-26
 publish: true
 summary: 委託先の利用枠が切れた。日次だと思って組んでいたが、実測すると「最初のリクエストで5時間の窓が開き、その窓の中で上限に当たる」形だった。手元の別のサービスと同じ構造で、バッチの置き方が変わる。
