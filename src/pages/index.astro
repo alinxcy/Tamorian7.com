@@ -15,6 +15,9 @@ import {
 } from '../lib/util';
 import { state, staleness, byUrgency, type Project } from '../lib/state';
 import { u } from '../lib/url';
+// 種の候補プールは private リポジトリにある。**数だけ**を受け取る
+// （中身は会話から抜いた語なので public には置かない。spec/site-v3.md）
+import stock from '../data/seed-stock.json';
 
 const garden = await getGarden();
 const log = await getLog();
@@ -171,6 +174,11 @@ const hrefOf = (r: Recent) => u(`/${r.kind}/${r.id}/`);
       </a>
     </div>
     <p class="muted" style="font-size:0.85rem; margin-top:14px">
+      これとは別に、会話から抜いた<strong>種の候補が {stock.total} 件</strong>
+      手元で寝ている（判定済み {stock.judged} 件・{stock.updated.slice(0, 10)} 時点）。
+      <strong>拾う仕組みではなく、選ぶ仕組みの方が足りていない。</strong>
+    </p>
+    <p class="muted" style="font-size:0.85rem; margin-top:8px">
       詳しい状態は <a href={u('/state/')}>State</a>、
       これを回している道具は <a href={u('/toolbox/')}>Toolbox</a>、
       探すなら <a href={u('/search/')}>Search</a> か <a href={u('/tags/')}>Tags</a>。
