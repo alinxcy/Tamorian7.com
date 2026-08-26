@@ -155,6 +155,29 @@ for (const { c, f } of files) {
 // 検証はここが唯一の場所になる(詳細は state.mjs)
 issues.push(...checkStateFile(ROOT));
 
+// --- コード塊の中の強調 ---
+// **``` の中では ** がそのまま文字として出る。** 書き手は自分の意図で読むので
+// 気づかない。2026-08-27 に21行見つかった(自分の書き癖)。
+// **本物のコードに ** が含まれることもある**ので error にはしない。
+for (const { c, f } of files) {
+  const rel = relative(ROOT, f);
+  const lines = readFileSync(f, 'utf8').split('\n');
+  let inside = false;
+  let fenceExcused = false;
+  lines.forEach((ln, i) => {
+    if (ln.trimStart().startsWith('```')) {
+      // 塊の直前に reason があれば、その塊は見逃す(本物のコードなど)
+      if (!inside) fenceExcused = /<!--\s*reason:/.test(lines[i - 1] ?? '');
+      inside = !inside;
+      return;
+    }
+    if (inside && !fenceExcused && ln.includes('**')) {
+      add('warn', rel, i + 1, 'コード塊の中に ** がある',
+        'そのまま記号として出る。本物のコードなら塊の直前に <!-- reason: ... --> を添える');
+    }
+  });
+}
+
 // --- CSS 変数の未定義 ---
 // **未定義の var() はエラーにならず、色が消えるだけ。**
 // 文字が背景と同じ色になって読めなくてもビルドは通る。目で見つけるしかない
