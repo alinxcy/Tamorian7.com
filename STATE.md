@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-08-22T19:53+09:00
-current_focus: "クロコの窓口を自前アプリに移す仕様が実測の上で固まった。Phase 0 を渡すか、先に LAN を振り直すかを決める段階"
+last_updated: 2026-08-26T13:23+09:00
+current_focus: "会話ログの取り込み経路が通った。9/5 の PC 移設まで、LAN 振り直しが2つのプロジェクトの律速"
 projects:
   - slug: state-hub
     status: active
@@ -18,13 +18,13 @@ projects:
   - slug: knowledge-garden
     status: active
     summary: "このサイトそのもの。4層モデル(seeds/log/garden/works)で育てる Astro の器"
-    next_action: "Q3PE の実録を log に起こす。scratch/2026-08-19.md に材料は揃っている"
-    next_action_at: "src/content/log/"
+    next_action: "seeds の在庫を棚卸しする。log は Q3PE を起こして一区切りついた"
+    next_action_at: "src/content/seeds/"
     link: "/works/knowledge-garden/"
   - slug: q3pe-recorder
     status: blocked
     summary: "遊んでいた PX-Q3PE を kernel 7.0 で生き返らせる。ドライバは動いた"
-    next_action: "極細アンテナケーブルと USB カードリーダーを注文する。ドライバ側の作業は無い"
+    next_action: "極細アンテナケーブルと USB カードリーダーを注文する。上物側のバグ2件は洗い出し済み"
     next_action_at: "~/ptx-q3pe/(パッチ済み) と ~/record_system/(上物)"
     link: "https://github.com/knight-rider/ptx"
   - slug: fugu-lab
@@ -42,7 +42,7 @@ projects:
   - slug: kuroko-chat
     status: active
     summary: "常時起動セッション(クロコ)の窓口を自前のローカルアプリに移す。実装は Antigravity"
-    next_action: "Phase 0(読む窓)を Antigravity に渡すか、先に LAN 振り直しをするか決める"
+    next_action: "Phase 0(読む窓)を Antigravity に渡すか、先に LAN 振り直しをするか決める。サイドチャットを仕様に追加済み"
     next_action_at: "~/kuroko-chat/SPEC.md"
     link: "/state/"
   - slug: peak-shifter
@@ -67,6 +67,9 @@ pending:
   - id: peakshift-before-shelf
     question: "栽培棚が無いままピークシフター v1 を作るか。棚を除くと取り分が年5000円強から1000円強に落ちる"
     raised: 2026-08-20
+  - id: home-router-add
+    question: "自宅のルータは壁埋め込みで触れない。自分のルータを1台足して 192.168.x を作るか。Tailscale は 100.64.1.x のままでは入れられない"
+    raised: 2026-08-26
   - id: kuroko-chat-order
     question: "kuroko-chat の Phase 0(読む窓)を先に Antigravity へ渡すか、先に LAN 振り直し+Tailscale をやるか。Phase 1 に入るとスマホから触れなくなるので順番が効く"
     raised: 2026-08-22
@@ -79,15 +82,16 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **kuroko-chat** — 仕様が固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
+1. **LAN の振り直し** — **9/5 の PC 移設までに必ず要る。** `kuroko-chat` の Phase 1 と
+   自宅ラズパイの両方がこれを待っている。**トークンを使わない物理作業**なので別枠。
+2. **kuroko-chat** — 仕様が固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
    実装は Antigravity に出すので、こちらの手は空く。
-2. **knowledge-garden** — 器は揃った。**中身が要る。**
-   いま一番書ける材料は Q3PE の実録で、`scratch/2026-08-19.md` に4セクション分の原料がある。
-3. **q3pe-recorder** — ドライバは動いた。**残りは買い物だけ**で、手を動かす作業が無い。
-4. **fugu-lab** / **atelier-lab** — どちらも「作ったが、まだ溜まっていない」。
+3. **knowledge-garden** — Q3PE の実録は起こした（`log/2026-08-19.md`）。**次は seeds の棚卸し。**
+4. **q3pe-recorder** — ドライバは動いた。**残りは買い物だけ**で、手を動かす作業が無い。
+5. **fugu-lab** / **atelier-lab** — どちらも「作ったが、まだ溜まっていない」。
    fugu は常駐化、atelier は注文。**どちらも判断ではなく手続き。**
-5. **peak-shifter** — 計算は終わっている。**作る対象が存在しない**ので止まっている。
-6. **state-hub** / **life-os** — 実装は済み。使ってから決める段階。
+6. **peak-shifter** — 計算は終わっている。**作る対象が存在しない**ので止まっている。
+7. **state-hub** / **life-os** — 実装は済み。使ってから決める段階。
 
 **詰まり方が3種類に分かれた。**
 `knowledge-garden` は書けば進む。`q3pe-recorder` と `atelier-lab` は物が届くまで動けない。
@@ -110,15 +114,15 @@ pending:
   **2日前から idle**。仕様書は修正済み。
 - **`~/kuroko-chat` は private。** `config/` に File Bridge の許可ルートが入るため。
 
-### knowledge-garden — Q3PE を log に起こす
+### knowledge-garden — Q3PE は起こした。次は seeds
 
-- **原料は揃っている。** `scratch/2026-08-19.md`（時系列、効かなかった手、自分のミス3件）。
-- **4セクションが全部埋まる**と確認済み。1=カードが遊んでいた / 2=実測でわかったこと /
-  3=刺さった罠 / 4=未確定のまま残したこと。
-- **直前に間違えたこと**: 「2 は数字が要るので電波が来るまで書けない」と判断した。
+- **`log/2026-08-19.md` を書いた**（2026-08-26）。check は error 0 / warn 0。
+- **判断ミスが1つ解けた**: 「2 は数字が要るので電波が来るまで書けない」と思っていたが、
   型の指定は「数字**には**単位と測定条件」であって、**数字を書けとは言っていない**。
-  質的な実測（PCIe リセットを無視する、等）で 2 は埋まる。**書き時は今。**
-- B-CAS の復号手順は書かない。**内蔵リーダーがスタブという事実だけに留める。**
+  `lsusb` に出るかで世代が分かる、PCIe リセットを無視する —— **質的な実測だけで 2 は埋まった。**
+- B-CAS の復号手順は書いていない。**内蔵リーダーがスタブという事実だけに留めた。**
+- **次は seeds の在庫。** `pending: seed-inventory-pressure` と絡むので、
+  棚卸しと同時に「どこで見せるか」を決められる。
 
 ### q3pe-recorder — 買い物待ち。ドライバ側は完成
 
@@ -132,7 +136,11 @@ pending:
 - **測ってから買う**: 端子面から干渉物までの mm / どちら向きが空いているか /
   干渉物は何か。**スロットカバーの縁ならタダで解決する。**
 - 上物（Mirakurun + EPGStation）は Antigravity が `~/record_system/` で配管まで通した。
-  **DB を SQLite に寄せる指示がまだ渡っていない**（postgres コンテナが未使用のまま起動している）。
+  **2026-08-26 に実際に読んだ**（`~/.claude/handoffs/2026-08-26-record-system-findings.md`）。
+  **`dbtype: sqlite` は既に済んでいた。** 残るは docker-compose の postgres 残骸と、
+  **バグ2件**: `encode.cmd` が存在しない `config/enc.js` を指している（録画は通るので
+  エンコードで初めて落ちる）／ `dummy-gr`（`sleep 30`）が `isDisabled: false` のまま。
+- **`tuners.yml` の偶数=t／奇数=s は正しく書けている。**
 
 ### fugu-lab — 手起動をやめる
 
