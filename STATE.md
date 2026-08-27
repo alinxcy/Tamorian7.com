@@ -3,18 +3,12 @@ schema_version: 2
 last_updated: 2026-08-27T12:05+09:00
 current_focus: "Skill が26本あって3本しか見えていなかった。一元化の方針を決めるのが先。9/5 の LAN 振り直しは日付の律速として並走"
 projects:
-  - slug: state-hub
-    status: active
-    summary: "STATE.md / DECISIONS.md / CLAUDE.md の役割を分けて、状態を1箇所に集める仕組み"
-    next_action: "pending 5件に決着条件を書けるか人間と詰める。スキーマ変更の要否はそこで決まる"
-    next_action_at: "STATE.md の pending[]"
-    link: "/state/"
   - slug: life-os
-    status: paused
-    summary: "STATE.md を人間が読める形に描画するページ。進捗率をやめ、要約とリンクのハブにした"
-    next_action: "描画対象を広げるかは、実際に使ってから決める。いまは判断材料が足りない"
-    next_action_at: "src/pages/state.astro"
-    link: "/state/"
+    status: active
+    summary: "状態と運営の仕組みそのもの。非公開リポジトリ alinxcy/life-os が本体で、公開できる結論だけをこのサイトへ出す"
+    next_action: "Skill 26本をどこに集約するか決める。~/.claude/skills/ に寄せると全リポジトリで効く"
+    next_action_at: "~/.claude/handoffs/DECISIONS.md と tools/skill_map.py"
+    link: "/works/life-os/"
   - slug: knowledge-garden
     status: active
     summary: "このサイトそのもの。4層モデル(seeds/log/garden/works)で育てる Astro の器"
@@ -109,7 +103,7 @@ pending:
 5. **fugu-lab** — 枠の形は測れた。索引の作り直しが**残り19本**、夜間ジョブが拾う。
 6. **q3pe-recorder** / **atelier-lab** — **どちらも買い物待ち。** 手を動かす作業が無い。
 7. **peak-shifter** — **実測で対象が2つ消えた。** 棚が来るまで作るものが無い。
-8. **state-hub** / **life-os** — 実装は済み。使ってから決める段階。
+8. **life-os** — 運営の仕組みそのもの（ を統合）。**本体は非公開リポジトリ。**
 
 **詰まり方が3種類に分かれている。**
 `knowledge-garden` は書けば進む。`q3pe-recorder` と `atelier-lab` は物が届くまで動けない。
@@ -272,24 +266,30 @@ claudePlayGround/.claude/ 17本   ← 手元にクローンすら無かった
 - **棚は存在せず、何を育てるかも未定**（葉物80-100W か 実もの220W+ かで倍半分変わる）。
   設計そのものは 2026-07-30 に済んでいる（170×80cm、床置きトロ舟＋天面吊りLED）。
 
-### state-hub — pending の扱いを詰める
+### life-os — 運営の仕組みそのもの（state-hub を統合した）
 
-- **観察できたこと**: `next_action_at` は文字列1個で足りた。着手する場所は1つで表せる。
-- **困ったこと**: `pending[]` に「何が揃えば決められるか / 誰が答えるか」が無い。
-- **ただしフィールドは足していない。** 決着条件は `question` の文字列に書き込めるので、
-  まずそれで足りるか試す。足りないと分かってからキーを足す。
-- **pending が5件に増えた。** 溜まりすぎたら「捨てる」も選択肢にする。
+**2026-08-27 に3つを1つにした。** `state-hub`（状態ファイルの役割分け）と
+`life-os`（それを描くページ）は**同じものを2つの名前で呼んでいた**。
+描く役はトップのダッシュボードが吸収したので、名前の方を運営全体に寄せた。
 
-### life-os — 使ってから決める
+**本体は非公開リポジトリ `alinxcy/life-os`**（旧 `claude-handoffs`）。
+ローカルは `~/.claude/handoffs` のまま — 直書きしている箇所が多すぎて、
+パスを変える価値が無い。
 
-- `/state/` はフロントマター（`current_focus` / `projects[]` / `pending[]`）だけを描く。
-- **直前に試したこと**: `readFileSync(new URL('../../STATE.md', import.meta.url))`。
-- **ダメだった理由**: `astro build` はフロントマターを `dist/.prerender/chunks/` に
-  バンドルしてから実行するので、`import.meta.url` が**チャンクの位置**を指し ENOENT。
-  → `import src from '../../STATE.md?raw'` に変更。
-  **`astro dev` では前者でも動く**ので、ローカルの dev だけでは気づけない。
-- 本文（作業中の暗黙知）も描画するかは保留。`scratch/` など非公開寄りへ広げるなら、
-  公開の決定を取り直す必要がある。
+```
+public   Tamorian7.com    作っているもの・技術の結論
+private  life-os          運営・生活の側（電力・冷蔵庫・会話ログ・道具32本）
+```
+
+- **決定は `life-os/DECISIONS.md` に書く**（2026-08-27 に新設）。
+  `Tamorian7.com/DECISIONS.md` は公開物の決定。**寿命が違うので統合しない**
+- **`pending[]` に決着条件のキーは足していない。** `question` の文字列に
+  書き込めるので、まずそれで足りるか試す。足りないと分かってからキーを足す
+- **`pending` が12件に増えた。** 溜まりすぎたら「捨てる」も選択肢にする
+- **`next_action_at` は文字列1個で足りている。** 着手する場所は1つで表せる
+
+**いま詰まっているのは Skill の一元化**（`pending: skills-single-home`）。
+26本あって常に効くのは1本だけ、という状態が続いている。
 
 ## 3. 作業中の暗黙知
 
@@ -307,7 +307,9 @@ claudePlayGround/.claude/ 17本   ← 手元にクローンすら無かった
 - **手起動したサーバは再起動で消える。** Q3PE の作業でコールドブートを繰り返したので、
   常駐させたいものは `systemd --user` に載せる。
 
-### Claude Code のセッション（2026-08-22 に実測。詳細は `~/kuroko-chat/SPEC.md` §2）
+### kuroko-chat の土台 — Claude Code を自前で常駐させる口（2026-08-22 実測）
+
+**この節は kuroko-chat の実装根拠。** 詳細は `~/kuroko-chat/SPEC.md` §2。
 
 - **セッションには3種別ある**: `interactive` / **`Remote Control`** / `cloud`。
   `claude agents --json` と `ListAgents` で見分けられる。**別物なので混ぜない。**
