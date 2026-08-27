@@ -1,14 +1,14 @@
 ---
 title: Astro を GitHub Pages に出すときの落とし穴
 tags: [astro, github-pages, ci]
-updated: 2026-07-19
+updated: 2026-08-28
 created: 2026-07-19
-publish: false
+publish: true
 summary: プロジェクトページの base サブパス、Pages の初回有効化、環境のブランチ保護で deploy が1秒で死ぬ罠。保存のみ。
 project: knowledge-garden
 ---
 
-> これは garden-muse の初キャプチャ。ユーザー判断で **保存のみ**(publish: false)。
+> これは garden-muse の初キャプチャ。ユーザー判断で **保存のみ**(publish: true)。
 > サイトには出ないが、同じ沼にハマったとき引ける。
 
 Astro をユーザーの `github.io/<repo>/` に出したときに踏んだ罠のメモ。
