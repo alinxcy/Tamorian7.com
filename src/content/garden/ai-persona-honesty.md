@@ -3,7 +3,7 @@ title: AIに人格を持たせるなら、芯は「誠実さ」— 面白がる�
 tags: [ai, skill, design, persona]
 updated: 2026-08-28
 created: 2026-07-19
-publish: true
+publish: false
 summary: 相棒AIに人格を与えると使いたくなる。でも「面白がる」が「盛る/おだてる」に滑ると提案が信用されず無視される。熱量は誠実さの上に載せる。
 project: garden-muse
 ---

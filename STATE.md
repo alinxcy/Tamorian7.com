@@ -1,6 +1,6 @@
 ---
 schema_version: 2
-last_updated: 2026-08-28T08:25+09:00
+last_updated: 2026-08-28T08:45+09:00
 current_focus: "Skill が26本あって3本しか見えていなかった。一元化の方針を決めるのが先。9/5 の LAN 振り直しは日付の律速として並走"
 projects:
   - slug: life-os
@@ -73,8 +73,11 @@ pending:
   - id: playground-role
     question: "claudePlayGround を配布元にするか保管庫にするか。skill-return という還流の仕組みまで作ってあるが、5週間動いていない"
     raised: 2026-08-27
+  - id: localllm-at-atelier
+    question: "LocalLLM のPCをアトリエに置いて、WoL で安い時間帯だけ起こすか。Fugu が止まったときの受け皿にもなる。peak-shifter にとっては初めての「大きくて時間の自由度がある負荷」"
+    raised: 2026-08-28
   - id: kuroko-chat-order
-    question: "Tailscale を追わないと決めたので順番の問題は消えた。Phase 0(読む窓)を Antigravity に渡すかどうかだけが残っている。Phase 1 に入ると外からクロコに触れなくなる点は変わっていない"
+    question: "Phase 0(読む窓)を先に Antigravity へ渡すか、先に Tailscale を入れるか。Phase 1 に入ると外からクロコに触れなくなるので順番が効く。Tailscale は入れると決まっている"
     raised: 2026-08-22
 ---
 
@@ -88,10 +91,10 @@ pending:
 1. **Skill の一元化** — **26本あって、私が見えていたのは3本だった**（2026-08-27）。
    置き場所で効く範囲が決まる。`~/.claude/skills/` の1本だけが全リポジトリで効いていた。
    **判断1つで動く**（`pending: skills-single-home`）。
-2. **Tailscale — 本人が「いらないかも」と言った**（2026-08-28）。**追わない。**
-   ほしくなったら言う、忘れてよい、とのこと。手順書は
-   `~/.claude/handoffs/2026-09-05-tailscale-runbook.md` に残してある。
-   **LAN の振り直しもしない**（壁の機器に入れず、ルータも買わない）。
+2. **Tailscale — 自宅とアトリエを VPN で繋ぐ。必須**（2026-08-28 に本人が明言）。
+   壁の機器には入れず、ルータも買わないので**振り直さずに入れる**（A案）。
+   手順は `~/.claude/handoffs/2026-09-05-tailscale-runbook.md`。
+   アカウント作成とラズパイ設置はこれから。**`kuroko-chat` の Phase 1 が待っている。**
 3. **kuroko-chat** — 仕様は固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
 4. **knowledge-garden** — v3 は動いた。**サイトには出していない**（デプロイ元へ未反映）。
    残るは `/works/` → `/projects/` の改名の判断。
