@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-08-27T00:44+09:00
-current_focus: "サイト v3 を実装した(ダッシュボード/Seeds/Toolbox)。9/5 の PC 移設まで、LAN 振り直しが律速"
+last_updated: 2026-08-27T12:05+09:00
+current_focus: "Skill が26本あって3本しか見えていなかった。一元化の方針を決めるのが先。9/5 の LAN 振り直しは日付の律速として並走"
 projects:
   - slug: state-hub
     status: active
@@ -76,6 +76,15 @@ pending:
   - id: seed-url-optional
     question: "seeds の url を必須から外した(会話由来の種を入れるため)。既存の拾いものと同じ一覧に混ぜてよいか、分けるか"
     raised: 2026-08-27
+  - id: skills-single-home
+    question: "Skill 26本をどこに集約するか。~/.claude/skills/ に寄せると全リポジトリで効くが一覧が長くなる。claudePlayGround を配布元のまま維持する道もある"
+    raised: 2026-08-27
+  - id: skill-selfimprove-trigger
+    question: "呼ぶたびの記録は始めた。PreToolUse で過去の失敗を実行前に注入するか、週次で Skill 本文へ蒸留するか"
+    raised: 2026-08-27
+  - id: playground-role
+    question: "claudePlayGround を配布元にするか保管庫にするか。skill-return という還流の仕組みまで作ってあるが、5週間動いていない"
+    raised: 2026-08-27
   - id: kuroko-chat-order
     question: "kuroko-chat の Phase 0(読む窓)を先に Antigravity へ渡すか、先に LAN 振り直し+Tailscale をやるか。Phase 1 に入るとスマホから触れなくなるので順番が効く"
     raised: 2026-08-22
@@ -88,22 +97,60 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **LAN の振り直し** — **9/5 の PC 移設までに必ず要る。** `kuroko-chat` の Phase 1 と
-   自宅ラズパイの両方がこれを待っている。**トークンを使わない物理作業**なので別枠。
-2. **kuroko-chat** — 仕様が固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
-   実装は Antigravity に出すので、こちらの手は空く。
-3. **knowledge-garden** — Q3PE の実録は起こした（`log/2026-08-19.md`）。**次は seeds の棚卸し。**
-4. **q3pe-recorder** — ドライバは動いた。**残りは買い物だけ**で、手を動かす作業が無い。
-5. **fugu-lab** / **atelier-lab** — どちらも「作ったが、まだ溜まっていない」。
-   fugu は常駐化、atelier は注文。**どちらも判断ではなく手続き。**
-6. **peak-shifter** — 計算は終わっている。**作る対象が存在しない**ので止まっている。
-7. **state-hub** / **life-os** — 実装は済み。使ってから決める段階。
+1. **Skill の一元化** — **26本あって、私が見えていたのは3本だった**（2026-08-27）。
+   置き場所で効く範囲が決まる。`~/.claude/skills/` の1本だけが全リポジトリで効いていた。
+   **判断1つで動く**（`pending: skills-single-home`）。
+2. **LAN の振り直し** — **9/5 の PC 移設までに必ず要る。** `kuroko-chat` の Phase 1 と
+   自宅ラズパイの両方が待っている。**トークンを使わない物理作業**なので別枠。
+   手順は `~/.claude/handoffs/2026-09-05-lan-runbook.md`。**現地5分の確認で分岐が決まる。**
+3. **kuroko-chat** — 仕様は固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
+4. **knowledge-garden** — v3 は動いた。**サイトには出していない**（デプロイ元へ未反映）。
+   残るは `/works/` → `/projects/` の改名の判断。
+5. **fugu-lab** — 枠の形は測れた。索引の作り直しが**残り19本**、夜間ジョブが拾う。
+6. **q3pe-recorder** / **atelier-lab** — **どちらも買い物待ち。** 手を動かす作業が無い。
+7. **peak-shifter** — **実測で対象が2つ消えた。** 棚が来るまで作るものが無い。
+8. **state-hub** / **life-os** — 実装は済み。使ってから決める段階。
 
-**詰まり方が3種類に分かれた。**
+**詰まり方が3種類に分かれている。**
 `knowledge-garden` は書けば進む。`q3pe-recorder` と `atelier-lab` は物が届くまで動けない。
-`kuroko-chat` は**人間が順番を決めれば動く**。**判断1つで進む方が一番安い。**
+`Skill の一元化` と `kuroko-chat` は**人間が決めれば動く**。**判断1つで進む方が一番安い。**
 
 ## 2. 次のアクション
+
+### Skill の一元化 — 置き場所を決める（判断1つで動く）
+
+**26本ある。私が見えていたのは3本だった**（2026-08-27 に `tools/skill_map.py` で数えた）。
+
+```
+~/.claude/skills/          1本   offload                    ← **どこでも効く**
+Tamorian7.com/.claude/     2本   tamorian7 / update-state
+fugu-lab/.claude/          6本
+claudePlayGround/.claude/ 17本   ← 手元にクローンすら無かった
+```
+
+- **効く範囲は置き場所で決まる。** リポジトリ側のものはそこを出ると消える。
+  今夜 `atelier-lab` と `fugu-lab` を直したとき、`tamorian7` も `update-state` も効いていない
+- **重複4本は1バイトも違わなかった**（`frontend-design` / `md` / `skill-creator` /
+  `skill-harvester`）。「いいとこ取り」する差は無い。**配布の問題であって品質の問題ではない**
+- **既に道具は揃っている。** `skill-harvester`（候補の検出）/ `skill-creator`（作成とA/B評価）/
+  `skill-optimizer`（診断）/ `skill-return`（還流）/ `playground-spawn`（切り出し）。
+  **設計は完成していて運用が止まっている**（最終 push は 2026-07-20）
+- **決めること**: `~/.claude/skills/` に寄せるか、`claudePlayGround` を配布元のまま維持するか
+  （`pending: skills-single-home` / `playground-role`）
+
+### 作る2本（着手前 / 検証）
+
+**skill-harvester と自分の判断で、別々のものが出た。合わせて2本にする。**
+
+| | 入力 | 出るもの | いつ効く |
+|---|---|---|---|
+| **着手前** | メモリの `type: feedback` 9本 | 作る前に探す / 日付を叩く / 索引を信じず本文 | **作る前** |
+| **検証** | 今夜踏んだバグ5件 | 0件を検査するな / 副作用まで見ろ / 母集団を疑え / 単位 / 分母 | **作った後** |
+
+**片方では防げない。** `作る前に探す` を守っても、作った検査が0件を検査していたら素通りする。
+
+**メモリの1行では止まらなかった。** `search-before-designing` は既にあるのに、
+2026-08-27 に4回、既にあるものを作り直しかけた。**手順で道具の呼び出しを含むものは Skill へ。**
 
 ### kuroko-chat — 順番を決める（判断1つで動く）
 
@@ -152,7 +199,7 @@ pending:
   エンコードで初めて落ちる）／ `dummy-gr`（`sleep 30`）が `isDisabled: false` のまま。
 - **`tuners.yml` の偶数=t／奇数=s は正しく書けている。**
 
-### fugu-lab — 手起動をやめる
+### fugu-lab — 索引の作り直しが残り19本
 
 - **落ちる原因が分かった（2026-08-20）。** アプリのバグではない。
   **コールドブートで消える。** ログは正常終了のまま終わっていた。
@@ -164,7 +211,13 @@ pending:
   なお**枠切れの受け皿にはならない**（枠はアカウント単位）。効くのはアプリが落ちたときだけ。
 - **枠は日次ではなく5時間窓**（2026-08-27 実測）。最初の1回で窓が開く。
   **48万トークンは通り、58万で落ちた。** 大きいバッチは窓の頭に置く。
-  → `garden/five-hour-window.md`
+  → `garden/five-hour-window.md`。**投げる前に `tools/window.py` で残りを見る**
+- **品質ゲートが一度も何も止めていなかった**（2026-08-27 朝に発覚）。判定して報告して
+  `exit(3)` するが、**書いたファイルを消していなかった**。呼ぶ側は「無ければ作る」ので
+  次の回は飛ばす。対象56本のうち31本が落ちる品質のまま溜まっていた。
+  → 落ちたら `.rejected` へ退避する。**残り19本を夜間ジョブが作り直す**
+- **識別子が20個未満の会話では残存率の判定を棄権する。** 日本語だけの議論では
+  2〜5個しか取れず、0/50/100% の粗い値しか出ない。**測れないことと悪いことは違う**
 - `ttft_s` を `number | null` にする件は `pending: fugu-ttft-null` へ移した。
 
 ### atelier-lab — まだ何も買っていない
@@ -329,6 +382,28 @@ pending:
   `tmp` へ書いて `os.replace` するので、途中で落ちても半端なファイルが残らない。
 - **道具を job の tmp に置かない。** ジョブと一緒に消える。`tools/` へ移す。
 - **systemd のユニットは `tools/` に控えがある。** 毎日動くものが手元にしか無かった。
+
+### Skill とフック（2026-08-27）
+
+- **Skill は置き場所で効く範囲が決まる。** `~/.claude/skills/` は全リポジトリ、
+  `<repo>/.claude/skills/` はその中だけ。**全体は26本あり、常に効くのは1本だけ**
+- **`tools/skill_map.py` で数える。** `inventory.py` は「いま効いているもの」しか出さない
+- **Skill 呼び出しはフックで拾える。** `PostToolUse` / `PostToolUseFailure` の
+  `matcher: "Skill"`。`tool_input.skill` に名前が入る。**再読込なしで効いた**
+- 記録は `~/.claude/handoffs/skill-use.jsonl`。記録係は**何が起きても終了コード0**で返す。
+  記録が本体を巻き込んで止めるのは本末転倒
+
+### 検査を書くときの決めごと（2026-08-27 に2回続けて踏んだ）
+
+- **検査を足したら、必ず一度わざと落として、期待した副作用まで見る。**
+  終了コードとログでは足りない。**「ゲートに掛かった」と出るのに成果物が残っていた**
+- **対象が0件なら「検査した」ことにしない。** 空のループは常に通る。
+  `walk()` が `.md` しか返さず `.astro` が0件だった
+- **閾値を決めるとき、その母集団が疑っている当のものの産物でないか確かめる。**
+  ゲートに掛かって残った索引を含む分布で、そのゲートの閾値を決めかけた
+- **単位を揃える。** `len()` は文字数、ファイルサイズはバイト。日本語は1文字3バイトで
+  **3倍甘くなる**。日付は `toISOString()` が UTC で、JST の朝方が前日になる
+- **分母が足りない指標は棄権させる。** 落とすのと測れないのは違う
 
 ### 既知の未処理
 
