@@ -1,6 +1,6 @@
 ---
 schema_version: 2
-last_updated: 2026-08-27T12:05+09:00
+last_updated: 2026-08-28T08:25+09:00
 current_focus: "Skill が26本あって3本しか見えていなかった。一元化の方針を決めるのが先。9/5 の LAN 振り直しは日付の律速として並走"
 projects:
   - slug: life-os
@@ -61,12 +61,6 @@ pending:
   - id: peakshift-before-shelf
     question: "栽培棚が無いままピークシフター v1 を作るか。棚の取り分を測り直したら年1,586〜3,948円で、元の5,000円強は最悪の窓と比べていた"
     raised: 2026-08-20
-  - id: home-router-add
-    question: "自宅のルータは壁埋め込みで触れない。自分のルータを1台足して 192.168.x を作るか。Tailscale は 100.64.1.x のままでは入れられない"
-    raised: 2026-08-26
-  - id: works-to-projects
-    question: "/works/ を /projects/ に改名するか。既存リンクが動くのと、works の手書き本文を projects の本文として生かすかがセットで決まる"
-    raised: 2026-08-27
   - id: seed-url-optional
     question: "seeds の url を必須から外した(会話由来の種を入れるため)。既存の拾いものと同じ一覧に混ぜてよいか、分けるか"
     raised: 2026-08-27
@@ -80,7 +74,7 @@ pending:
     question: "claudePlayGround を配布元にするか保管庫にするか。skill-return という還流の仕組みまで作ってあるが、5週間動いていない"
     raised: 2026-08-27
   - id: kuroko-chat-order
-    question: "kuroko-chat の Phase 0(読む窓)を先に Antigravity へ渡すか、先に LAN 振り直し+Tailscale をやるか。Phase 1 に入るとスマホから触れなくなるので順番が効く"
+    question: "Tailscale を追わないと決めたので順番の問題は消えた。Phase 0(読む窓)を Antigravity に渡すかどうかだけが残っている。Phase 1 に入ると外からクロコに触れなくなる点は変わっていない"
     raised: 2026-08-22
 ---
 
@@ -94,9 +88,10 @@ pending:
 1. **Skill の一元化** — **26本あって、私が見えていたのは3本だった**（2026-08-27）。
    置き場所で効く範囲が決まる。`~/.claude/skills/` の1本だけが全リポジトリで効いていた。
    **判断1つで動く**（`pending: skills-single-home`）。
-2. **LAN の振り直し** — **9/5 の PC 移設までに必ず要る。** `kuroko-chat` の Phase 1 と
-   自宅ラズパイの両方が待っている。**トークンを使わない物理作業**なので別枠。
-   手順は `~/.claude/handoffs/2026-09-05-lan-runbook.md`。**現地5分の確認で分岐が決まる。**
+2. **Tailscale — 本人が「いらないかも」と言った**（2026-08-28）。**追わない。**
+   ほしくなったら言う、忘れてよい、とのこと。手順書は
+   `~/.claude/handoffs/2026-09-05-tailscale-runbook.md` に残してある。
+   **LAN の振り直しもしない**（壁の機器に入れず、ルータも買わない）。
 3. **kuroko-chat** — 仕様は固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
 4. **knowledge-garden** — v3 は動いた。**サイトには出していない**（デプロイ元へ未反映）。
    残るは `/works/` → `/projects/` の改名の判断。
