@@ -1,6 +1,6 @@
 ---
 schema_version: 2
-last_updated: 2026-08-28T08:45+09:00
+last_updated: 2026-08-28T13:10+09:00
 current_focus: "Skill が26本あって3本しか見えていなかった。一元化の方針を決めるのが先。9/5 の LAN 振り直しは日付の律速として並走"
 projects:
   - slug: life-os
@@ -36,7 +36,7 @@ projects:
   - slug: kuroko-chat
     status: active
     summary: "常時起動セッション(クロコ)の窓口を自前のローカルアプリに移す。実装は Antigravity"
-    next_action: "Phase 0(読む窓)を Antigravity に渡すか、先に LAN 振り直しをするか決める。サイドチャットを仕様に追加済み"
+    next_action: "Phase 0(読む窓)を Antigravity に渡す。Tailscale が入って「Phase 1 で外から触れなくなる」心配は消えた"
     next_action_at: "~/kuroko-chat/SPEC.md"
     link: "/state/"
   - slug: peak-shifter
@@ -76,9 +76,6 @@ pending:
   - id: localllm-at-atelier
     question: "LocalLLM のPCをアトリエに置いて、WoL で安い時間帯だけ起こすか。Fugu が止まったときの受け皿にもなる。peak-shifter にとっては初めての「大きくて時間の自由度がある負荷」"
     raised: 2026-08-28
-  - id: kuroko-chat-order
-    question: "Phase 0(読む窓)を先に Antigravity へ渡すか、先に Tailscale を入れるか。Phase 1 に入ると外からクロコに触れなくなるので順番が効く。Tailscale は入れると決まっている"
-    raised: 2026-08-22
 ---
 
 # 現在の状態
@@ -91,10 +88,9 @@ pending:
 1. **Skill の一元化** — **26本あって、私が見えていたのは3本だった**（2026-08-27）。
    置き場所で効く範囲が決まる。`~/.claude/skills/` の1本だけが全リポジトリで効いていた。
    **判断1つで動く**（`pending: skills-single-home`）。
-2. **Tailscale — 自宅とアトリエを VPN で繋ぐ。必須**（2026-08-28 に本人が明言）。
-   壁の機器には入れず、ルータも買わないので**振り直さずに入れる**（A案）。
-   手順は `~/.claude/handoffs/2026-09-05-tailscale-runbook.md`。
-   アカウント作成とラズパイ設置はこれから。**`kuroko-chat` の Phase 1 が待っている。**
+2. **Tailscale — 自宅PCとスマホが繋がった**（2026-08-28）。**`--netfilter-mode=off` が鍵。**
+   ルータ購入も LAN 振り直しも不要だった。中継なしの直接接続で 72.6ms。
+   **次はラズパイをアトリエへ。** それで WoL の発射台ができる。
 3. **kuroko-chat** — 仕様は固まった。**着手の順番だけが未決**（`pending: kuroko-chat-order`）。
 4. **knowledge-garden** — v3 は動いた。**サイトには出していない**（デプロイ元へ未反映）。
    残るは `/works/` → `/projects/` の改名の判断。
@@ -144,20 +140,20 @@ claudePlayGround/.claude/ 17本   ← 手元にクローンすら無かった
 **メモリの1行では止まらなかった。** `search-before-designing` は既にあるのに、
 2026-08-27 に4回、既にあるものを作り直しかけた。**手順で道具の呼び出しを含むものは Skill へ。**
 
-### kuroko-chat — 順番を決める（判断1つで動く）
+### kuroko-chat — 順番の問題は消えた（2026-08-28）
 
-- **仕様は `~/kuroko-chat/SPEC.md`。実測は `probes/` 5本。** 推測で書いた行は無い。
-- **選ぶのは2つのうちどちらを先にやるか。**
-  - **A. Phase 0（読む窓）を Antigravity に渡す** — 今日から動ける。
-    transcript を読むだけなので**既存の Remote Control を壊さない**
-  - **B. 先に LAN 振り直し + Tailscale** — 退路を作ってから全部やる。作業中ネットが落ちる
-- **なぜ順番が効くか**: `/remote-control` は `--print` で拒否される（実測）。
+**Tailscale が入ったので、A か B かで悩む理由が無くなった。**
+「Phase 1 に入ると外からクロコに触れなくなる」のが順番を縛っていたが、**退路ができた。**
+残るのは **Phase 0（読む窓）を Antigravity に渡すかどうか**だけ。
+
+- **仕様は `~/kuroko-chat/SPEC.md`。実測は `probes/` 5本。** 推測で書いた行は無い
+- **順番が効いていた理由**: `/remote-control` は `--print` で拒否される（実測）。
   **アプリがセッションを持った瞬間、スマホからクロコに触れなくなる。**
-  実装で回避できないので、Tailscale は Phase 1 の**前**に要る。
+  実装で回避できないので退路が要ったが、**Tailscale がその退路になった**
 - **引き継ぐべきセッションを取り違えていた。** スマホで「常時起動プロセス・接続済み」と
   出ているのは `kind:"background"` の方。`pts/0` の `tamorian7-com-da`（`interactive`）は
-  **2日前から idle**。仕様書は修正済み。
-- **`~/kuroko-chat` は private。** `config/` に File Bridge の許可ルートが入るため。
+  idle。仕様書は修正済み
+- **`~/kuroko-chat` は private。** `config/` に File Bridge の許可ルートが入るため
 
 ### knowledge-garden — v3 は動いた。残るは改名の判断
 
