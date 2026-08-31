@@ -1,6 +1,6 @@
 ---
 schema_version: 2
-last_updated: 2026-08-28T13:10+09:00
+last_updated: 2026-08-31T19:20+09:00
 current_focus: "Skill が26本あって3本しか見えていなかった。一元化の方針を決めるのが先。9/5 の LAN 振り直しは日付の律速として並走"
 projects:
   - slug: life-os
@@ -46,6 +46,12 @@ projects:
     next_action_at: "atelier-lab の jepx/peakshift.py"
     link: "https://github.com/alinxcy/atelier-lab"
 pending:
+  - id: dashboard-exposure-level
+    question: "トップのダッシュボード(次の1手・未確定・ローカルパス)をどこまで公開に出すか。現状は全部見える"
+    raised: 2026-08-31
+  - id: life-os-naming
+    question: "life-os という名前が実体(横断運営の機械)と合っていない。改名するか"
+    raised: 2026-08-31
   - id: main-merge-timing
     question: "main へのマージをいつ行うか。試験運用の区切りをどう判断するか"
     raised: 2026-08-13
