@@ -1,121 +1,216 @@
 ---
-// 道具の一覧。**INVENTORY.md を描くだけ。手で書かない。**
+// 道具の一覧。**inventory.json を描くだけ。手で書かない。**
 //
-// 22本あって増え続けるので、手で書くと必ず古くなる。生成は
-// weekly_inventory.sh（木曜 01:15）が回し、ここは描くだけを担当する。
+// 112本あって増え続けるので、手で書くと必ず古くなる。生成は
+// `inventory.py --json` が回し、ここは描くだけを担当する。
 // **生成器とページは必ずセットで置く**（denki.html が6日間止まった教訓）。
 //
-// ?raw で読む理由は state.astro の注記と同じ。
+// 2026-08-31 に INVENTORY.md の正規表現読みから JSON に切り替えた。理由は2つ:
+//   - 本文（docstring 全体）を載せたいが、マークダウン+正規表現では壊れる
+//   - 探索先が handoffs/tools だけで、**atelier-lab の55本が見えていなかった**
+//     （32本と出ていたが実際は112本）
 import Base from '../../layouts/Base.astro';
 import { u } from '../../lib/url';
-import src from '../../../INVENTORY.md?raw';
+import inv from '../../data/inventory.json';
 import config from '../../../garden.config.json';
 
-type Item = { name: string; meta: string; desc: string; dead: boolean };
-type Group = { title: string; id: string; n: number; items: Item[] };
-
-// INVENTORY.md は `- **名前**（属性）— 説明` の羅列。**ここで書式を仮定する**ので、
-// 生成側を変えたらここも直す。読めなかったらビルドを止める(黙って空を描かない)
-const groups: Group[] = [];
-let stamp = '';
-for (const line of src.split('\n')) {
-  const h1 = line.match(/^#\s+(.*)$/);
-  if (h1) { stamp = h1[1].replace(/^道具の棚卸し\s*/, '').trim(); continue; }
-  const h2 = line.match(/^##\s+(.*?)\s*\((\d+)\)\s*$/);
-  if (h2) {
-    // **見出しの文字をそのまま id にしない。** 「常駐（systemd --user）」のように
-    // 空白と全角が混ざると、href 側のエンコードと噛み合わなくなる
-    groups.push({ title: h2[1], id: `g${groups.length}`, n: Number(h2[2]), items: [] });
-    continue;
-  }
-  const it = line.match(/^-\s+\*\*(.+?)\*\*(?:（(.*?)）)?\s*—\s*(.*)$/);
-  if (it && groups.length) {
-    groups[groups.length - 1].items.push({
-      name: it[1],
-      meta: it[2] ?? '',
-      desc: it[3].replace(/\*\*/g, ''),
-      dead: /動いていない/.test(it[3]),
-    });
-  }
-}
-if (groups.length === 0) {
-  throw new Error('INVENTORY.md を読めなかった（inventory.py の書式が変わった？）');
+// **読めなかったらビルドを止める。** 黙って空を描くと、「まだ作っていない」のか
+// 「読めていない」のか人間が区別できない
+if (!inv || !Array.isArray(inv.tools) || inv.tools.length === 0) {
+  throw new Error('inventory.json が空（inventory.py --json を先に走らせる）');
 }
 
-const total = groups.reduce((s, g) => s + g.items.length, 0);
+type Tool = { name: string; group: string; head: string; body: string; scars: string[]; age: string };
+const tools = inv.tools as Tool[];
+
+// 置き場ごとにまとめる。**傷の多い順**に並べる — 直した回数が多いものほど、
+// 読むと得るものがある
+const byGroup = new Map<string, Tool[]>();
+for (const t of tools) {
+  if (!byGroup.has(t.group)) byGroup.set(t.group, []);
+  byGroup.get(t.group)!.push(t);
+}
+for (const list of byGroup.values()) list.sort((a, b) => b.scars.length - a.scars.length);
+
+const nScar = tools.filter((t) => t.scars.length > 0).length;
+const nChars = tools.reduce((s, t) => s + (t.body?.length ?? 0), 0);
+const stamp = (inv.generated ?? '').replace('T', ' ');
 const repo = `https://github.com/${config.repo}`;
+
+const sections = [
+  ...[...byGroup.entries()].map(([title, items], i) => ({ id: `t${i}`, title, items })),
+];
 ---
-<Base title="Toolbox" description="Skill・サブエージェント・フック・道具・常駐の一覧。手で書かず、棚卸しから自動生成する。">
+<Base title="Toolbox" description="道具・Skill・サブエージェント・フック・常駐の一覧。手で書かず、道具そのものから自動生成する。">
   <section class="section" style="margin-top:32px">
     <h1 style="margin:0 0 4px">Toolbox</h1>
     <p class="lead">
-      このガーデンを回している道具の一覧。<strong>手で書いていない。</strong>
-      週に一度の棚卸し（木曜 01:15）が書き出したものを、そのまま描いている。
+      この庭を回している道具の一覧。<strong>紹介文を手で書いていない。</strong>
+      道具の中に書いてある説明（docstring）を、そのまま並べている。
     </p>
-    <p class="muted" style="font-size:0.8rem; margin:10px 0 0">
-      棚卸し {stamp} 時点 · {total} 件
+    <div class="stats">
+      <div><b>{tools.length}</b><span>道具</span></div>
+      <div><b>{nScar}</b><span>傷を持つ</span></div>
+      <div><b>{nChars.toLocaleString()}</b><span>説明の字数</span></div>
+      <div><b>{inv.skills.length}</b><span>Skill</span></div>
+      <div><b>{inv.agents.length}</b><span>Agent</span></div>
+      <div><b>{inv.hooks.length}</b><span>フック</span></div>
+      <div><b>{inv.services.length}</b><span>常駐</span></div>
+    </div>
+    <p class="muted scar-note">
+      <span class="dot"></span>
+      <strong>傷を持つ</strong> ＝ 説明の中に日付つきの教訓が埋まっている道具。
+      <strong>壊れた日が書いてある。</strong>行を開くと読める。
     </p>
+    <p class="muted" style="font-size:0.8rem; margin:10px 0 0">棚卸し {stamp} 時点</p>
   </section>
 
   <nav class="jump">
-    {groups.map((g) => (
-      <a href={`#${g.id}`}>{g.title}<span class="n">{g.items.length}</span></a>
-    ))}
+    {sections.map((s) => (<a href={`#${s.id}`}>{s.title}<span class="n">{s.items.length}</span></a>))}
+    <a href="#skill">Skill<span class="n">{inv.skills.length}</span></a>
+    <a href="#agent">Agent<span class="n">{inv.agents.length}</span></a>
+    <a href="#hook">フック<span class="n">{inv.hooks.length}</span></a>
+    <a href="#svc">常駐<span class="n">{inv.services.length}</span></a>
   </nav>
 
   <!--
     **検索に載せる。** Pagefind は data-pagefind-body のある要素だけを拾うので、
-    付けないと 54件が1つも引けない。「何がなんだか分からない」を解くページで
+    付けないと1件も引けない。「何がなんだか分からない」を解くページで
     検索できないのは本末転倒（2026-08-27）。
   -->
   <div data-pagefind-body>
-  {groups.map((g) => (
+  {sections.map((s) => (
     <section class="section">
       <div class="section-head">
-        <h2 id={g.id}>{g.title}</h2>
-        <span class="muted" style="font-size:0.82rem">{g.items.length} 件</span>
+        <h2 id={s.id}>{s.title}</h2>
+        <span class="muted" style="font-size:0.82rem">{s.items.length} 件</span>
       </div>
-      <ul class="tool-list">
-        {g.items.map((it) => (
-          <li class={it.dead ? 'dead' : ''}>
-            <div class="row">
-              <code class="tool-name">{it.name}</code>
-              {it.meta && <span class="tool-meta">{it.meta}</span>}
-            </div>
-            {it.desc && <p class="summary">{it.desc}</p>}
-          </li>
+      <div class="rows">
+        {s.items.map((t) => (
+          <details>
+            <summary>
+              <code class="tool-name">{t.name}</code>
+              <span class="head">{t.head || '—'}</span>
+              {t.scars.length > 0 && (
+                <span class="scar" title={t.scars.join(' · ')}>傷 {t.scars.length}</span>
+              )}
+              <span class="age">{t.age}</span>
+            </summary>
+            <pre class="doc">{t.body || '（説明が書かれていない）'}</pre>
+          </details>
         ))}
-      </ul>
+      </div>
     </section>
   ))}
+
+  <section class="section">
+    <div class="section-head"><h2 id="skill">Skill</h2>
+      <span class="muted" style="font-size:0.82rem">{inv.skills.length} 件</span></div>
+    <div class="tw"><table><thead><tr><th>名前</th><th>置き場</th><th>何をするもの</th></tr></thead>
+      <tbody>{inv.skills.map((s: any) => (
+        <tr><td><code>{s.name}</code></td><td class="nw">{s.scope}</td><td>{s.desc || '—'}</td></tr>
+      ))}</tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2 id="agent">サブエージェント</h2>
+      <span class="muted" style="font-size:0.82rem">{inv.agents.length} 件</span></div>
+    <div class="tw"><table><thead><tr><th>名前</th><th>置き場</th><th>何をするもの</th></tr></thead>
+      <tbody>{inv.agents.map((a: any) => (
+        <tr><td><code>{a.name}</code></td><td class="nw">{a.scope}</td><td>{a.desc || '—'}</td></tr>
+      ))}</tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2 id="hook">フック</h2>
+      <span class="muted" style="font-size:0.82rem">{inv.hooks.length} 件</span></div>
+    <p class="muted" style="font-size:0.85rem; margin:0 0 12px">
+      会話の節目で自動的に走る。<strong>書いた本人が忘れる</strong>ので並べる。
+    </p>
+    <div class="tw"><table><thead><tr><th>いつ</th><th>対象</th><th>走るもの</th></tr></thead>
+      <tbody>{inv.hooks.map((h: any) => (
+        <tr><td class="nw">{h.event}</td><td class="nw"><code>{h.matcher || '—'}</code></td>
+          <td><code class="sm">{h.cmd}</code></td></tr>
+      ))}</tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2 id="svc">常駐（systemd --user）</h2>
+      <span class="muted" style="font-size:0.82rem">{inv.services.length} 件</span></div>
+    <div class="tw"><table><thead><tr><th>unit</th><th>自動起動</th><th>状態</th><th>説明</th></tr></thead>
+      <tbody>{inv.services.map((s: any) => {
+        const dead = !['active', 'timer駆動', ''].includes(s.state);
+        return (<tr class={dead ? 'dead' : ''}>
+          <td><code>{s.name}</code></td><td class="nw">{s.auto}</td>
+          <td class="nw">{s.state}{dead && ' ←動いていない'}</td><td>{s.desc || '—'}</td></tr>);
+      })}</tbody></table></div>
+  </section>
   </div>
 
   <section class="section">
     <p class="muted" style="font-size:0.85rem">
-      中身は <a href={`${repo}/blob/${config.branch}/INVENTORY.md`}>INVENTORY.md</a>。
-      判断の中身（Skill の本体）は載せていない — 具体的すぎて、他人には文脈が要りすぎる。
+      生成は <code>inventory.py --json</code>。中身は
+      <a href={`${repo}/blob/${config.branch}/src/data/inventory.json`}>inventory.json</a>。
       考え方の方は <a href={u('/garden/')}>Garden</a> にある。
     </p>
   </section>
 </Base>
 
 <style>
+  .stats {
+    display: grid; gap: 1px; background: var(--border); margin: 18px 0 0;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  }
+  .stats div { background: var(--bg); padding: 12px 10px; }
+  .stats b {
+    display: block; font-family: var(--mono); font-size: 1.3rem;
+    font-variant-numeric: tabular-nums; line-height: 1.2;
+  }
+  .stats span { display: block; font-size: 0.7rem; color: var(--fg-muted); margin-top: 2px; }
+
+  .scar-note { display: flex; align-items: baseline; gap: 8px; font-size: 0.85rem; margin: 14px 0 0; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--wip); flex: none; }
+
   .jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
   .jump a {
     font-size: 0.82rem; text-decoration: none;
     border: 1px solid var(--border); border-radius: 999px; padding: 3px 12px;
   }
   .jump a:hover { border-color: var(--accent); }
-  .jump .n {
-    font-family: var(--mono); font-size: 0.72rem;
-    color: var(--fg-muted); margin-left: 7px;
+  .jump .n { font-family: var(--mono); font-size: 0.72rem; color: var(--fg-muted); margin-left: 7px; }
+
+  .rows { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  details { border-top: 1px solid var(--border); }
+  details:first-child { border-top: 0; }
+  summary {
+    cursor: pointer; padding: 10px 13px; display: flex; gap: 11px;
+    align-items: baseline; list-style: none; flex-wrap: wrap;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: var(--bg-elev); }
+  .tool-name { font-family: var(--mono); font-size: 0.88rem; font-weight: 600; flex: none; min-width: 190px; }
+  .head { flex: 1 1 240px; font-size: 0.84rem; color: var(--fg-muted); min-width: 0; }
+  .scar {
+    flex: none; font-size: 0.68rem; font-weight: 700; color: var(--wip);
+    border: 1px solid currentColor; border-radius: 999px; padding: 1px 8px;
+    font-family: var(--mono);
+  }
+  .age { flex: none; font-size: 0.72rem; color: var(--fg-muted); font-family: var(--mono); }
+  .doc {
+    margin: 0; padding: 4px 14px 16px; font-size: 0.82rem; line-height: 1.85;
+    white-space: pre-wrap; word-break: break-word; font-family: inherit;
+    border-top: 1px solid var(--border);
+    background: var(--bg-elev);
   }
 
-  .tool-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
-  .tool-list .row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-  .tool-name { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; }
-  .tool-meta { font-size: 0.76rem; color: var(--fg-muted); }
-  .tool-list .summary { margin: 4px 0 0; font-size: 0.9rem; }
+  .tw { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 8px 12px; border-top: 1px solid var(--border); font-size: 0.84rem; vertical-align: top; }
+  th { border-top: 0; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--fg-muted); white-space: nowrap; }
+  td.nw { white-space: nowrap; }
+  td code { font-family: var(--mono); font-size: 0.8rem; font-weight: 600; }
+  td code.sm { font-size: 0.74rem; color: var(--fg-muted); font-weight: 400; word-break: break-all; }
   /* 止まっているものは目で分かるようにする。**一覧が嘘をつくのが一番困る** */
-  .dead .tool-name { color: var(--wip); }
+  .dead code { color: var(--wip); }
 </style>
