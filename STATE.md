@@ -49,9 +49,6 @@ pending:
   - id: dashboard-exposure-level
     question: "トップのダッシュボード(次の1手・未確定・ローカルパス)をどこまで公開に出すか。現状は全部見える"
     raised: 2026-08-31
-  - id: life-os-naming
-    question: "life-os という名前が実体(横断運営の機械)と合っていない。改名するか"
-    raised: 2026-08-31
   - id: main-merge-timing
     question: "main へのマージをいつ行うか。試験運用の区切りをどう判断するか"
     raised: 2026-08-13
