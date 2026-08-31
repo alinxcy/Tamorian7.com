@@ -1,7 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { fmtDate, getWorks, getProjectItems, STATUS_LABEL } from '../../lib/util';
+import { fmtDate, getWorks, getProjectItems, gitLastTouched, STATUS_LABEL } from '../../lib/util';
 import { u } from '../../lib/url';
 
 export async function getStaticPaths() {
@@ -13,6 +13,12 @@ const { work } = Astro.props;
 const { Content, headings } = await render(work);
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const { title, emoji, tags, updated, created, status, url, repo, chats } = work.data;
+
+// **git の実履歴を優先する。** frontmatter の updated は手で書き換える運用で、
+// 忘れられて古びる(2026-08-31、knowledge-garden.md が08-27のまま止まっていた)。
+// 取れなければ frontmatter へフォールバック
+const gitUpdated = gitLastTouched(`src/content/works/${work.id}.md`);
+const displayUpdated = gitUpdated ?? updated;
 
 // chats は作業中だけ生かす。published では出さない(腐ったリンクを公開に残さない)
 const showChats = status !== 'published' && chats.length > 0;
@@ -28,7 +34,7 @@ const { notes, logs, seeds } = await getProjectItems(work.id);
       <h1 class="title">{emoji ? `${emoji} ` : ''}{title}</h1>
       <div class="meta">
         <span class={`badge ${status}`}>{STATUS_LABEL[status]}</span>
-        <span>· updated {fmtDate(updated)}</span>
+        <span>· updated {fmtDate(displayUpdated)}</span>
         {created && <span>· created {fmtDate(created)}</span>}
         {url && <span>· <a href={url} target="_blank" rel="noopener">サイト ↗</a></span>}
         {repo && <span>· <a href={repo} target="_blank" rel="noopener">リポジトリ ↗</a></span>}

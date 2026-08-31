@@ -137,3 +137,23 @@ export async function getRelated(
     .slice(0, 5)
     .map((x) => ({ kind: 'garden' as const, id: x.e.id, title: x.e.data.title }));
 }
+
+// **frontmatter の updated は忘れられる。** works/knowledge-garden.md が
+// 08-27 のまま止まっていて、本人「更新日時アプデートするようにしてください」
+// (2026-08-31)。git の実履歴から取れば、手で書き換える手間が要らない。
+//
+// child_process はビルド時(サーバ側)専用。ブラウザには出ない。
+// git が引けない環境(浅い clone・claude.ai 経由等)では null を返す
+// ——呼ぶ側が frontmatter の updated にフォールバックする
+export function gitLastTouched(relPath: string): Date | null {
+  try {
+    const { execSync } = require('node:child_process');
+    const out = execSync(
+      `git log -1 --format=%aI -- ${JSON.stringify(relPath)}`,
+      { cwd: process.cwd(), encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] },
+    ).trim();
+    return out ? new Date(out) : null;
+  } catch {
+    return null;
+  }
+}
