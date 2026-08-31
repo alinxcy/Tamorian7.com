@@ -1,7 +1,8 @@
 {
   "$comment": "Tamorian7 運用の設定。Skill / Agent はここを最初に読む。値を SKILL.md 本文に書かないこと(二重管理の地雷になる)",
   "repo": "alinxcy/Tamorian7.com",
-  "branch": "claude/state-hub-phase-2",
+  "$branch_comment": "2026-08-31 修正。claude/state-hub-phase-2 を指したままで、実体より67コミット遅れていた。deploy.yml の push.branches と同じものを指す。枝名が読みにくいのは別途。",
+  "branch": "claude/code-handoff-phase-1-ruj6je",
   "paths": {
     "garden": "src/content/garden",
     "log": "src/content/log",
