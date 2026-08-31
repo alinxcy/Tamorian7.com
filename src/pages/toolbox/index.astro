@@ -137,11 +137,19 @@ const sections = [
   <section class="section">
     <div class="section-head"><h2 id="svc">常駐（systemd --user）</h2>
       <span class="muted" style="font-size:0.82rem">{inv.services.length} 件</span></div>
-    <div class="tw"><table><thead><tr><th>unit</th><th>自動起動</th><th>状態</th><th>説明</th></tr></thead>
+    <p class="muted" style="font-size:0.85rem; margin:0 0 12px">
+      「常駐」は1種類ではない。<strong>サーバ</strong>はプロセスが生き続ける
+      （panel.py など）。<strong>定期実行</strong>は .timer が .py を都度呼ぶだけで、
+      呼ばれていない間は何も動いていない。<strong>一度きり</strong>は設定して終わる。
+      道具の .py ファイル自体が裏でずっと回っているわけではない。
+    </p>
+    <div class="tw"><table><thead><tr><th>unit</th><th>種類</th><th>自動起動</th><th>状態</th><th>説明</th></tr></thead>
       <tbody>{inv.services.map((s: any) => {
         const dead = !['active', 'timer駆動', ''].includes(s.state);
         return (<tr class={dead ? 'dead' : ''}>
-          <td><code>{s.name}</code></td><td class="nw">{s.auto}</td>
+          <td><code>{s.name}</code></td>
+          <td class="nw"><span class={`kind kind-${s.kind}`}>{s.kind}</span></td>
+          <td class="nw">{s.auto}</td>
           <td class="nw">{s.state}{dead && ' ←動いていない'}</td><td>{s.desc || '—'}</td></tr>);
       })}</tbody></table></div>
   </section>
@@ -213,4 +221,12 @@ const sections = [
   td code.sm { font-size: 0.74rem; color: var(--fg-muted); font-weight: 400; word-break: break-all; }
   /* 止まっているものは目で分かるようにする。**一覧が嘘をつくのが一番困る** */
   .dead code { color: var(--wip); }
+
+  .kind {
+    font-size: 0.72rem; padding: 1px 8px; border-radius: 999px;
+    border: 1px solid var(--border); white-space: nowrap;
+  }
+  .kind-サーバ { border-color: var(--accent); color: var(--accent); }
+  .kind-定期実行, .kind-定期実行\(本体\) { color: var(--fg-muted); }
+  .kind-一度きり { color: var(--fg-muted); border-style: dashed; }
 </style>

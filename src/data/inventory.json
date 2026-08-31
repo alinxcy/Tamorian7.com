@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-31T15:50+09:00",
+ "generated": "2026-08-31T15:52+09:00",
  "counts": {
   "skill": 24,
   "agent": 5,
@@ -1243,151 +1243,176 @@
    "name": "charge-cheap.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "安い時間だけポタ電を充電し、残量の推定を更新する"
+   "desc": "安い時間だけポタ電を充電し、残量の推定を更新する",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "charge-cheap.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "値段を見てポタ電の充電を入り切りする（コマ境界に合わせる）"
+   "desc": "値段を見てポタ電の充電を入り切りする（コマ境界に合わせる）",
+   "kind": "定期実行"
   },
   {
    "name": "daily-index.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "取り込み時に落ちた会話の索引を後から拾い直す"
+   "desc": "取り込み時に落ちた会話の索引を後から拾い直す",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "daily-index.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "索引の穴を埋める（04:00 / 失敗したら 08:00）"
+   "desc": "索引の穴を埋める（04:00 / 失敗したら 08:00）",
+   "kind": "定期実行"
   },
   {
    "name": "daily-inventory.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "道具の棚卸し（日次）"
+   "desc": "道具の棚卸し（日次）",
+   "kind": "定期実行"
   },
   {
    "name": "daily-jepx.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "JEPX の価格取得と denki.html の作り直し。片方だけだとページが古いまま残る"
+   "desc": "JEPX の価格取得と denki.html の作り直し。片方だけだとページが古いまま残る",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "daily-jepx.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "JEPX の価格を取り直す（11:00 / 失敗したら 15:00・20:00）"
+   "desc": "JEPX の価格を取り直す（11:00 / 失敗したら 15:00・20:00）",
+   "kind": "定期実行"
   },
   {
    "name": "daily-seeds.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "議事録から抜いた語を Fugu に「種か / ただの語か」判定させる"
+   "desc": "議事録から抜いた語を Fugu に「種か / ただの語か」判定させる",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "daily-seeds.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "種の候補を Fugu に判定させる（04:30 / 失敗したら 08:30）"
+   "desc": "種の候補を Fugu に判定させる（04:30 / 失敗したら 08:30）",
+   "kind": "定期実行"
   },
   {
    "name": "drive-sync.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "Google Drive の受け渡しフォルダを inbox へ同期する"
+   "desc": "Google Drive の受け渡しフォルダを inbox へ同期する",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "drive-sync.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "Drive の受け渡しフォルダを10分ごとに同期する"
+   "desc": "Drive の受け渡しフォルダを10分ごとに同期する",
+   "kind": "定期実行"
   },
   {
    "name": "fridge-dashboard.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "冷蔵庫ダッシュボードを作り直す"
+   "desc": "冷蔵庫ダッシュボードを作り直す",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "fridge-dashboard.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "冷蔵庫ダッシュボードを1分ごとに作り直す"
+   "desc": "冷蔵庫ダッシュボードを1分ごとに作り直す",
+   "kind": "定期実行"
   },
   {
    "name": "fugu-chat.service",
    "auto": "自動起動",
    "state": "active",
-   "desc": "fugu-lab chat アプリ（外注を JSONL に記録する計測環境）"
+   "desc": "fugu-lab chat アプリ（外注を JSONL に記録する計測環境）",
+   "kind": "サーバ"
   },
   {
    "name": "inbox-index.service",
    "auto": "自動起動",
    "state": "active",
-   "desc": "inbox に置かれた会話ログの索引を Fugu に作らせる"
+   "desc": "inbox に置かれた会話ログの索引を Fugu に作らせる",
+   "kind": "サーバ"
   },
   {
    "name": "matter-server-home.service",
    "auto": "自動起動",
    "state": "active",
-   "desc": "自宅の Matter コントローラ（ポート 5581）"
+   "desc": "自宅の Matter コントローラ（ポート 5581）",
+   "kind": "サーバ"
   },
   {
    "name": "outdoor-temp.service",
    "auto": "自動起動",
    "state": "active",
-   "desc": "外気温を記録する(冷蔵庫の消費と突き合わせる用)"
+   "desc": "外気温を記録する(冷蔵庫の消費と突き合わせる用)",
+   "kind": "サーバ"
   },
   {
    "name": "plug-monitor.service",
    "auto": "自動起動",
    "state": "inactive",
-   "desc": "スマートプラグの電力を記録する(制御はしない)"
+   "desc": "スマートプラグの電力を記録する(制御はしない)",
+   "kind": "一度きり"
   },
   {
    "name": "queue-run.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "条件が揃っていれば、積んだ仕事を片付ける"
+   "desc": "条件が揃っていれば、積んだ仕事を片付ける",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "queue-run.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "10分ごとにキューを見に行く（動くのは今日の最安コマだけ）"
+   "desc": "10分ごとにキューを見に行く（動くのは今日の最安コマだけ）",
+   "kind": "定期実行"
   },
   {
    "name": "shifter-web.service",
    "auto": "自動起動",
    "state": "active",
-   "desc": "shifter のダッシュボードを配信する(このマシンからのみ)"
+   "desc": "shifter のダッシュボードを配信する(このマシンからのみ)",
+   "kind": "サーバ"
   },
   {
    "name": "wake-write.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "Fugu の枠と電気の値段を見て wake.json を書く"
+   "desc": "Fugu の枠と電気の値段を見て wake.json を書く",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "wake-write.timer",
    "auto": "手動",
    "state": "active",
-   "desc": "wake.json を書き直す（コマ境界に合わせる）"
+   "desc": "wake.json を書き直す（コマ境界に合わせる）",
+   "kind": "定期実行"
   },
   {
    "name": "weekly-inventory.service",
    "auto": "手動",
    "state": "timer駆動",
-   "desc": "道具の棚卸しを書き出して push する"
+   "desc": "道具の棚卸しを書き出して push する",
+   "kind": "定期実行(本体)"
   },
   {
    "name": "weekly-inventory.timer",
    "auto": "手動",
    "state": "inactive",
-   "desc": "道具の棚卸し（週次）"
+   "desc": "道具の棚卸し（週次）",
+   "kind": "定期実行"
   }
  ]
 }
