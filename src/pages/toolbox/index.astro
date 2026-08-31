@@ -143,15 +143,27 @@ const sections = [
       呼ばれていない間は何も動いていない。<strong>一度きり</strong>は設定して終わる。
       道具の .py ファイル自体が裏でずっと回っているわけではない。
     </p>
-    <div class="tw"><table><thead><tr><th>unit</th><th>種類</th><th>自動起動</th><th>状態</th><th>説明</th></tr></thead>
-      <tbody>{inv.services.map((s: any) => {
-        const dead = !['active', 'timer駆動', ''].includes(s.state);
-        return (<tr class={dead ? 'dead' : ''}>
-          <td><code>{s.name}</code></td>
-          <td class="nw"><span class={`kind kind-${s.kind}`}>{s.kind}</span></td>
-          <td class="nw">{s.auto}</td>
-          <td class="nw">{s.state}{dead && ' ←動いていない'}</td><td>{s.desc || '—'}</td></tr>);
-      })}</tbody></table></div>
+    {['自宅', 'アトリエ', '自宅Zero'].map((where) => {
+      const rows = inv.services.filter((s: any) => (s.where ?? '自宅') === where);
+      if (rows.length === 0) return null;
+      return (
+        <div style="margin-top:14px">
+          <h3 class="place">{where} <span class="muted" style="font-weight:400; font-size:0.8rem">{rows.length} 件</span></h3>
+          <div class="tw"><table><thead><tr><th>unit</th><th>種類</th><th>自動起動</th><th>状態</th><th>説明</th></tr></thead>
+            <tbody>{rows.map((s: any) => {
+              const dead = !['active', 'timer駆動', 'リモート', ''].includes(s.state);
+              return (<tr class={dead ? 'dead' : ''}>
+                <td><code>{s.name}</code></td>
+                <td class="nw"><span class={`kind kind-${s.kind}`}>{s.kind}</span></td>
+                <td class="nw">{s.auto}</td>
+                <td class="nw">{s.state}{dead && ' ←動いていない'}</td><td>{s.desc || '—'}</td></tr>);
+            })}</tbody></table></div>
+        </div>
+      );
+    })}
+    <p class="muted" style="font-size:0.78rem; margin:10px 0 0">
+      アトリエ側は SSH 越しに名前だけ数えている。説明文はこの機体のソースに無いので出せない。
+    </p>
   </section>
   </div>
 
@@ -229,4 +241,6 @@ const sections = [
   .kind-サーバ { border-color: var(--accent); color: var(--accent); }
   .kind-定期実行, .kind-定期実行\(本体\) { color: var(--fg-muted); }
   .kind-一度きり { color: var(--fg-muted); border-style: dashed; }
+
+  .place { font-size: 0.86rem; margin: 0 0 6px; font-weight: 600; }
 </style>

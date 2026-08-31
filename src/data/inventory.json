@@ -1,10 +1,10 @@
 {
- "generated": "2026-08-31T15:52+09:00",
+ "generated": "2026-08-31T16:11+09:00",
  "counts": {
   "skill": 24,
   "agent": 5,
   "hook": 6,
-  "service": 25,
+  "service": 37,
   "tool": 112
  },
  "tools": [
@@ -1244,175 +1244,296 @@
    "auto": "手動",
    "state": "timer駆動",
    "desc": "安い時間だけポタ電を充電し、残量の推定を更新する",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "charge-cheap.timer",
    "auto": "手動",
    "state": "active",
    "desc": "値段を見てポタ電の充電を入り切りする（コマ境界に合わせる）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "daily-index.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "取り込み時に落ちた会話の索引を後から拾い直す",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "daily-index.timer",
    "auto": "手動",
    "state": "active",
    "desc": "索引の穴を埋める（04:00 / 失敗したら 08:00）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "daily-inventory.timer",
    "auto": "手動",
    "state": "active",
    "desc": "道具の棚卸し（日次）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "daily-jepx.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "JEPX の価格取得と denki.html の作り直し。片方だけだとページが古いまま残る",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "daily-jepx.timer",
    "auto": "手動",
    "state": "active",
    "desc": "JEPX の価格を取り直す（11:00 / 失敗したら 15:00・20:00）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "daily-seeds.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "議事録から抜いた語を Fugu に「種か / ただの語か」判定させる",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "daily-seeds.timer",
    "auto": "手動",
    "state": "active",
    "desc": "種の候補を Fugu に判定させる（04:30 / 失敗したら 08:30）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "drive-sync.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "Google Drive の受け渡しフォルダを inbox へ同期する",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "drive-sync.timer",
    "auto": "手動",
    "state": "active",
    "desc": "Drive の受け渡しフォルダを10分ごとに同期する",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "fridge-dashboard.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "冷蔵庫ダッシュボードを作り直す",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "fridge-dashboard.timer",
    "auto": "手動",
    "state": "active",
    "desc": "冷蔵庫ダッシュボードを1分ごとに作り直す",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "fugu-chat.service",
    "auto": "自動起動",
    "state": "active",
    "desc": "fugu-lab chat アプリ（外注を JSONL に記録する計測環境）",
-   "kind": "サーバ"
+   "kind": "サーバ",
+   "where": "自宅"
   },
   {
    "name": "inbox-index.service",
    "auto": "自動起動",
    "state": "active",
    "desc": "inbox に置かれた会話ログの索引を Fugu に作らせる",
-   "kind": "サーバ"
+   "kind": "サーバ",
+   "where": "自宅"
   },
   {
    "name": "matter-server-home.service",
    "auto": "自動起動",
    "state": "active",
    "desc": "自宅の Matter コントローラ（ポート 5581）",
-   "kind": "サーバ"
+   "kind": "サーバ",
+   "where": "自宅"
   },
   {
    "name": "outdoor-temp.service",
    "auto": "自動起動",
    "state": "active",
    "desc": "外気温を記録する(冷蔵庫の消費と突き合わせる用)",
-   "kind": "サーバ"
+   "kind": "サーバ",
+   "where": "自宅"
   },
   {
    "name": "plug-monitor.service",
    "auto": "自動起動",
    "state": "inactive",
    "desc": "スマートプラグの電力を記録する(制御はしない)",
-   "kind": "一度きり"
+   "kind": "一度きり",
+   "where": "自宅"
   },
   {
    "name": "queue-run.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "条件が揃っていれば、積んだ仕事を片付ける",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "queue-run.timer",
    "auto": "手動",
    "state": "active",
    "desc": "10分ごとにキューを見に行く（動くのは今日の最安コマだけ）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "shifter-web.service",
    "auto": "自動起動",
    "state": "active",
    "desc": "shifter のダッシュボードを配信する(このマシンからのみ)",
-   "kind": "サーバ"
+   "kind": "サーバ",
+   "where": "自宅"
   },
   {
    "name": "wake-write.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "Fugu の枠と電気の値段を見て wake.json を書く",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "wake-write.timer",
    "auto": "手動",
    "state": "active",
    "desc": "wake.json を書き直す（コマ境界に合わせる）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
   },
   {
    "name": "weekly-inventory.service",
    "auto": "手動",
    "state": "timer駆動",
    "desc": "道具の棚卸しを書き出して push する",
-   "kind": "定期実行(本体)"
+   "kind": "定期実行(本体)",
+   "where": "自宅"
   },
   {
    "name": "weekly-inventory.timer",
    "auto": "手動",
    "state": "inactive",
    "desc": "道具の棚卸し（週次）",
-   "kind": "定期実行"
+   "kind": "定期実行",
+   "where": "自宅"
+  },
+  {
+   "name": "log-power.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "matter-server.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "panel.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "sleep-guard.timer",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "定期実行",
+   "where": "アトリエ"
+  },
+  {
+   "name": "systemd-pstore.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "systemd-timesyncd.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "tailscaled.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "udisks2.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "volt-watch.timer",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "定期実行",
+   "where": "アトリエ"
+  },
+  {
+   "name": "wake-arp.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
+  },
+  {
+   "name": "wake.timer",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "定期実行",
+   "where": "アトリエ"
+  },
+  {
+   "name": "wpa_supplicant.service",
+   "auto": "自動起動",
+   "state": "リモート",
+   "desc": "",
+   "kind": "サーバ",
+   "where": "アトリエ"
   }
  ]
 }
