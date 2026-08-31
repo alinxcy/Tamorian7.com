@@ -47,7 +47,9 @@ Tamorian7 の Knowledge Garden を一緒に育てる。**このスキルはど�
 - 本筋なら今やる。**逸れたから種になる**
 - 詳細は `references/` を読む:
   - `references/seeds.md` — 種の型と `why` の書き方
-  - `references/devlog.md` — 実録の型(4セクション)
+  - `references/devlog.md` — 実録の型(4セクション。強制ではない)
+  - `references/kuroko-voice.md` — **log を書くときはまずこちらを読む**。
+    クロコが一人称で語る声の指針(v0.1、育てている途中)
   - `references/works.md` — 三態(構想/作業場/使い方)と chats
   - `references/honest-gate.md` — 公開前に止める基準
   - `references/retro-capture-prompt.md` — 過去の作業を遡って捕獲する
