@@ -1,13 +1,13 @@
 ---
 schema_version: 2
-last_updated: 2026-09-02T12:39+09:00
-current_focus: "副担当(Codex/Antigravity)への委託が回り始めた。委託先ごとの得手を測って振り分けを決めるのが次。9/5 の LAN 振り直しは日付の律速として並走"
+last_updated: 2026-09-02T22:44+09:00
+current_focus: "委託先が4つ(Fugu/Local/Codex/Antigravity)になり、どれも実行口が通った。次は振り分けを1箇所にまとめること。9/5 の LAN 振り直しは日付の律速として並走"
 projects:
   - slug: foundation
     status: active
     summary: "状態と運営の仕組みそのもの。非公開リポジトリ alinxcy/foundation が本体で、公開できる結論だけをこのサイトへ出す"
-    next_action: "委託の台帳を Fugu 以外(Codex/Antigravity)へ広げる。まず置き場を foundation/delegation/ に決める"
-    next_action_at: "~/.claude/handoffs/tools/offload_log.py と CODEX-HANDOFF.md"
+    next_action: "外注の振り分けを1箇所にまとめる。台帳の置き場は foundation/delegation/ に決まった"
+    next_action_at: "~/.claude/handoffs/tools/offload_log.py と 2026-09-02-night-batch.md の B1"
     link: "/works/foundation/"
   - slug: knowledge-garden
     status: active
@@ -24,20 +24,20 @@ projects:
   - slug: fugu-lab
     status: active
     summary: "Sakana Fugu を月額契約すべきか判断するための計測環境。チャットで使い、使用データを溜める"
-    next_action: "委託先が4つ(Fugu/Local/Codex/Antigravity)に増えたので、fugu-lab 単体でなく横断の台帳へ広げる"
-    next_action_at: "LM Studio と ~/.claude/handoffs/tools/make_index.py"
+    next_action: "Fugu の得手を測り直す。要約は強く抽出は落ちる。向こうが謳うのはコーディングで、我々の使い方と合っていない"
+    next_action_at: "~/atelier-lab/wake/bench_local.py と ~/.claude/handoffs/design/bench/"
     link: "/works/fugu-lab/"
   - slug: atelier-lab
     status: active
     summary: "アトリエ(作業場)の計測と制御。20A の天井の中で何を動かせるかを実測で決める"
-    next_action: "Codex の SOC距離制御に必須修正2件を返した。直ってきたら SOC分と充電制御分を別々にマージする"
-    next_action_at: "~/atelier-lab-codex-soc と ~/.claude/handoffs/REVIEW-2026-09-02-soc-charge.md"
+    next_action: "エアコン導入と合わせて充電の設計を詰める。先読みは配線済みで、残りは大きな負荷が入ってから"
+    next_action_at: "~/atelier-lab/wake/charge_plan.py と jepx/plan_vs_react.py"
     link: "https://github.com/alinxcy/atelier-lab"
   - slug: kuroko-chat
     status: active
     summary: "常時起動セッション(クロコ)の窓口を自前のローカルアプリに移す。実装は Antigravity"
-    next_action: "Antigravity の Phase 0 進捗を確認する。ブランチ antigravity/phase0-read-window は切られたがコミットが無い"
-    next_action_at: "~/kuroko-chat/SPEC.md"
+    next_action: "先にキューの画面を作ってもらう。Phase 0 はその後。agy CLI が入ったので auto でも投げられる"
+    next_action_at: "~/.claude/handoffs/tasks/2026-09-02-queue-dashboard.md"
     link: "/state/"
   - slug: peak-shifter
     status: blocked
@@ -67,18 +67,12 @@ pending:
   - id: seed-url-optional
     question: "seeds の url を必須から外した(会話由来の種を入れるため)。既存の拾いものと同じ一覧に混ぜてよいか、分けるか"
     raised: 2026-08-27
-  - id: skills-single-home
-    question: "Skill 26本をどこに集約するか。~/.claude/skills/ に寄せると全リポジトリで効くが一覧が長くなる。claudePlayGround を配布元のまま維持する道もある"
-    raised: 2026-08-27
   - id: skill-selfimprove-trigger
     question: "呼ぶたびの記録は始めた。PreToolUse で過去の失敗を実行前に注入するか、週次で Skill 本文へ蒸留するか"
     raised: 2026-08-27
   - id: playground-role
     question: "claudePlayGround を配布元にするか保管庫にするか。skill-return という還流の仕組みまで作ってあるが、5週間動いていない"
     raised: 2026-08-27
-  - id: delegation-single-ledger
-    question: "Fugu/Local/Codex/Antigravity を横断する委託の台帳をどこに置くか。foundation/delegation/ 配下を提案したが、fugu-lab を畳むのか併存させるのか未決"
-    raised: 2026-09-02
   - id: charge-full-by-deadline
     question: "日次満充電の締切 full_by を何時にするか。Codex 案の17:00 は過去7日すべてでその日の最高値の87〜99.9%で、フォールバックが最も高い瞬間に発火する。Claude は14:00 を推奨"
     raised: 2026-09-02
@@ -94,96 +88,103 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **委託が回り始めた。次は振り分けを測って決める** — 副担当が2つ動いている。
-   Codex は数字の監査と SOC距離制御を出してきて、どちらも**分業ルールを守った上で
-   実データに耐える成果**だった。Antigravity は UI 側を担当する方針。
-   **足りないのは「どの仕事をどこへ投げるか」の記録**（`pending: delegation-single-ledger`）。
-2. **atelier-lab の充電制御** — Codex の SOC距離モデルへレビューを返した。**必須修正2件**。
-   直ってきたら SOC分と充電制御分を**別々に**マージする。本番反映（Piへの配備）はまだ。
-3. **Skill の一元化** — **26本あって見えていたのは3本**（2026-08-27）。
-   置き場所で効く範囲が決まる。**判断1つで動く**（`pending: skills-single-home`）。
-4. **knowledge-garden — log を毎日出す仕組み** — 素材は本体が蒸留し、執筆は Fable、検証は honest-reviewer、
-   直しは本体。**毎朝3時すぎに前日分を自動で書く**運用にした（2026-09-02）。
-5. **9/5 の LAN 振り直し** — 日付が律速。並走させる。
-6. **q3pe-recorder** / **peak-shifter** — どちらも**物待ち**。手を動かす作業が無い。
+1. **委託の振り分けが実装になった** — `route.py` が「どこへ投げるか」を1箇所で決める。
+   試験の母集団は**実際に下した判断**にした（今日の4回）。
+   次は使いながら外れを見つけること。**台帳は `foundation/delegation/` に置いた**
+2. **委託先ごとの得手が、測って出てきた** — 下の暗黙知欄。
+   ただし**母数はまだ足りない**（Codex 5件、他は1〜2件）
+3. **atelier-lab の充電が3段になった** — 95%以上は入れない / 50〜95%は先読み /
+   30〜50%は反応的 / 30%未満は無条件。**配線済みで動いている**
+4. **knowledge-garden — 記事が自動で書かれるようになった**。
+   毎朝3時すぎの systemd timer。**本数は素材の「逆転の数」が決める**（上限3本）
+5. **9/5 の LAN 振り直し** — 日付が律速。並走させる
+6. **q3pe-recorder** / **peak-shifter** — どちらも**物待ち**
 
-**詰まり方は3種類。** 書けば進むもの（log・委託の台帳）、物が届くまで動けないもの
-（q3pe・栽培棚）、**人間が決めれば動くもの**（Skill の置き場・締切時刻・公開範囲）。
-**判断1つで進む方が一番安い。**
+**詰まり方は3種類。** 書けば進むもの、物が届くまで動けないもの、
+**人間が決めれば動くもの**。判断1つで進む方が一番安い。
 
 ## 2. 次のアクション
 
-### atelier-lab — Codex の修正待ち。返した必須2件
+### foundation / fugu-lab — 振り分けを使いながら直す
 
-回答は `~/.claude/handoffs/REVIEW-2026-09-02-soc-charge.md`。
+`route.py` は今日書いてテスト14件が通っているが、**まだ1度も実運用で使っていない。**
 
-- **`find_fulls()` の30W判定が1サンプルしかない。** 仕様は3サンプル連続。
-  この差で 08-31 12:51 に**実際の誤検出**が起きていた——充電中(98.7W)に人が手で切り、
-  6分後に自動で入れ直した直後の0Wを満充電と誤認。産物が `0.97 W` という無効な学習値
-- **外部OFF検出にデバウンスが無い。** 1回の観測で自動運転を無期限休止する。
-  同じ diff の `FULL_SAMPLES=3` や番犬の `GUARD_TICKS=3` と非対称
-- **直前に試してダメだったこと**: テストは20件とも通る。**合成データなので30W判定の穴が
-  露呈しない。** 実ログ4日分を通して初めて `0.97 W` が出た
+- **外れたら台帳に残す。** 今日の試験で既に1件外している——
+  agy の権限探り(5KB)を「小さいから自分でやる」に倒したが、実際は委託が正解だった
+- **節約の型が2つある**と分かったのが収穫。
+  かさばる仕事は字数で測れるが、**往復する仕事は字数では測れない**
+- **fugu-lab の前提が揺れた。** Sakana が Fugu について謳うのは
+  コーディングとコードレビューで、**要約・長文脈には一言も触れていない**。
+  我々はほぼ要約にしか使っていない。**契約判断の土台が、間違った用途での評価かもしれない**
+- 直前に確かめたこと: `~/.claude/skills/` の集約は **08-27 に既に終わっていた**。
+  pending が6日間古かった。**現物を見ずに pending を信じると、決め直しが起きる**
 
-### 委託の台帳 — 置き場を決めてから作る
+### atelier-lab — エアコンが入るまで設計を進めない
 
-**`fugu-lab` は「Fugu 1社の契約判断」に特化していて、4つに増えた委託先を載せる器ではない。**
-`foundation/delegation/` 配下に寄せる案を出したが未決（`pending: delegation-single-ledger`）。
+先読み充電は配線済み。**効果は実測 0.21円/日**で、いまの622Whでは小さい。
 
-- **既にあるもの**: `offload_log.py`（Fugu の効果台帳）/ `offload_keep.py`（入出力の保存）/
-  `CODEX-HANDOFF.md` / `ANTIGRAVITY-HANDOFF.md`。**素材は揃っていて、横断の索引だけが無い**
-- **効果の測り方は決まっている**: 入力を避けた分 − 出力を読んだ分。`MIN_N = 3` で棄権する
-- **直前に確かめたこと**: 今日の改名で参照は58件・9.4KB しか無く、**委託に出すと損だった**。
-  「使うこと自体は目的でない」を実際に一度当てはめた
+- **必要量が締切までの枠をほぼ埋めるので、選ぶ余地がほとんど無い**
+- 電池を大きくすると選択の余地が増える側の設計。**器を先に作った状態**
+- 残りは「エアコンを含めた設計」で、**物が来るまで前提が無い**
 
-### Skill の一元化 — 置き場所を決める（判断1つで動く）
+### knowledge-garden — 配色を決めると先へ進む
 
-```
-~/.claude/skills/          1本   offload                    ← どこでも効く
-Tamorian7.com/.claude/     2本   tamorian7 / update-state
-fugu-lab/.claude/          6本
-claudePlayGround/.claude/ 17本   ← 手元にクローンすら無い
-```
+9案が並んでいる（Claude 1 / Codex 4 / Antigravity 4）。
+**決まれば `design/tokens.css` を切り出して、サイトと `panel.py` の両方から使える。**
 
-- **重複4本は1バイトも違わなかった。配布の問題であって品質の問題ではない**
-- 道具は揃っている（`skill-harvester` / `skill-creator` / `skill-optimizer` / `skill-return`）。
-  **設計は完成していて運用が止まっている**（最終 push は 2026-07-20）
+- 3者が独立に**色相255度・彩度55%前後**へ着地した（`#5b3fbf` / `#5d38c9` / `#5937be`）
+- 唯一の外れ値は Antigravity の「鮮紫・明快」（彩度85%）
+- **暫定で進めることもできる。** トークンは1ファイルなので後から差し替えられる
 
-### kuroko-chat — Antigravity の進捗を確認する
+### kuroko-chat — キューの画面が先に返ってきた
 
-ブランチ `antigravity/phase0-read-window` は切られたが、**コミットがまだ無い**。
-`probes/` の再現スクリプトを走らせて仕様の前提を確かめる段階のはず。**催促の前に確認する。**
+`agy` でキューの画面を作らせた（`~/atelier-lab/wake/queue.html`）。
+要件は全部満たし、テスト9件も通る。**見た目はスレート＋緑で、庭の紫とは別物。**
+
+- **Claude の予測版と並べて、本人が選ぶ**のが次
+- Phase 0（読む窓）はその後
 
 ## 3. 作業中の暗黙知
 
-### 実データに通すまで、テストが通ったことに意味は無い
+### 委託先の得手（2026-09-02 実測。母数は足りていない）
 
-**2026-09-02 に2回続けて出た。** Codex の20件は全部通るのに、実ログ4日分を通したら
-満充電の誤検出が1件出た。合成データは、書いた人が想定した壊れ方しか含まない。
-**「テストが通った」は「まだ壊れ方を1つも見つけていない」と読む。**
+    Fugu          全部読んで要約するのは強い。**干し草から針を探すのは落ちる**
+                  しかも**空答で返る**ので、原文を数えないと気づけない
+    granite4.2:8b ローカルで唯一、数字と日付を拾えた（罠 2/8・実測値 4/9）
+    qwen3:8b/14b  **罠を1件も拾えなかった**（0/8）。入力は読めているのに
+                  14b は 11GB では10分48秒かかり、使い物にならない
+    Codex         **明示した禁止は完全に守る。書いていない空白は自分で埋める**
+                  主担当の誤りを3回指摘し、3回とも正しかった
+    agy           静的に全部展開する作りを選ぶ。振り幅が広い（彩度33〜85%）
 
-### 委託は、入力が大きいか出力を読まないときだけ得
+**比較を汚さない。** 今日 agy のプロンプトにだけ「文言を増やすな」を足した。
+**次は一字一句同じにする。**
 
-今日の改名で参照を数えたら**58件・9.4KB**。委託の指示を書いて結果を読む方が高くつく。
-**断ることも測定のうち。** `offload_log.py` に載らない判断だが、載せる価値がある。
+### 節約の型は2つある
 
-### 手で止めたものは、勝手に再開させない
+    かさばる仕事   節約 = 読まずに済んだ入力 − 読んだ出力     字数で測れる
+    往復する仕事   節約 = **肩代わりさせた試行錯誤**          字数では測れない
 
-旧実装の「次に判断が変わるまで尊重する」は**価格が動いた瞬間に解除される**ため、
-「止めておきたい」意図を保持できなかった。2026-09-02 の朝、5時間20分見送ったあと
-Claude が入れ直して差し戻された。**止め方が明示なら、解除も明示でなければ釣り合わない。**
+字数の門をコード判定より前に置くと、**後者を丸ごと取りこぼす。**
 
-### 充電の締切を夕方に置くと、フォールバックが最悪の時刻に当たる
+### 規則を文書に書いても、守るのも見張るのも自分なら破る
 
-過去7日で **17:00 はその日の最高値の87〜99.9%**。「締切までに満充電できなければ
-価格条件を解除」という規則は、**1日で最も高い瞬間に発火する**。安い窓は7日中6日が
-09:30〜13:00 に集中しているので、14:00 でも計画対象は変わらない。
+「DECISIONS.md に書いたら STATE.md も見る」を規則にした**30分後に自分で破った。**
+`state_stale.py` を **git log の時刻比較**にして、機械が言う形へ変えた。
 
-### 操作の主体が一意に辿れることは、機能要件
+### 入力が届いたことを、毎回確かめる
 
-2026-09-02 の朝、本人が手で切った操作を Claude が「委託先の検証操作ではないか」と誤って疑った。
-**自動制御・人の操作・検証用の操作が混ざると、事故のとき原因が追えない。**
-委託先には「検証で実機のプラグを操作しない」を明示した。
+`ask_llm.py` は引数を渡すと**標準入力を丸ごと捨てていた。**
+終了コード0で、読むものが無いまま創作した要約が返る。
+**比較を仕込む前に気づかなければ、「何も読まずに書いた答え」を Fugu と比べていた。**
+
+**出力の打ち切りと、入力の読み落としを混同しない。** カナリアが返らないのは
+「読めていない」とは限らず、`num_predict` に張り付いただけのことがある。
+
+### pending は古びる。現物を見る
+
+`skills-single-home` は **08-27 に解決済み**だったのに、6日間 pending に残っていた。
+**本人に判断を仰ぐ前に現物を見ていれば、決定そのものが不要だった。**
 
 ### 日付は毎回 `date` を叩く
 
