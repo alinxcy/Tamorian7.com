@@ -58,8 +58,8 @@ Astro でビルドし、git push で自動デプロイして完結させる。
   Cloudflare Pages + 独自ドメインへの移行が残っている
 - **サイト名「Tamorian7」は暫定。** セクション名 Garden との衝突を避けて置いただけ
 - ローカル LLM に Skill を下ろすためのルータが未着手
-- **life-os との棲み分けが言葉になっていない。** 詳細は [life-os](/works/life-os/) 側の注記を見てほしいが、
-  「運営の機械（private, life-os）」と「公開する結論（public, ここ）」の境目を、
+- **foundation との棲み分けが言葉になっていない。** 詳細は [foundation](/works/foundation/) 側の注記を見てほしいが、
+  「運営の機械（private, foundation）」と「公開する結論（public, ここ）」の境目を、
   まだ一文で言い切れていない（2026-08-31、本人から棲み分けを詰めたいと指摘された）
 
 ## 撤回したこと
