@@ -15,7 +15,9 @@ export type Project = {
   next_action_at?: string;
   link?: string;
 };
-export type Pending = { id: string; question: string; raised: string };
+// private: 省略可。true なら公開側で伏せる（2026-09-02 本人承認）
+export type Pending = { id: string; question: string; raised: string;
+                        private?: boolean };
 
 const split = splitFrontmatter(src);
 // フロントマターが壊れていればビルドを止める。黙って空を描くと、

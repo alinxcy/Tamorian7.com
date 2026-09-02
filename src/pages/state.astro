@@ -21,7 +21,11 @@ if (!split) throw new Error('STATE.md にフロントマターが無い（npm ru
 const { data } = parseYamlSubset(split.fm);
 
 const projects = Array.isArray(data.projects) ? data.projects : [];
-const pending = Array.isArray(data.pending) ? data.pending : [];
+const allPending = Array.isArray(data.pending) ? data.pending : [];
+// private: true は公開側で伏せる（2026-09-02 本人承認）。
+// **伏せた件数は出す。** 0件と「隠した」を人が区別できるように
+const pending = allPending.filter((q: any) => q.private !== true);
+const hiddenPending = allPending.length - pending.length;
 
 // GitHub の blob URL は main ではなく作業ブランチを指す。
 // main は1コミットしか無く、STATE.md も DECISIONS.md も存在しない(404 になる)。
@@ -86,7 +90,7 @@ const stale = days > 14;
     <section class="section">
       <div class="section-head">
         <h2>未確定</h2>
-        <span class="muted" style="font-size:0.82rem">人間の判断待ち</span>
+        <span class="muted" style="font-size:0.82rem">人間の判断待ち{hiddenPending > 0 && ` · ${hiddenPending} 件は非公開`}</span>
       </div>
       <ul class="note-list">
         {pending.map((q: any) => (

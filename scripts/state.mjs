@@ -31,6 +31,9 @@ export const SCHEMA_VERSION = 2;
 const TOP_KEYS = ['schema_version', 'last_updated', 'current_focus', 'projects', 'pending'];
 const PROJECT_KEYS = ['slug', 'status', 'summary', 'next_action', 'next_action_at', 'link'];
 const PENDING_KEYS = ['id', 'question', 'raised'];
+// 省略可。true なら公開側で伏せる（2026-09-02 本人承認）。
+// **スキーマは描画側との契約**なので、増やすときは描画とセットで直す
+const PENDING_OPTIONAL = ['private'];
 // last_updated がこれ以上古ければ warn。更新漏れに人間が気づけるように
 const STALE_DAYS = 14;
 
@@ -227,8 +230,12 @@ export function validateState(src, { file = 'STATE.md', now = new Date() } = {})
       if (!(k in q)) add('error', line, `pending[] に ${k} が無い`);
     }
     for (const k of Object.keys(q)) {
-      if (!k.startsWith('__') && !PENDING_KEYS.includes(k)) {
+      if (!k.startsWith('__') && !PENDING_KEYS.includes(k)
+          && !PENDING_OPTIONAL.includes(k)) {
         add('error', line, `pending[] の未知のキー: ${k}`);
+      }
+      if (k === 'private' && q[k] !== true && q[k] !== false) {
+        add('error', line, `pending[].private は true か false`);
       }
     }
     if ('raised' in q && !ISO_DATE.test(String(q.raised))) {

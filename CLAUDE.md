@@ -64,6 +64,7 @@
 | `projects[].next_action_at` | string | 着手するファイル/場所 |
 | `projects[].link` | string | 飛び先。`/` 始まりか `http(s)://` のみ |
 | `pending[].id` / `.question` / `.raised` | string / string / date | 未確定・確認待ち |
+| `pending[].private` | bool | **省略可。true なら公開側で伏せる**（伏せた件数は出る） |
 
 - **進捗率は持たない**(v2 で廃止)。誰も見ないまま二重管理になっていた。
   状態は `status` で表し、中身は `summary` で説明する

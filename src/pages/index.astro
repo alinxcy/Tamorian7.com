@@ -60,6 +60,10 @@ const recent: Recent[] = [
 ].sort((a, b) => b.at.getTime() - a.at.getTime()).slice(0, 8);
 
 const hrefOf = (r: Recent) => u(`/${r.kind}/${r.id}/`);
+// private: true の未確定は公開側で伏せる（2026-09-02 本人承認）。
+// **伏せた件数は出す。** 0件と「隠した」を人が区別できるように
+const shownPending = state.pending.filter((q) => q.private !== true);
+const hiddenPending = state.pending.length - shownPending.length;
 ---
 <Base description={state.current_focus}>
   <section class="section hero">
@@ -113,16 +117,17 @@ const hrefOf = (r: Recent) => u(`/${r.kind}/${r.id}/`);
     </ul>
   </section>
 
-  {state.pending.length > 0 && (
+  {shownPending.length > 0 && (
     <section class="section">
       <div class="section-head">
         <h2>未確定</h2>
         <span class="muted" style="font-size:0.82rem">
-          {state.pending.length} 件 · 人間の判断待ち
+          {shownPending.length} 件 · 人間の判断待ち
+          {hiddenPending > 0 && ` · ${hiddenPending} 件は非公開`}
         </span>
       </div>
       <ul class="note-list">
-        {state.pending.map((q) => (
+        {shownPending.map((q) => (
           <li>
             <div class="row">
               <span class="title"><code>{q.id}</code></span>
