@@ -1,11 +1,11 @@
 {
- "generated": "2026-09-02T12:43+09:00",
+ "generated": "2026-09-03T01:16+09:00",
  "counts": {
   "skill": 24,
   "agent": 5,
   "hook": 6,
-  "service": 32,
-  "tool": 112
+  "service": 34,
+  "tool": 128
  },
  "tools": [
   {
@@ -21,7 +21,7 @@
   {
    "name": "analyze_export.py",
    "group": "foundation / 道具",
-   "age": "08-25 (7日前)",
+   "age": "08-25 (8日前)",
    "head": "書き出しの**形式**を Fugu に分析させる。中身は送らない。",
    "body": "書き出しの**形式**を Fugu に分析させる。中身は送らない。\n\n## なぜ中身を送らないか\n\nclaude.ai の書き出しは**アカウントの全会話**が入る。仕事の話も個人の話も全部。\nそれを丸ごと外部の API に投げるのは、このリポジトリの方針\n(「機密はリポジトリに入れない」)より一段重い判断になる。\n\nそして**形式を知るのに中身は要らない。**\nキー・型・入れ子・配列の長さが分かれば、変換器は書ける。\n\n## どう伏せるか\n\n文字列の値を**全部**伏せる。ただし例外が1つ:\n\n  **文書全体で3回以上出てくる32文字以下の値**は残す。\n\nこれは \"human\" / \"assistant\" / \"text\" / \"image/png\" のような**列挙値**であって、\n会話の中身ではない。逆に、会話本文やタイトルは同じ文字列が3回も出ないので落ちる。\n**頻度で機械的に切るので、判断ミスが混ざらない。**\n\n    python3 analyze_export.py <zip か json>            # 伏せた骨格を見るだけ\n    python3 analyze_export.py <zip か json> --ask      # Fugu に投げる\n    python3 analyze_export.py <zip か json> --ask --model fugu",
    "scars": []
@@ -29,7 +29,7 @@
   {
    "name": "batch_index.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "選んだ会話にだけ議事録を作る。**全部はやらない。**",
    "body": "選んだ会話にだけ議事録を作る。**全部はやらない。**\n\n149本すべてに作ると Fugu で320万トークン・2時間かかる。\n「Token 余ってるからと言って無駄にしていいわけではない」（本人、2026-08-26）ので、\n**いま動いているプロジェクトに効くものだけ**を選んである。\n\nFugu は同じキーで同時リクエストを受ける（実測: 4本同時で3.0倍速、全部 via=app で記録も残る）。\n\n    python3 batch_index.py --check     # ファイルの実在確認だけ\n    python3 batch_index.py             # 4並列で実行\n    python3 batch_index.py --at 13:25  # その時刻まで待ってから実行",
    "scars": [
@@ -49,7 +49,7 @@
   {
    "name": "catalog.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "会話の**目次**を作る。3段の一番上。",
    "body": "会話の**目次**を作る。3段の一番上。\n\n    原文      大きい    → Claude は読まない\n    議事録    中        → 選んだものだけ読む（Fugu が生成、`*-index.md`）\n    **目次**  小        → **全部読む**（何を選ぶかを決めるため）  ← これ\n\n**目次に Fugu は使わない。** 議事録の太字トピックを機械で抜くだけで作れる。\nLLM を通すと (a) 費用がかかり (b) 言い換えられて grep が効かなくなる。\n\n**1行を短く保つことが要件。** ここは Claude が全部読む唯一の段なので、\n1行が長いと目次自体が重くなる。会話200本で数千トークンに収まる形にする。\n\n    python3 catalog.py            # conversations/CATALOG.md を作る\n    python3 catalog.py --show     # 標準出力に出すだけ",
    "scars": []
@@ -81,10 +81,20 @@
   {
    "name": "daily.sh",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "定期タスクを走らせ、**成功したら印を置く。**",
    "body": "定期タスクを走らせ、**成功したら印を置く。**\n\nなぜ「失敗の検出」ではなく「成功の印」なのか\n\n5時間リミットで流れたのか、クラッシュしたのか、電源が落ちたのかを\n**機械で区別できない**（Claude も Sakana も残量を返さない）。\n\n**「印が無ければやり直す」なら、どの原因でも同じように拾える。**\n\n03:00  走る → 成功したら印を置く\n07:00  **印が無ければ**走る。あれば何もしない\n\n使い方:\ndaily.sh <名前> <コマンド...>\n\n印は ~/.claude/handoffs/.stamps/<名前>-YYYY-MM-DD",
    "scars": []
+  },
+  {
+   "name": "daily_log.sh",
+   "group": "foundation / 道具",
+   "age": "09-02 (今日)",
+   "head": "**前日分の log 記事が無ければ、Claude を headless で起こして書かせる。**",
+   "body": "**前日分の log 記事が無ければ、Claude を headless で起こして書かせる。**\n\n2026-09-02 まで、この仕事は「毎時のアイドル監視が拾う」形だった。\n**どのスケジューラにも出ないので、止まったことに気づけない。**\n`systemctl list-timers` に出る形へ移した。\n\n**書く必要があるときだけ起こす。** 枠を無人で焼くのが一番高くつく事故。\n記事が既にあれば Claude を起動しない。",
+   "scars": [
+    "2026-09-02"
+   ]
   },
   {
    "name": "describe_artifacts.py",
@@ -97,7 +107,7 @@
   {
    "name": "digest.py",
    "group": "foundation / 道具",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "今夜のコミットを、リポジトリごとにまとめる。",
    "body": "今夜のコミットを、リポジトリごとにまとめる。",
    "scars": []
@@ -123,7 +133,7 @@
   {
    "name": "extract_convo.py",
    "group": "foundation / 道具",
-   "age": "08-17 (15日前)",
+   "age": "08-17 (16日前)",
    "head": "Codex の rollout jsonl から会話だけを抜く。要約しない。落とすのはノイズだけ。",
    "body": "Codex の rollout jsonl から会話だけを抜く。要約しない。落とすのはノイズだけ。\n\n推論トレース(reasoning)・ツール呼び出しと出力・token_count は捨てる。\n残すのは user_message と agent_message の本文と時刻だけ。",
    "scars": []
@@ -149,7 +159,7 @@
   {
    "name": "find_plug.py",
    "group": "foundation / 道具",
-   "age": "08-28 (4日前)",
+   "age": "08-28 (5日前)",
    "head": "プラグを LAN から探す。**IP が変わっても MAC で見つける。**",
    "body": "プラグを LAN から探す。**IP が変わっても MAC で見つける。**\n\n追加し直すと DHCP で別の IP を拾うことがある(2026-08-28)。\n毎回アプリで調べるのは面倒なので、MAC の先頭で当てる。\n\n    python3 find_plug.py            # 見つかった候補を出す\n    python3 find_plug.py --set      # ~/.config/atelier-charge.env の PLUG_HOST を書き換える",
    "scars": [
@@ -159,15 +169,26 @@
   {
    "name": "fugu_perf.py",
    "group": "foundation / 道具",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "Fugu の応答特性を、手元の UsageRecord だけから測る。外注はしない。",
    "body": "Fugu の応答特性を、手元の UsageRecord だけから測る。外注はしない。",
    "scars": []
   },
   {
+   "name": "handoff.py",
+   "group": "foundation / 道具",
+   "age": "09-02 (今日)",
+   "head": "**申し送りの「今の事実」を、手書きから生成に変える。**",
+   "body": "**申し送りの「今の事実」を、手書きから生成に変える。**\n\n    python3 handoff.py            # 全部の申し送りを更新する\n    python3 handoff.py --show     # 書かずに標準出力へ\n    python3 handoff.py --check    # 古びていないか見るだけ（CI/検査用。書かない）\n\n2026-09-02、`CODEX-HANDOFF.md` に「近日 `foundation` に改名予定」と書いてあり、\n**改名した後も数時間そのままだった**。手で直すまで、新しいセッションで来た\n副担当は嘘を読む状態だった。\n\n副担当は**毎回はじめまして**なので、申し送りが唯一の文脈になる。\nそこが古いと、間違った前提で作業が始まる。**古びる部分は機械で取れる。**\n\n## 何を生成し、何を手で書くか\n\n    生成する（古びる）   リポジトリ名 / ブランチ / 直近のコミット / 作業場の一覧 /\n                        STATE.md の pending / キューの中身 / 出ている依頼書\n    手で書く（古びない）  権限の表 / 分業のルール / 判断してはいけないこと / 得手\n\n**手書きの部分は絶対に触らない。** マーカーの間だけを入れ替える。\n\n    <!-- HANDOFF:AUTO:START -->\n    （ここだけ書き換わる）\n    <!-- HANDOFF:AUTO:END -->\n\nマーカーが無いファイルは**黙って飛ばさない**。飛ばしたことが分からないと、\n古い申し送りが生き残る（2026-08-27 に棚卸しで同じ形の事故を踏んでいる）。",
+   "scars": [
+    "2026-08-27",
+    "2026-09-02"
+   ]
+  },
+  {
    "name": "inbox_watch.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "inbox/ に置かれた会話ログを、索引まで自動で仕上げる。",
    "body": "inbox/ に置かれた会話ログを、索引まで自動で仕上げる。\n\n## 流れ\n\n```\ninbox/**/*.zip                --展開------------>  同名のフォルダ\ninbox/**  (何でも)             --adapters.py----->  conversations/<source>/*.md\nconversations/**/*.md          --make_index.py--->  *-index.md\ninbox/**/*.md, *.txt           --make_index.py--->  *-index.md\n議事録すべて                    --seed_candidates-->  種の候補（数だけ報告）\n```\n\n**2026-08-26: アダプタ方式にした。** サービスごとの読み取りは `adapters.py`、\n揃える先は `../FORMAT.md` の中間形式。**新しいサービスはアダプタ1本で乗る。**\n\n**zip をまず開く(2026-08-25 追加)。** claude.ai / ChatGPT の書き出しは\nzip の中に conversations.json が入った形で降ってくる。開かないと素通りする。\n\n**フォルダごと置かれても拾う**(再帰的に探す)。Drive から降ってくるのが\nフォルダ単位なので(2026-08-22 実測: `OBDLink_LX_chat_log_.../rollout-*.jsonl`)。\n\n## なぜ自動化するか\n\n`make_index.py` は出来がいいのに使われていなかった。**手で叩く必要があったから。**\n今日だけで「作ってあるのに使われていない」が3回出た(chat アプリ、make_index、Fugu 自体)。\n**摩擦があると使われない。** 置くだけで済むようにする。\n\n## これが Fugu の節約になる唯一の形\n\n```\n元ログ 65,740 bytes  → 私が読めば 約20,000トークン\n索引    6,717 bytes  → 私が読むのは約 1,700トークン\n```\n\n**入力が巨大・出力が短い・元ログを私が読まない。** 逆(自分で入力を書いて出力を全部読む)\nをやると損をする —— 2026-08-22 に実際にやって5割増だった。\n\n    python3 inbox_watch.py --once\n    python3 inbox_watch.py            # 5分ごと",
    "scars": [
@@ -179,7 +200,7 @@
   {
    "name": "inject_pending.py",
    "group": "foundation / 道具",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "**次に人が喋ったときに、置き手紙を1回だけ渡す。**",
    "body": "**次に人が喋ったときに、置き手紙を1回だけ渡す。**\n\n## なぜ要るか\n\ncompact 直後に何かを差し込む口は `PostCompact` だが、**2026-08-30 の実測で\n届いていないことが分かった**（フックは走り、正しい JSON を吐くのに、文脈に出ない）。\n\n`UserPromptSubmit` は現に毎回火を吹いている。**動いている口を使う。**\n\nもう1つ効くのは**締切が消えること**。`PostCompact` は compact の直後に\n拾いに来るので、書く側は3分しかない。こちらは**人が次に喋るまで**待てる。\n外注や別の LLM に投げて、出来たら置いておけばよい。\n\n## 使い方\n\n`.stamps/pending-inject.md` を置くだけ。渡したら `.consumed.md` へ退避する\n（**消さない。** 届かなかったときに中身を失わないため）。",
    "scars": [
@@ -189,7 +210,7 @@
   {
    "name": "inspect_export.py",
    "group": "foundation / 道具",
-   "age": "08-25 (7日前)",
+   "age": "08-25 (8日前)",
    "head": "書き出し(claude.ai / ChatGPT)の中身を、形式を仮定せずに報告する。",
    "body": "書き出し(claude.ai / ChatGPT)の中身を、形式を仮定せずに報告する。\n\n**変換器を書く前に、これを走らせる。**\n2026-08-22 に「実物を見ずにハンドオフを書いて外した」ので、同じことをしない。\n\n知りたいのはこの4つ:\n\n  1. 会話が何本入っているか(全部入っているか)\n  2. いつからいつまでか\n  3. **添付や画像の実体が入っているか**(公式ドキュメントに記載が無い)\n  4. どんなキーで構成されているか(変換器を書くための材料)\n\nスキーマは一切決め打ちしない。木を歩いて、出てきたものを数えるだけ。\n\n    python3 inspect_export.py <zip か json かフォルダ>",
    "scars": [
@@ -209,7 +230,7 @@
   {
    "name": "make_index.py",
    "group": "foundation / 道具",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "会話ログを塊に割り、各塊の索引を Fugu(base) に作らせる。",
    "body": "会話ログを塊に割り、各塊の索引を Fugu(base) に作らせる。\n\n判断はさせない。「どこに何があるか」だけ言わせる。\n外注1回ごとに UsageRecord が1件増える(chat アプリ経由なので)。",
    "scars": []
@@ -217,7 +238,7 @@
   {
    "name": "notify.py",
    "group": "foundation / 道具",
-   "age": "08-31 (1日前)",
+   "age": "08-31 (2日前)",
    "head": "**次に人が喋ったときに伝えたいことを、置き手紙に足す。**",
    "body": "**次に人が喋ったときに伝えたいことを、置き手紙に足す。**\n\n    python3 notify.py \"ポタ電の充電が手で切られた。判断を仰ぎたい\"\n    echo \"長い本文\" | python3 notify.py --stdin --title \"ズレを見つけた\"\n\n`inject_pending.py` が `UserPromptSubmit` で拾って文脈に差し込む。\n**締切が無い**ので、機械が気づいたことを溜めておける。\n\n## なぜ要るか\n\n2026-08-31、本人が手でポタ電の充電を止めた。記録は 60秒で捕まえていたが、\n**誰にも言わなかった。** 本人に指摘されるまで分からなかった。\n「記録はしたが誰も言わない」を埋める。\n\n## 溜めすぎない\n\n**上限を切る。** ここが太ると、次の会話の頭が置き手紙で埋まる。\n同じ話を何度も足さないよう、**呼ぶ側が重複を防ぐこと**（このファイルは\n言われたものを足すだけ）。",
    "scars": [
@@ -227,7 +248,7 @@
   {
    "name": "offload_keep.py",
    "group": "foundation / 道具",
-   "age": "08-31 (1日前)",
+   "age": "08-31 (2日前)",
    "head": "**外注の入力と出力を残す。後から別の相手に同じ問いを投げられるように。**",
    "body": "**外注の入力と出力を残す。後から別の相手に同じ問いを投げられるように。**\n\n## なぜ要るか\n\n本人（2026-08-31）:\n> 使った文脈が残っているなら、Local で同じ処理をした場合どのくらい劣化するかも\n> 継続定期に監視していきたい\n\n**入力が残っていないと、その比較は永久にできない。**\n台帳（`offload.jsonl`）は「いつ・いくら・何秒」しか持っていなかった。\n**測れるようにしておくことと、測ることは別の仕事。**\n\n昨夜も同じ形で助かった: 電力を録り始めた9時間後に、その記録が\n「誰が PC を起こしたか」を答えた。**録っていなければ推測で終わっていた。**\n\n## 置き方\n\n    ~/.claude/handoffs/offload/<日付>-<連番>-<task>/\n        meta.json    いつ・どこへ・何秒・何字\n        prompt.txt   投げた指示\n        input.txt    投げた本文（**洗った後のもの**）\n        output.txt   返ってきたもの\n\n**入力は洗った後のものだけ置く。** 生の秘密を保存し直さない。\n\n## 溜めすぎない\n\n1回で数百KB。`--gc <日数>` で古いものを落とす。既定は残す。",
    "scars": [
@@ -237,7 +258,7 @@
   {
    "name": "offload_log.py",
    "group": "foundation / 道具",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "**外注を1本の台帳に落とす。Fugu もローカルも同じ行に。**",
    "body": "**外注を1本の台帳に落とす。Fugu もローカルも同じ行に。**\n\n## なぜ要るか\n\n2026-08-30 に数えたら、こうなっていた:\n\n    Fugu    chat アプリ経由のときだけ usage.jsonl に残る（直 API に落ちたぶんは消える）\n    ローカル **何も残らない**\n\n**測れていないものは、増やすか減らすかの判断ができない。**\nどちらが速いか・通るか・安いかを比べたいのに、片方の目盛りが無い。\n\n## 何を「効果」と呼ぶか\n\n**節約できたのは「入力を読まずに済んだぶん」だけ。**\n出力を読んだ時点で、その分は自分の文脈に入るので節約から差し引く。\n\n    得 = 入力の大きさ − 出力の大きさ      出力を読まないとき\n    得 = 入力の大きさ − 出力の大きさ      出力を読むときも同じ式だが、\n                                          **読んだ出力は文脈に乗る**ので `read` を立てる\n\nだから `read` を記録する。**呼ぶ側が申告する。** 機械には分からない。\n\n## 使い方\n\n    from offload_log import record\n    record(backend=\"fugu\", task=\"index\", in_chars=..., out_chars=...,\n           sec=..., ok=True, read=False, note=\"...\")\n\n台帳は `~/.claude/handoffs/.stamps/offload.jsonl`。**追記のみ。**\n読むのは `offload_stat.py`。",
    "scars": [
@@ -247,7 +268,7 @@
   {
    "name": "offload_stat.py",
    "group": "foundation / 道具",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "**外注の効果を読む。** `offload.jsonl` だけを見る。外注はしない。",
    "body": "**外注の効果を読む。** `offload.jsonl` だけを見る。外注はしない。\n\npython3 ~/.claude/handoffs/tools/offload_stat.py\npython3 ~/.claude/handoffs/tools/offload_stat.py --days 7",
    "scars": []
@@ -255,7 +276,7 @@
   {
    "name": "path_deps.py",
    "group": "foundation / 道具",
-   "age": "08-27 (5日前)",
+   "age": "08-27 (6日前)",
    "head": "道具が cwd に依存しているかを数える。",
    "body": "道具が cwd に依存しているかを数える。\n\n**cwd 依存は「どこで動かすか」を変えた瞬間に壊れる。** 逆に絶対パス直書きは\n壊れないが、置き場所を変えられなくなる。どちらがどれだけあるかを見る。",
    "scars": []
@@ -263,7 +284,7 @@
   {
    "name": "postcompact_inject.py",
    "group": "foundation / 道具",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "compact の直後に、`precompact_snapshot.py` が残した1枚を読み戻す。",
    "body": "compact の直後に、`precompact_snapshot.py` が残した1枚を読み戻す。\n\n`hookSpecificOutput.additionalContext` で文脈に差し込む。\n**これで「compact 後に一からファイルを漁り直す」がほぼ消える。**\n\n書き出しと読み戻しを別のフックに分けているのは、\n**書く側が失敗しても読む側が壊れないようにする**ため\n（スナップショットが無ければ何も差し込まない）。\n\n上限を切ってあるのは、**差し込んだ分がそのまま新しい文脈の初期値**になるから。\nここが太ると compact した意味が薄れる。",
    "scars": []
@@ -271,7 +292,7 @@
   {
    "name": "precompact_snapshot.py",
    "group": "foundation / 道具",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "compact の直前に、**機械で分かる状態だけ**を1枚に落とす。",
    "body": "compact の直前に、**機械で分かる状態だけ**を1枚に落とす。\n\n## なぜ要るか\n\ncompact で失うのは「ディスクに書いていないもの」だけ。\nだが**書き出す判断そのものを compact 直前にはできない**（自動発動だと間に合わない）。\nなので**機械的に取れるものを、常に自動で残しておく。**\n\n**フックは command 型しか使えない**（PreCompact は prompt/agent 型に対応していない）ので、\n「いま何を考えていたか」は書けない。**書けるのは「何が動いていて、何が変わったか」だけ。**\nそれでも、compact 後に一からファイルを漁り直す手間はほぼ消える。\n\n対になる `postcompact_inject.py` が、これを compact 直後に読み戻す。\n\n出力は `~/.claude/handoffs/SNAPSHOT.md`。**上書き。履歴は持たない**（STATE.md と同じ思想）。",
    "scars": []
@@ -297,7 +318,7 @@
   {
    "name": "recall.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "**作る前に探す。** 過去の会話・記録・決定を横断して引く。",
    "body": "**作る前に探す。** 過去の会話・記録・決定を横断して引く。\n\n## なぜ要るか\n\n2026-08-26、外注の判定表を一から設計した。**その2週間前（7/29）に\n「六軸エスカレーション」として、より良いものが既に設計されていた。**\n\n索引は既にあったのに引かなかった。**理由は単純で、「六軸エスカレーション」\nという語を知らなかったから grep のしようがなかった。**\n\n**必要なのは中身ではなく語彙。** だから2つ用意する。\n\n- `topics`  537項目の見出しだけを出す（約2,500トークン）。**これが語彙**\n- `search`  語彙が分かったら、全部を横断して引く\n\n## 探す先\n\n    conversations/**/*-index.md   会話の議事録（Fugu 生成 / 元サービス同梱）\n    conversations/**/*.md         会話の原文\n    ~/.claude/projects/*/memory/  memory\n    Tamorian7 の STATE / DECISIONS / scratch / src/content\n\n    recall.py topics                    # 語彙を出す\n    recall.py search 六軸 委譲          # 横断して引く\n    recall.py search --full 六軸        # 当たった行の前後も出す",
    "scars": [
@@ -315,15 +336,25 @@
   {
    "name": "render_inventory.py",
    "group": "foundation / 道具",
-   "age": "08-31 (1日前)",
+   "age": "08-31 (2日前)",
    "head": "目録を1枚の HTML にする。**集める側（build_inventory）と分ける。**",
    "body": "目録を1枚の HTML にする。**集める側（build_inventory）と分ける。**\n\n集めるのと描くのを混ぜない（`collect_power` / `build_power` と同じ形）。\n取れなかったものは「不明」と出す。**0件を「無い」と言い切らない。**",
    "scars": []
   },
   {
+   "name": "route.py",
+   "group": "foundation / 道具",
+   "age": "09-03 (今日)",
+   "head": "**どこへ投げるかを1箇所で決める。** いままでこの場所が無かった。",
+   "body": "**どこへ投げるかを1箇所で決める。** いままでこの場所が無かった。\n\n    python3 route.py --chars 146000 --kind summary\n    python3 route.py --chars 9400 --kind sweep --why      # 理由も出す\n    python3 route.py --file talk.md --kind extract\n\n2026-09-02、同じ判断を手で4回した:\n\n    改名の参照掃き出し   9.4KB  → **断った**（指示を書いて結果を読む方が高い）\n    記事の素材蒸留     146KB   → Fable（サブエージェント）\n    配色案              小     → Codex と Antigravity の両方\n    agy の権限探り      小     → Codex\n\n**その判断はどこにも残っていない。** 残っていなければ、次に同じ形が来ても\nまた手で考えることになるし、外したかどうかも分からない。\n\n## 出すもの\n\n投げ先と**理由**。**「投げない」(`claude`) も正当な出力。**\n断った回も台帳に1行残る——`fugu-offload-only-saves-on-big-inputs` を\n実装に落とすとはそういうこと。\n\n## 判定できないときは自分でやる\n\n条件が読めないときに外へ投げない。**分からないのと「やってよい」は違う**\n（`queue.py` と同じ方針）。",
+   "scars": [
+    "2026-09-02"
+   ]
+  },
+  {
    "name": "safe_write.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "導出ファイルを**黙って縮ませない**書き出し。",
    "body": "導出ファイルを**黙って縮ませない**書き出し。\n\n2026-08-26、Fugu の枠が切れて判定が全滅し、`SEED-POOL.md` を空で上書きした。\nスクリプトは終了コード0で、ファイルを書き、前の90件を消した。\n**壊れていないのに効いていない**の典型で、同じ日に別の形で6件見つかっている\n(`garden/silent-failures.md`)。\n\nだから書き出し口に指標を1つ置く。**前より極端に小さいなら書かない。**\n初回(既存が無い)は素通し。意図して減らすときは `force=True`。",
    "scars": [
@@ -333,7 +364,7 @@
   {
    "name": "seed_candidates.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "**seeds の候補を会話ログから拾う。**",
    "body": "**seeds の候補を会話ログから拾う。**\n\nseeds の定義は「他人の成果 / まだ見ていない / 本筋から逸れたもの」。\n**在庫が無いのではなく、取り出す仕組みが無かった。**\n1本しか入っていないのが証拠（2026-08-26 時点）。\n\n議事録の見出しと本文から固有名詞らしきものを拾い、\n**既にサイトに書いてあるものを除く。** 残りが候補。\n\n    seed_candidates.py            候補を数える\n    seed_candidates.py --list     一覧を出す\n    seed_candidates.py --list 20  上位20件",
    "scars": [
@@ -343,7 +374,7 @@
   {
    "name": "seed_filter.py",
    "group": "foundation / 道具",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "候補199件を Fugu に判定させる。**「他人の成果か、ただの語か」だけ。**",
    "body": "候補199件を Fugu に判定させる。**「他人の成果か、ただの語か」だけ。**\n\n判定基準は `references/seeds.md` で決めたもの:\n  ◯ 種になる   誰かが作ったもの・提唱したもの（LEV50N / Qwen2.5-VL / ReAct）\n  ✗ ならない   名前があるだけの語（MS-CAN / RSSI_OUT / Japanese-language）\n\n**列挙と分類は外注、採否は人間。** 外しても困らない種類なので出させる価値がある。",
    "scars": []
@@ -351,7 +382,7 @@
   {
    "name": "seed_rank.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "種の候補を**鮮度の3軸**で並べる。",
    "body": "種の候補を**鮮度の3軸**で並べる。\n\n`references/seeds.md` で決めた3軸:\n\n| 軸 | どこから取るか |\n|---|---|\n| **世間で話題か** | いまは測れない（`blog-curator` の担当）。**ここでは0点** |\n| **最近その話をしたか** | **議事録の日付。** 直近ほど熱がある |\n| **プロジェクトで使えるか** | **`STATE.md` との突合。** いま動いている8件に効くか |\n\nそして**「まだ本筋に使っていないか」**で足切りする。\n`YouTube` や `PowerPoint` は他人の成果ではあるが、**種にする意味がない。**\n判定は「その語が、その会話の主題に近いか」で近似する\n（ついでに出てきただけの語は、議事録の見出しに載らない）。\n\n    seed_rank.py           上位を出す\n    seed_rank.py --all     全部",
    "scars": []
@@ -387,7 +418,7 @@
   {
    "name": "slice_talk.py",
    "group": "foundation / 道具",
-   "age": "08-31 (1日前)",
+   "age": "08-31 (2日前)",
    "head": "**会話ログから「喋った部分」だけを切り出し、秘密を洗って外注に渡す。**",
    "body": "**会話ログから「喋った部分」だけを切り出し、秘密を洗って外注に渡す。**\n\n    python3 slice_talk.py <jsonl> --since 2026-08-30 > talk.md\n    python3 slice_talk.py <jsonl> --since 2026-08-30 --check   # 洗い残しを見る\n\n## なぜ要るか\n\n記事の素材として一番厚いのは `scratch` ではなく**会話ログ**。\nscratch は後から起こした蒸留なので、判断の揺れが落ちている。\n\nだが会話ログには**道具の出力が9割**入っていて、そのままでは外注に入らない。\n\n    直前の1区間  599万トークン\n    道具を捨てる **13万**   ← 46分の1\n\n## 洗う\n\n**外注は外部サービスへ送ること。** パスワード・メール・MAC・鍵は落とす。\n`--check` で洗い残しを数えてから送ること。**0件を「洗った」ことにしない。**",
    "scars": [
@@ -397,7 +428,7 @@
   {
    "name": "start-chat.sh",
    "group": "foundation / 道具",
-   "age": "08-17 (15日前)",
+   "age": "08-17 (16日前)",
    "head": "fugu-lab の chat アプリを起動する。外注を JSONL に記録させるために要る。 ポートは fugu_offload.py の既定 (8150) に合わせる。README の 8137 とは食い違っている。",
    "body": "fugu-lab の chat アプリを起動する。外注を JSONL に記録させるために要る。\nポートは fugu_offload.py の既定 (8150) に合わせる。README の 8137 とは食い違っている。",
    "scars": []
@@ -413,6 +444,17 @@
    ]
   },
   {
+   "name": "state_stale.py",
+   "group": "foundation / 道具",
+   "age": "09-02 (今日)",
+   "head": "**STATE.md が古びたら、ネタ帳へ1行積む。** 本人には催促しない。",
+   "body": "**STATE.md が古びたら、ネタ帳へ1行積む。** 本人には催促しない。\n\n    python3 state_stale.py            # 見て、古ければ積む\n    python3 state_stale.py --check    # 見るだけ。積まない\n\n2026-08-31 19:20 から 2026-09-02 12:39 まで**2日間止まっていて、\n誰も気づかなかった**。`last_updated` は最初からあるのに、**誰も見ていなかった。**\n\n## 閾値は48時間（2026-09-02 本人承認）\n\n    24時間   毎日鳴る。STATE.md は毎日更新する性質のものではない\n    48時間   ← ここ\n    72時間   今日の2日間を見逃す\n\n## 積む先はネタ帳まで\n\n`~/.claude/nudge/topics.md` の在庫に1行足す。\n**Claude が起きたときに気づくのが目的**で、本人を急かすためではない。\n既に積んであれば重ねない。\n\n## どの写しを見るか\n\n**推測しない。** `handoff.py` と同じく、作業ツリーとリモートの枝を全部読んで\n`last_updated` が一番新しいものを採る。\n2026-09-02 に踏んだ——main チェックアウトが別ブランチに取り残されていて、\n`STATE.md` が17日古かった。",
+   "scars": [
+    "2026-08-31",
+    "2026-09-02"
+   ]
+  },
+  {
    "name": "sync_drive.sh",
    "group": "foundation / 道具",
    "age": "08-26 (7日前)",
@@ -424,9 +466,19 @@
    ]
   },
   {
+   "name": "test_route.py",
+   "group": "foundation / 道具",
+   "age": "09-03 (今日)",
+   "head": "振り分けの試験。**今日 手でやった判断を、実装が再現できるか。**",
+   "body": "振り分けの試験。**今日 手でやった判断を、実装が再現できるか。**\n\n合成の場合分けだけでは足りない。**実際に下した判断が正解**なので、\nそれを母集団にする（2026-09-02 の4回 + その後わかった修正）。",
+   "scars": [
+    "2026-09-02"
+   ]
+  },
+  {
    "name": "today.py",
    "group": "foundation / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "**「今日やったこと」を、思い出さずに機械から作る。**",
    "body": "**「今日やったこと」を、思い出さずに機械から作る。**\n\n## なぜ要るか\n\n常時起動セッションは何日も続く。前回の compact から105時間経っていた日もある\n（2026-08-26 実測）。その間に日付は4回変わった。\n\n**そして「今日」と書いた文は文脈に残り続ける。**\n8/22 に書いた「今日やったこと」を 8/26 の自分が読むと「今日」に見える。\n**本人から「今日のタスクに昨日のやつが紛れている」と指摘された（2026-08-26）。**\n\n`git log` とファイルの更新時刻に正解が入っているので、**記憶から再構成しない。**\n\n    today.py            今日ぶん\n    today.py 2026-08-24 その日ぶん\n    today.py --days 3   直近3日",
    "scars": [
@@ -437,7 +489,7 @@
   {
    "name": "weekly_inventory.sh",
    "group": "foundation / 道具",
-   "age": "08-31 (1日前)",
+   "age": "09-02 (今日)",
    "head": "日次の棚卸し。**毎日 01:15**。",
    "body": "日次の棚卸し。**毎日 01:15**。\n\n2026-08-31 まで週次(木曜のみ)だった。本人「今作ってくれた2は随時更新\nされていく？勝手に古くなったりしないすか？」で発覚 — このスクリプトは\n--json を呼んでおらず、Toolbox が読む inventory.json は次の木曜まで\n古いままになるところだった。頻度も json 化も両方直す。\n\nSkill / サブエージェント / フック / 道具 / 常駐を一覧して書き出し、\n差分があれば commit & push する。\n\n**サイトの /toolbox/ はこのファイルを読む**ので、\n書き出しを止めると「古い一覧が動いて見える」状態になる。\n生成器とページはセットで置く（denki.html が6日間止まった教訓）。",
    "scars": [
@@ -447,7 +499,7 @@
   {
    "name": "window.py",
    "group": "foundation / 道具",
-   "age": "08-27 (5日前)",
+   "age": "08-27 (6日前)",
    "head": "委託先の「いまの窓」で、あとどれだけ投げられるかを返す。",
    "body": "委託先の「いまの窓」で、あとどれだけ投げられるかを返す。\n\n**枠は2段ある**(2026-08-27 に週の方を踏んで判明)。\n\n    Subscription window        5時間窓。最初の1回で開く。48万通り / 58万で落ちた\n    Subscription weekly limit  **週の枠。約185万トークンで尽きた**\n\n5時間窓ばかり見ていて、上に週の天井があることに気づいていなかった。\nエラーには `Try again after <ISO>` が入り、それが usage.jsonl に残る。\n**その時刻を読んで、明けるまで0を返す。**",
    "scars": [
@@ -457,7 +509,7 @@
   {
    "name": "write_stock.py",
    "group": "foundation / 道具",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "種の在庫の**数だけ**をサイトへ渡す。中身は渡さない。",
    "body": "種の在庫の**数だけ**をサイトへ渡す。中身は渡さない。\n\n候補プール(`SEED-POOL.md`)は個人の会話から抜いた語なので、public な\nリポジトリには入れない。**だが「何本寝ているか」は器の状態**で、\nトップに出す価値がある(spec/site-v3.md)。\n\nだから数だけを JSON にして site 側に置く。**週次の棚卸しと同じ経路に乗せる。**",
    "scars": []
@@ -465,7 +517,7 @@
   {
    "name": "ask_llm.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "09-02 (今日)",
    "head": "アトリエの LLM に投げる。**Fugu が止まっているときの代役。**",
    "body": "アトリエの LLM に投げる。**Fugu が止まっているときの代役。**\n\n    python3 ask_llm.py \"聞きたいこと\"\n    echo \"長い入力\" | python3 ask_llm.py\n\n**寝ていたら投げない。** 起こす仕掛け（ラズパイ + WoL）はまだ無いので、\n落ちているときは「人がプラグを入れ直す」しかない。**それを黙って待たない。**\n\n経路: 自宅 → Tailscale → 100.88.57.50:11434（Ollama）\nOllama は tailnet からだけ見える（Windows ファイアウォールで 100.64.0.0/10 に限定）。",
    "scars": []
@@ -479,9 +531,19 @@
    "scars": []
   },
   {
+   "name": "bench_local.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "同じ入力・同じ指示を複数のローカルモデルへ投げ、Fugu の出力と並べる。",
+   "body": "同じ入力・同じ指示を複数のローカルモデルへ投げ、Fugu の出力と並べる。\n\n    python3 bench_local.py --task docs --models qwen3:8b,qwen3:14b,granite4.2:8b\n    python3 bench_local.py --task extract --models qwen3:8b --ctx 98000\n\n**「入力が届いたか」を毎回確かめる。** これが無いと比較そのものが無意味になる。\n\n2026-09-02、`ask_llm.py` が引数を渡すと標準入力を丸ごと捨てていた。\n終了コード0で、読むものが無いまま創作した要約が返っていた。\n**内容を見なければ通っていた。**\n\nさらに `num_ctx` を指定しないと、長い入力は**黙って切られる**。\n切られたことは出力からは分からない。\n\nだから**カナリア**を使う: 入力の末尾に印を埋め、それを答えさせる。\n**答えられなければ、末尾まで読めていない。** 読めていない比較は捨てる。",
+   "scars": [
+    "2026-09-02"
+   ]
+  },
+  {
    "name": "build_power.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "09-02 (今日)",
    "head": "集めた JSON から、電源まわりの状態ページを書く。**集める側とは分ける。**",
    "body": "集めた JSON から、電源まわりの状態ページを書く。**集める側とは分ける。**\n\n    python3 collect_power.py > /tmp/power.json\n    python3 build_power.py /tmp/power.json > power.html\n\n`build_dashboard.py` と同じ作法。**取れなかったものは「不明」と出す。**\n見た目が動くせいで古い数字を新しいと思い込むのが一番まずい（2026-08-14 の教訓）。",
    "scars": [
@@ -489,9 +551,17 @@
    ]
   },
   {
+   "name": "build_queue.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "wake/build_queue.py - キュー（後回しの仕事）を1枚の静的 HTML にする生成器。",
+   "body": "wake/build_queue.py - キュー（後回しの仕事）を1枚の静的 HTML にする生成器。\n\nUsage:\n    python3 wake/build_queue.py [--queue-dir DIR] [--output FILE]",
+   "scars": []
+  },
+  {
    "name": "charge_cheap.py",
    "group": "atelier-lab / wake",
-   "age": "08-31 (1日前)",
+   "age": "09-02 (今日)",
    "head": "ポタ電を**安い時間だけ充電する**。",
    "body": "ポタ電を**安い時間だけ充電する**。\n\n    python3 charge_cheap.py            # 判定して入り切りする\n    python3 charge_cheap.py --dry-run  # 何をするかだけ言う\n\n**判定は `cheap_now.py` に任せる。** ここで線を引き直さない\n（0.85倍 かつ 36.9円以下。`jepx/cheap_now.py` が持っている）。\n\n**満充電なら切る。** 入れっぱなしにしても入らないのに、\nインバータと待機のぶんだけ払い続けることになる。\n`imuto T600-G` は 622Wh / DC入力 120W。満充電に近づくと電流を絞る。\n\n**出力に何も挿さっていないときは、充電を止めても誰も困らない**\n（2026-08-30 時点はその状態）。下流に何か挿すときは、\n**尽きると困るものを繋がないこと**。622Wh は思ったより早く無くなる。",
    "scars": [
@@ -499,9 +569,27 @@
    ]
   },
   {
+   "name": "charge_mode.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "充電の自動制御と、人の停止指示の境界を管理する。",
+   "body": "充電の自動制御と、人の停止指示の境界を管理する。\n\n``skip`` は今回の計画セッションだけを除外して再計画する。``pause`` は\n人が明示的に戻すまで自動運転を止める。``resume`` は自動運転へ戻すだけで、\nその場で充電するかは計画が決める。計測とSOC更新はいずれの状態でも止めない。",
+   "scars": []
+  },
+  {
+   "name": "charge_plan.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "**その日の安い連続枠を先に押さえる。** 反応的な判定の手前に置く。",
+   "body": "**その日の安い連続枠を先に押さえる。** 反応的な判定の手前に置く。\n\n    python3 charge_plan.py            # 今日の計画を立てて charge-plan.json へ書く\n    python3 charge_plan.py --show     # 立てるだけ。書かない\n    python3 charge_plan.py --at 09:00 # その時刻に立てたことにする（検証用）\n\n**これまでは「今この瞬間が安いか」しか見ていなかった。**\n2026-09-02 の朝、09:00〜13:00 に安い窓があったのに 09:00 に入って 10:45 に\n満タンで止まった。最安は 12:00 の 30.1 円で、09:00 台はそれより高い。\n**必要な量が分かっていれば、待って安く入れられた。**\n\n## 残量で振る舞いを変える（2026-09-02 本人指示）\n\n    50% 以上   **先読み**  計画した枠の中でだけ入れる。最安を待つ\n    30〜50%    **反応的**  安ければ入れる。待たない（余裕が無い）\n    30% 未満   **無条件**  高くても入れる。空にする方が高くつく\n    95% 以上   入れない（安くても要らない）\n\n**余裕があるときだけ待つ。** 減っていたら待つ余裕そのものが無い。\n\n## 何を保守側に倒すか\n\n- **残量は下端**（`estimate_wh_lo` = 常設負荷を最大に見た側）。少なく見て多めに入れる\n- **充電速度は遅い側**（`PLAN_W`）。速いと思って枠を足りなくするより、余らせる\n- **物理的な満充電で早めに止まる**ので、多めに押さえた分は捨てられるだけで害が無い\n\n**逆はできない。** 枠が足りないと締切に間に合わず、価格条件を外して\n一番高い時間に買うことになる。",
+   "scars": [
+    "2026-09-02"
+   ]
+  },
+  {
    "name": "collect_power.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "09-02 (今日)",
    "head": "電源まわりの状態を1つの JSON に集める。**描画はしない。**",
    "body": "電源まわりの状態を1つの JSON に集める。**描画はしない。**\n\n    python3 collect_power.py > power.json\n\n`build_dashboard.py` と同じ形（集める側と描く側を分ける）。\n**取れないものは `null` にして、嘘の値を入れない。** 画面側で「不明」と出す。\n\n集める先:\n    アトリエ  ラズパイ(ssh) / LLM PC(ping) / プラグ2台(Matter 5580)\n    自宅     LED(Matter 5581) / タイマー(systemd --user)\n    値段     JEPX の CSV",
    "scars": []
@@ -509,7 +597,7 @@
   {
    "name": "install-matter-home.sh",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "**自宅側の Matter コントローラ。** アトリエで通した手順をそのまま持ってくる。",
    "body": "**自宅側の Matter コントローラ。** アトリエで通した手順をそのまま持ってくる。\n\n違うのは3つだけ。\n- x86_64（アトリエは aarch64）。ホイールはどちらもある\n- `systemd --user`（アトリエはシステムサービス）。linger は設定済み\n- **ポートは 5581**。アトリエの 5580 と間違えないため\n\n**`/data` を先に作る。** SDK が決め打ちで書きに行く場所で、無いと\n`0xAD (Open file failed)` で死ぬ。2026-08-30 にここで2日詰まった。",
    "scars": [
@@ -519,7 +607,7 @@
   {
    "name": "install-matter.sh",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "ラズパイに Matter のコントローラを入れる。**まず「起動するか」だけを確かめる。**",
    "body": "ラズパイに Matter のコントローラを入れる。**まず「起動するか」だけを確かめる。**\n\n2026-08-28、自宅の PC で `pychip_CommonStackInit` が **173 (INCORRECT_STATE)**\nを返して死んだ。疑っていた原因は2つ:\nBT アダプタが無い    → **3B+ には載っている**\nkernel 7.0 と不整合  → **Pi は 6.x**\nどちらも消えるはずだが、**確かめるまでは分からない。**\n\n共有コードを本人に出してもらうのは、**サーバが立つと分かってから。**\n前回コードを3回無駄にした（3分で失効する）。",
    "scars": [
@@ -529,7 +617,7 @@
   {
    "name": "install-pi.sh",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "アトリエのラズパイに「起こす係」を仕込む。**Tailscale が載った後に、自宅から1回流す。**",
    "body": "アトリエのラズパイに「起こす係」を仕込む。**Tailscale が載った後に、自宅から1回流す。**\n\nscp -r ~/atelier-lab/wake pi:/tmp/ && ssh pi 'sudo bash /tmp/wake/install-pi.sh'\n\n現地でやるのは電源を挿して2行打つところまで。**残りはこれ。**\n\ncurl -fsSL https://tailscale.com/install.sh | sh\nsudo tailscale up --ssh\n\n実機の値は wake/atelier-facts.md から。**推測しない。**",
    "scars": []
@@ -547,7 +635,7 @@
   {
    "name": "log_power.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "**プラグの電力を録り続ける。** 表示は後、記録が先。",
    "body": "**プラグの電力を録り続ける。** 表示は後、記録が先。\n\n## なぜ今すぐ要るか\n\n2026-08-30 に数えたら、**Matter のプラグ3台は履歴が1件も無かった。**\n前の記録（`power-100.64.1.39.jsonl`）は **8/28 16:55 で止まっている**\n— プラグのファームが上がってローカル API が死んだ日。\n\n**表示は後から作れる。記録は遡れない。**\n\n## 瞬時値だけでは足りない\n\n60秒おきの点は、間の山を取りこぼす。**単価を出すなら積算が要る。**\n\n    w    そのときの電力。グラフの形はこちらが素直\n    wh   電源投入からの積算。**差を取れば、その区間の消費が正確に出る**\n\n料金は「区間の Wh × その30分コマの実質単価」で足し上げる。\n実質単価 = JEPX × 1.153 + 18.18（固定 14.0 + 再エネ賦課金 4.18）。\n\n## 置き場所\n\nラズパイ。**両方のサイトに届く唯一の常時起動機**だから。\n日付でファイルを割る（1日あたり約 500KB）。",
    "scars": [
@@ -557,7 +645,7 @@
   {
    "name": "matter_commission.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "共有コードを受け取って、プラグをうちのファブリックに迎える。",
    "body": "共有コードを受け取って、プラグをうちのファブリックに迎える。\n\n    python3 matter_commission.py 1234-567-8901\n\n**コードは3分で失効する。** だから受け取る側を先に立ててから頼む。\n2026-08-28 に3回無駄にした（そのときはサーバが立っていなかった）。\n\nmatter-server の websocket API に投げるだけ。`aiohttp` は使わず、\n標準ライブラリの範囲で済ませる（**ラズパイに余計なものを入れない**）。",
    "scars": [
@@ -567,7 +655,7 @@
   {
    "name": "matter_home.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "自宅の Matter 機器を読む／操作する。**アトリエ用と同じ形で、宛先だけ違う。**",
    "body": "自宅の Matter 機器を読む／操作する。**アトリエ用と同じ形で、宛先だけ違う。**\n\n    python3 matter_home.py                    # 一覧\n    python3 matter_home.py --on 1             # 点ける\n    python3 matter_home.py --off 1            # 消す\n    python3 matter_home.py --level 1 --pct 40 # 明るさ 40%\n\n自宅 5581 / アトリエ 5580。**別のファブリックとして立っている。**",
    "scars": []
@@ -575,7 +663,7 @@
   {
    "name": "matter_read.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "Matter でプラグから**電力を読む**。今日の最後の未確認事項。",
    "body": "Matter でプラグから**電力を読む**。今日の最後の未確認事項。\n\n    python3 matter_read.py            # 一覧と、読める値\n    python3 matter_read.py --raw      # 属性を全部出す\n\nMatter の属性は `<エンドポイント>/<クラスタ>/<属性>` の文字列キーで返る。\n\n    144 = 0x90  ElectricalPowerMeasurement   （電力・電圧・電流）\n    145 = 0x91  ElectricalEnergyMeasurement  （積算）\n      6         OnOff\n\n**mW / mV / mA で返る。** 桁を間違えないこと\n（2026-08-20 に `current_power` の生値を W として記録して1000倍ずれた）。",
    "scars": [
@@ -585,7 +673,7 @@
   {
    "name": "matter_toggle.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "プラグを入り切りして、電力が追随するかを見る。**10秒窓で。**",
    "body": "プラグを入り切りして、電力が追随するかを見る。**10秒窓で。**\n\n    python3 matter_toggle.py --node 1\n\n**切っている間もポタ電は電池で持つ**ので、下流（ラズパイ）は落ちない。\nそれでも放電はするので、**切る時間は短く**。\n\n読むのは `read_attribute` で毎回取り直す。**`get_nodes` はキャッシュ**なので、\nそれを見ていると「変わっていない」と勘違いする。",
    "scars": []
@@ -593,7 +681,7 @@
   {
    "name": "matter_watch.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "プラグの電力を一定間隔で読み続ける。**変化の形を見るためのもの。**",
    "body": "プラグの電力を一定間隔で読み続ける。**変化の形を見るためのもの。**\n\n    python3 matter_watch.py --node 1 --window 10 --count 18   # 3分\n\n記録として溜めるなら `--log`。**冷蔵庫のときと同じ形**（1行1 JSON）にしてある。\n\n報告は10秒周期で、**値は1つ遅れる**（2026-08-30 に入り切りで確認）。\nリアルタイム制御には使えないが、記録には十分。",
    "scars": [
@@ -603,7 +691,7 @@
   {
    "name": "measure_drain.py",
    "group": "atelier-lab / wake",
-   "age": "08-31 (2日前)",
+   "age": "09-02 (今日)",
    "head": "**ポタ電に繋がっている負荷を、充電の記録から測る。**",
    "body": "**ポタ電に繋がっている負荷を、充電の記録から測る。**\n\n## 考え方\n\n満充電から次の満充電までに**入れた分**は、その間に**出て行った分**と等しい。\n\n    負荷[W] = 充電で入った Wh × 効率 ÷ 満充電どうしの間隔[h]\n\nプラグは充電の入力を測っているので、**電池に入るぶんは効率をかける**。\n\n## なぜ要るか\n\n2026-08-31、SOC を「100%」と報告した。**インバーターを切ったので\n待機 0.139W だけ**という前提で計算していたため。\n本人「ラズパイをポタ電に繋いでますよ」——**前提が違った。**\n\n3W なら 96%、10W なら 87%。**推測で埋めない。測る。**\n\n## 使い方\n\n    python3 measure_drain.py power-2026-08-31.jsonl [...]\n\n満充電どうしの区間が1つも無ければ、**「まだ測れない」と言って終わる**\n（0件を「測った」ことにしない）。",
    "scars": [
@@ -613,7 +701,7 @@
   {
    "name": "panel.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "09-02 (今日)",
    "head": "ラズパイで配る操作盤。**tailnet の中からだけ見える。**",
    "body": "ラズパイで配る操作盤。**tailnet の中からだけ見える。**\n\n    python3 panel.py            # 100.111.123.99:8080 で待ち受ける\n\n**アーティファクトでは出来ないことをやる。**\nページから外の機器へ通信できず、そもそも機器が tailnet の中に居るので、\n**配る場所を機器のそばに置く**のが正しい。ラズパイは常時起動で番犬つき。\n\n    アトリエ  127.0.0.1:5580   同じ機体の中。待ち時間ゼロ\n    自宅     100.64.217.22:5581  tailnet 越し\n\n**依存を増やさない。** 標準ライブラリだけで書く（ラズパイに余計なものを入れない）。\nページを足したいときは `PAGES` に1つ増やす。",
    "scars": []
@@ -621,7 +709,7 @@
   {
    "name": "psrun.sh",
    "group": "atelier-lab / wake",
-   "age": "08-29 (3日前)",
+   "age": "08-29 (4日前)",
    "head": "アトリエの Windows で PowerShell を走らせる。",
    "body": "アトリエの Windows で PowerShell を走らせる。\n\n**クォートの入れ子で壊れるのを避ける。** ssh 越しに PowerShell へ\n生の文字列を渡すと、bash → ssh → cmd → PowerShell で4回展開されて\n日本語も引用符も壊れる。**-EncodedCommand なら1回も展開されない。**\n\necho 'Get-Service *ssh*' | psrun.sh\npsrun.sh 'Get-Date'",
    "scars": []
@@ -640,10 +728,12 @@
   {
    "name": "queue.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
-   "head": "**後回しにできる仕事**のキュー。条件が揃った時間に、まとめて片付ける。",
-   "body": "**後回しにできる仕事**のキュー。条件が揃った時間に、まとめて片付ける。\n\n    queue.py add shell \"ffmpeg -i a.mov a.mp4\" --needs cheap --note \"変換\"\n    queue.py add ollama \"要約して\" --file big.md --needs cheap,llm-pc\n    queue.py add claude \"STATE.md を整理する\" --needs claude   # 私が拾う\n    queue.py list                 # 全部\n    queue.py list --ready         # **いま条件が揃っているものだけ**\n    queue.py run                  # 揃っているものを片付ける\n\n**LLM 専用ではない。** シミュレーション・エンコード・集計、何でも積める。\n共通しているのは「**いつやってもいいが、いつかはやらねばならない**」こと。\n\n## 種類（誰がやるか）\n\n    shell    自宅の PC で走らせる\n    remote   アトリエの LLM PC で走らせる（GPU が要る仕事）\n    ollama   アトリエのローカル LLM に投げる\n    claude   **自動では実行しない。** 枠が余ったときに人/私が拾うための覚え書き\n\n**claude を自動実行しない**のは、枠を無人で焼くのが一番高くつく事故だから。\n`list --ready` に出すところまでが仕事。\n\n## 条件（いつやるか）\n\n    cheap    電気が安い（その日の平均の1.05倍まで）\n    llm-pc   アトリエの PC が起きている。**寝ていたら起こす**\n    fugu     Fugu の窓が明いている\n    claude   Claude の枠に余裕がある（read_gate の判定）\n\n**条件が判定できないときは「やらない」に倒す。** 分からないのと「やってよい」は違う。\n\n置き場は 1件1ファイル。DB を使わないのは、**中身を目で見て直せる方が大事**だから。\n落ちたものは `failed/` に残す。**消さない。**",
-   "scars": []
+   "age": "09-02 (今日)",
+   "head": "",
+   "body": "**後回しにできる仕事**のキュー。条件が揃った時間に、まとめて片付ける。\n\n    queue.py add shell \"ffmpeg -i a.mov a.mp4\" --needs cheap --note \"変換\"\n    queue.py add ollama \"要約して\" --file big.md --needs cheap,llm-pc\n    queue.py add claude \"STATE.md を整理する\" --needs claude   # 私が拾う\n    queue.py list                 # 全部\n    queue.py list --ready         # **いま条件が揃っているものだけ**\n    queue.py run                  # 揃っているものを片付ける\n\n**LLM 専用ではない。** シミュレーション・エンコード・集計、何でも積める。\n共通しているのは「**いつやってもいいが、いつかはやらねばならない**」こと。\n\n## 種類（**何が考えるか**）\n\n    shell    頭は無い。ただコマンドを走らせる（自宅の PC）\n    remote   頭は無い。ssh でアトリエの LLM PC 上を走らせる\n    ollama   アトリエのローカル LLM。**`--model` でモデルを指定する**\n    fugu     Sakana Fugu へ投げる\n    codex    Codex CLI（`codex exec`）へ投げる\n    agy      Antigravity CLI（`agy -p`）へ投げる\n    claude   **自動では実行しない。** 枠が余ったときに人/私が拾うための覚え書き\n\n**「どこで走るか」は `kind` では持たない。`needs` から決まる**\n（`llm-pc` が付いていればアトリエ、無ければ自宅）。\n2026-09-02 に整理した——`kind` が「どこで」「何が考えるか」「何を食うか」の\n3つを1つに潰していて、ollama と codex を同じ列に並べられなかった。\n\n**モデルは `kind` に埋めない。** `granite4.2:8b` と `qwen3:14b` は\n得手が違い、しかも入れ替わる。**台帳のキーは `kind + model`。**\n\n**claude を自動実行しない**のは、枠を無人で焼くのが一番高くつく事故だから。\n`list --ready` に出すところまでが仕事。\n\n## 説明は2段で持つ（2026-09-02 本人指示）\n\n    note      一覧に出る見出し。短く\n    summary   **3〜4行。後で見た人が、開かずに「何の話か」分かること**\n    prompt    実際に投げる本文。長い\n\n**`note` だけだと後で分からない。** `STATE.md` で\n`summary`（何をやっているものか）と `next_action`（次の1手）を分けたのと同じ。\n\n## 依頼書を指す（頭のある委託先だけ）\n\n    task_file   `~/.claude/handoffs/tasks/*.md` へのパス\n\n**読める相手にはパスを、読めない相手には中身を。**\n`codex` / `agy` / `claude` は依頼書を自分で読める。\n`ollama` / `shell` / `remote` は読めないので `prompt` に全部入れる。\n\n読む側は **`task_file` があればそちらを優先**。無ければ `prompt`。\n**既存の件は `prompt` のままで動く**（足すだけの変更）。\n\n## 条件（いつやるか）\n\n    cheap    電気が安い（その日の平均の1.05倍まで）\n    llm-pc   アトリエの PC が起きている。**寝ていたら起こす**\n    fugu     Fugu の窓が明いている\n    claude   Claude の枠に余裕がある（read_gate の判定）\n\n**条件が判定できないときは「やらない」に倒す。** 分からないのと「やってよい」は違う。\n\n置き場は 1件1ファイル。DB を使わないのは、**中身を目で見て直せる方が大事**だから。\n落ちたものは `failed/` に残す。**消さない。**",
+   "scars": [
+    "2026-09-02"
+   ]
   },
   {
    "name": "sleep_guard.py",
@@ -668,12 +758,70 @@
   {
    "name": "soc.py",
    "group": "atelier-lab / wake",
-   "age": "08-31 (2日前)",
+   "age": "09-02 (今日)",
    "head": "ポタ電の残量を、**満充電からの距離**で追う。",
-   "body": "ポタ電の残量を、**満充電からの距離**で追う。\n\n    python3 soc.py            # いまの推定\n    python3 soc.py --poll     # 状態を更新する（タイマーから叩く）\n    python3 soc.py --full     # 「いま満充電」と手で教える\n\n**プラグは充電側しか測れない。** 出力に何を繋いだかは分からないので、\n**満充電を起点にして、分かっている減りを引く**という形にする。\n\n    満充電          622 Wh（imuto T600-G のラベル）\n    待機            **139 mW**（2026-08-29 実測。3日で10Wh）\n    インバータ       **5.7 W**（同日実測。AC 出力を入れている間だけ）\n    充電            プラグの積算 `1/145/1` の差分 × 充電効率\n\n**出力に何か繋いだら、この推定は外れる。** そのときは `--full` で\n起点を打ち直すか、`--drain W` で分かっている負荷を教える。\n**「推定」であることを忘れないための名前にしてある**（`estimate_wh`）。\n\n満充電の判定は「入っているのに電力が小さい」。充電が終われば電流を絞るので。",
+   "body": "ポタ電の残量を、**満充電からの距離**で追う。\n\n    python3 soc.py            # いまの推定\n    python3 soc.py --poll     # 状態を更新する（タイマーから叩く）\n    python3 soc.py --full     # 「いま満充電」と手で教える\n\n**プラグは充電側しか測れない。** 出力に何を繋いだかは分からないので、\n**満充電から失われた量（距離）を積み上げる**形にする。\n\n    満充電          622 Wh（imuto T600-G のラベル）\n    待機            **139 mW**（2026-08-29 実測。3日で10Wh）\n    インバータ       **5.7 W**（同日実測。AC 出力を入れている間だけ）\n    充電            プラグの積算 `1/145/1` の差分 × 充電効率\n\n**出力に何か繋いだら、この推定は外れる。** そのときは `--full` で\n起点を打ち直すか、`--drain W` で分かっている負荷を教える。\n常設負荷が確定していない間は、距離を最小・最大の2本で持つ。部分充電では\n入力 Wh を両方の距離から引く。残量を622 Whへ足して上限で潰してはいけない。\n\n満充電の判定は「充電中から低電力へ落ちた遷移」。単なる低電力だけでは、\nスイッチを入れた直後の谷を満充電と誤認する。",
    "scars": [
     "2026-08-29"
    ]
+  },
+  {
+   "name": "test_build_queue.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "wake/test_build_queue.py - build_queue.py の単体テスト。",
+   "body": "wake/test_build_queue.py - build_queue.py の単体テスト。",
+   "scars": []
+  },
+  {
+   "name": "test_charge_cheap_mode.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "",
+   "body": "",
+   "scars": []
+  },
+  {
+   "name": "test_charge_mode.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "",
+   "body": "",
+   "scars": []
+  },
+  {
+   "name": "test_charge_plan.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "charge_plan の判定を、値段表を作って確かめる。",
+   "body": "charge_plan の判定を、値段表を作って確かめる。\n\n**実データではなく合成データで通しただけでは足りない**（2026-09-02 に学んだ）。\n最後の1本で、その日の実際の JEPX を使って「今朝より安い枠を選べたか」を見る。",
+   "scars": [
+    "2026-09-02"
+   ]
+  },
+  {
+   "name": "test_charge_plan_boundary.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "charge_plan の時刻コード境界を仕様の期待値で検証する。",
+   "body": "charge_plan の時刻コード境界を仕様の期待値で検証する。",
+   "scars": []
+  },
+  {
+   "name": "test_panel_charge_control.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "",
+   "body": "",
+   "scars": []
+  },
+  {
+   "name": "test_soc.py",
+   "group": "atelier-lab / wake",
+   "age": "09-02 (今日)",
+   "head": "",
+   "body": "",
+   "scars": []
   },
   {
    "name": "vram.py",
@@ -686,7 +834,7 @@
   {
    "name": "waker.py",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "アトリエのラズパイで10分ごとに走らせる。**読んで、投げるだけ。**",
    "body": "アトリエのラズパイで10分ごとに走らせる。**読んで、投げるだけ。**\n\n判断は持たない（`write_wake.py` が自宅で決める）。ここがやるのは3つ。\n\n    1. Tailscale 越しに wake.json を取る\n    2. **古かったら起こさない**（自宅が死んだときに起こし続けないため）\n    3. want_llm が true で、PC が落ちていれば WoL を投げる\n\n**PC 側には何も持たせない。** 起きて、仕事をして、自分で落ちる。\n\n    python3 waker.py --mac AA:BB:CC:DD:EE:FF --host 100.x.y.z         --url http://<自宅ノード>/wake.json",
    "scars": []
@@ -694,7 +842,7 @@
   {
    "name": "watch_volt.sh",
    "group": "atelier-lab / wake",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "ラズパイの電圧不足を記録し続ける。**「どのくらいでだめになるか」を測る** （2026-08-30、本人が電源をそのままにして様子を見ると決めた）。",
    "body": "ラズパイの電圧不足を記録し続ける。**「どのくらいでだめになるか」を測る**\n（2026-08-30、本人が電源をそのままにして様子を見ると決めた）。\n\n`vcgencmd get_throttled` のビット:\n0x00001  いま電圧不足\n0x00002  いま周波数を落としている\n0x00004  いま制限中\n0x00008  いま温度で制限中\n0x10000  過去に電圧不足があった\n0x40000  過去に制限がかかった\n\n**「過去に」のビットは再起動しないと消えない。** 立ち上がってから一度でも\n起きたかを示す。**いま**のビットが立っている時間の割合が、劣化の目安になる。",
    "scars": [
@@ -712,7 +860,7 @@
   {
    "name": "atelier_when.py",
    "group": "atelier-lab / jepx",
-   "age": "08-17 (15日前)",
+   "age": "08-17 (16日前)",
    "head": "「いつアトリエで作業するか」「栽培棚をいつ点けるか」を実データで",
    "body": "「いつアトリエで作業するか」「栽培棚をいつ点けるか」を実データで",
    "scars": []
@@ -720,7 +868,7 @@
   {
    "name": "battery_eta.py",
    "group": "atelier-lab / jepx",
-   "age": "08-23 (9日前)",
+   "age": "08-23 (10日前)",
    "head": "PC を常にポタ電の AC 出力で動かす（パススルー無し）構成を、 往復効率を振って通しでシミュレーションする。",
    "body": "PC を常にポタ電の AC 出力で動かす（パススルー無し）構成を、\n往復効率を振って通しでシミュレーションする。\n\n**η=1.0 は物理的にありえないが、「構造だけで失っている分」を切り出せる。**\n入口が100Wしかないこと・容量が600Whしかないことによる損と、\n変換で失う損を、分けて見るための基準線。\n\n制御は実際に作るであろう形にする:\n    価格がしきい値以下 かつ 空きがあれば充電。\n    足りなくなりそうなら、価格に関係なく充電（保護動作）。\nしきい値を振って、各 η の最良を出す。",
    "scars": []
@@ -728,7 +876,7 @@
   {
    "name": "battery_policy.py",
    "group": "atelier-lab / jepx",
-   "age": "08-23 (9日前)",
+   "age": "08-23 (10日前)",
    "head": "方針:「高い時間帯に壁から取らない。その時間は SOC100 で迎える」",
    "body": "方針:「高い時間帯に壁から取らない。その時間は SOC100 で迎える」\n\n**構成によって答えが正反対になる**ので、両方計算する。\n\n  構成1 常時インバータ経由（AC パススルー無し）\n        PC は always 電池の出力につながる。高い時間は充電を止めるだけ。\n        → **全量が往復損を食う**\n  構成2 切替式（AC パススルー / UPS 機能あり）\n        安い時間は壁から直で PC、同時に充電。高い時間だけ電池へ切り替え。\n        → **動かしたぶんだけが往復損を食う**\n\n比較の基準は「構成0 = 電池なし、壁に直挿し」。",
    "scars": []
@@ -736,7 +884,7 @@
   {
    "name": "battery_worth.py",
    "group": "atelier-lab / jepx",
-   "age": "08-31 (1日前)",
+   "age": "08-31 (2日前)",
    "head": "**電池でピークを避けると、月いくら浮くか。** 容量ごとに出す。",
    "body": "**電池でピークを避けると、月いくら浮くか。** 容量ごとに出す。\n\n## なぜこれを測るか\n\n本人（2026-08-31）:\n> もっと大きなバッテリを入れて、大きな負荷をシフトするための制御基盤作り。\n> 当面は up to 数100W 規模なのでポタ電でやるつもり。\n\n**台の大きさではなく、仕組みの価値を測る。**\n「充電の枠を選ぶ」（買う時間をずらす）は月9円しか動かなかったが、\nそれは**安い枠どうしの差**しか使っていないから。\n**負荷そのものをずらせば、最安と最高の差が丸ごと効く。**\n\n## 前提（全部ここに書く。隠さない）\n\n    充電の効率   0.88   壁→電池（実測の中間値）\n    放電の効率   0.95   電池→AC（インバータ）\n    往復        0.836\n    インバータの待機  5.7W   **実測。放電している時間だけ入れる**\n    充放電の電力  引数。既定 1.0 kW（いまのポタ電は 0.1 kW）\n\n**待機損を無視しない。** 小さい電池では、これがアービトラージを食う。\n\n## 出すもの\n\n1日1サイクル（最安で充電し、最高の時間に使う）としたときの、\n容量ごとの月あたりの差額。**電池の値段と突き合わせれば元が取れるか分かる。**",
    "scars": [
@@ -746,7 +894,7 @@
   {
    "name": "best_window.py",
    "group": "atelier-lab / jepx",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "**明日の一番安い時間帯**を出す。前日の午後に翌日分が揃うので言える。",
    "body": "**明日の一番安い時間帯**を出す。前日の午後に翌日分が揃うので言える。\n\n    python3 best_window.py            # 明日\n    python3 best_window.py --day 今日  # 今日\n    python3 best_window.py --n 3      # 安い方から3コマ\n\n**「安くなったら動く」ではなく「ここで動く」と決めるための道具。**\n計算の仕事は待てるので、**一番安いところだけ狙う**方が効く。",
    "scars": []
@@ -754,7 +902,7 @@
   {
    "name": "breakeven.py",
    "group": "atelier-lab / jepx",
-   "age": "08-23 (9日前)",
+   "age": "08-23 (10日前)",
    "head": "ポタ電で常時起動 PC を賄うときの損益分岐（往復効率）を出す。",
    "body": "ポタ電で常時起動 PC を賄うときの損益分岐（往復効率）を出す。\n\n**式は単純。** 電池経由は「安い時に 1/η 買って、いつでも使う」なので、\n    直取り  = E × p_avg\n    電池経由 = E / η × p_cheap\n    分岐    = η* = p_cheap / p_avg\n\n**ここで効くのが固定部分 FIXED=18.18円/kWh。** 時間で動かないので、\nJEPX がいくら安くなっても実質単価の「比」は 1 に近づく。\n= 市場連動でも、固定部分が大きいほど裁定の旨味が消える。\n\n充電窓の長さ(何時間ぶんの安値を使えるか)で p_cheap が変わるので、\n窓の長さを振って分岐点を出す。",
    "scars": []
@@ -783,7 +931,7 @@
   {
    "name": "cheap_now.py",
    "group": "atelier-lab / jepx",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "**いま動かしてよい値段か**を返す。重い処理の前に叩く。",
    "body": "**いま動かしてよい値段か**を返す。重い処理の前に叩く。\n\n    python3 cheap_now.py          # 人が読む\n    python3 cheap_now.py --gate   # 安ければ 0、高ければ 1（スクリプト用）\n\n**「16時になったら止める」ではなく「高いときは動かさない」。**\n時刻で切ると、安い日の夕方まで止めてしまうし、高い日の昼を通してしまう。\n**見るのは時計ではなく値段。**\n\n判定は「今日の平均に対して何%か」。絶対額で線を引くと、\n高い月には一日中止まり、安い月には一日中通る。**その日の中での高い安いを見る。**",
    "scars": []
@@ -791,7 +939,7 @@
   {
    "name": "grow_light.py",
    "group": "atelier-lab / jepx",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "育成灯をポタ電経由で回したとき、いくらになるか。",
    "body": "育成灯をポタ電経由で回したとき、いくらになるか。\n\n**「いつ点けるか」を植物の都合だけで決める**ための構え（2026-08-30 本人の設計）。\n値段の都合はポタ電が吸う。**緩衝材があるなら、そのために使う。**\n\n    安い時間   壁から充電しながら、通過給電で灯りも点ける\n    高い時間   **電池から出す**\n\n622Wh あれば「高い時間」ぶんは十分に賄える — 一日ぶんを賄う必要は無い。",
    "scars": [
@@ -830,7 +978,7 @@
   {
    "name": "load_shift.py",
    "group": "atelier-lab / jepx",
-   "age": "08-23 (9日前)",
+   "age": "08-23 (10日前)",
    "head": "処理内容(計算)を安い時間に寄せたときの取り分。",
    "body": "処理内容(計算)を安い時間に寄せたときの取り分。\n\n**電池と違って変換損がゼロ**なので、動かせた分がそのまま取り分になる。\n比較対象は「電池でやった場合の理論上限 = 年1,131円」。\n\n電池は「しきい値」で判断するが、処理は「締切」で判断する。\n損失が無いので、締切に間に合う範囲でいちばん安い窓に置けばよい。",
    "scars": []
@@ -838,7 +986,7 @@
   {
    "name": "peakshift.py",
    "group": "atelier-lab / jepx",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "ピークシフターの設計: 電池が要る負荷 / 要らない負荷 の切り分け",
    "body": "ピークシフターの設計: 電池が要る負荷 / 要らない負荷 の切り分け",
    "scars": []
@@ -857,7 +1005,7 @@
   {
    "name": "pota_take.py",
    "group": "atelier-lab / jepx",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "ポタ電の充電窓の取り分を、現実的な比較相手で出し直す。",
    "body": "ポタ電の充電窓の取り分を、現実的な比較相手で出し直す。\n\n`peakshift.py` は「一日中の平均」= ランダムな時刻に充電する人と比べている。\nだが実際は**深夜に挿しっぱなし**にする人が多い。そこからの改善が制御の価値。",
    "scars": []
@@ -876,7 +1024,7 @@
   {
    "name": "shift_queue.py",
    "group": "atelier-lab / jepx",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "締切つきのジョブを、安い時間帯に落として実行する。",
    "body": "締切つきのジョブを、安い時間帯に落として実行する。\n\n## 電池との違い\n\n**電池は「しきい値」、処理は「締切」。**\n\n電池は変換損（往復66%）を払うので、`価格 > 充電単価/η` を超えたときだけ意味がある。\n**処理を動かすのは損失ゼロ**なので、しきい値は要らない。\n**締切に間に合う範囲で、いちばん安い窓に置けばそれだけ得。**\n\n実測（`load_shift.py`、中国エリア143日）:\n1日 0.5kWh 動かすと **年1,364円**。ハードは0円。\n電池の理論上限（損失ゼロ・600Wh・100W）が年1,131円なので、**それを超える。**\n\n## 使い方\n\n    # 積む（締切は「何時間後まで待てるか」）\n    shift_queue.py add --deadline 18 --name enc-A -- ffmpeg -i in.ts out.mp4\n\n    # 30分ごとに叩く（cron / systemd timer）\n    shift_queue.py tick\n\n    # 見る\n    shift_queue.py list\n\n## 判定\n\n`tick` のたびに、各ジョブについてこう考える。\n\n    締切までに残っているコマのうち、いまが安い方から N 番以内か？\n        N = 残り必要コマ数（= まだ実行していない = 1）\n\nつまり **「これから締切までの間で、今より安い時間が無いなら実行する」**。\n価格は前日に48コマ分が確定公示されるので、**予測は不要。**\n\n**締切を過ぎたら価格に関係なく実行する。** 締切は締切。",
    "scars": []
@@ -884,7 +1032,7 @@
   {
    "name": "standby.py",
    "group": "atelier-lab / jepx",
-   "age": "08-29 (3日前)",
+   "age": "08-29 (4日前)",
    "head": "ポタ電の待機損失を、実測から年額に直して、裁定の取り分と比べる。",
    "body": "ポタ電の待機損失を、実測から年額に直して、裁定の取り分と比べる。\n\n**2026-08-29 実測（本人）**\n\n    08-26 昼ごろ  満充電になって放置（**3日間**）\n    08-29 昼      **強制**充電。100W で始まり、気づかぬ間に止まって積算 **約10Wh**\n\n10Wh ÷ 100W = **6分**。すぐ満たされて止まった。数字として辻褄が合う。\n\n`build_dashboard.py` は往復効率 `EFF=0.663` しか持っておらず、\n**置いているだけで減る分を勘定していない。** そこを埋める。\n\n**効き方が逆なのが要点。**\n\n    裁定の取り分   容量に**比例**する\n    待機損失       容量に**依存しない**（固定費）\n\nだから**小さい電池ほど、待機損失に食われる割合が大きい。**",
    "scars": [
@@ -894,7 +1042,7 @@
   {
    "name": "terasel_check.py",
    "group": "atelier-lab / jepx",
-   "age": "08-17 (15日前)",
+   "age": "08-17 (16日前)",
    "head": "TERASEL 損益分岐リファレンスの閾値を実データに当てる",
    "body": "TERASEL 損益分岐リファレンスの閾値を実データに当てる",
    "scars": []
@@ -902,7 +1050,7 @@
   {
    "name": "threshold.py",
    "group": "atelier-lab / jepx",
-   "age": "08-30 (2日前)",
+   "age": "08-30 (3日前)",
    "head": "「安い時間」の条件を、**通る割合**と**トークン単価**の両方で比べる。",
    "body": "「安い時間」の条件を、**通る割合**と**トークン単価**の両方で比べる。\n\n    python3 threshold.py\n\n**厳しくすれば単価は下がるが、動ける時間が減る。** 片方だけ見ると必ず間違える。\n「25円以下」のような絶対値は、**その値を一度も下回らない日**があると\nまる一日止まる。**止まった日の仕事は消えるのではなく、翌日に積み上がる。**",
    "scars": []
@@ -910,7 +1058,7 @@
   {
    "name": "today_battery.py",
    "group": "atelier-lab / jepx",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "今日(08-27)の実価格で、ポタ電を挟む意味があるか確かめる。",
    "body": "今日(08-27)の実価格で、ポタ電を挟む意味があるか確かめる。",
    "scars": []
@@ -918,7 +1066,7 @@
   {
    "name": "when_cheap.py",
    "group": "atelier-lab / jepx",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "毎日の最安2時間が、いつ来ているか。月ごとに分けて数える。",
    "body": "毎日の最安2時間が、いつ来ているか。月ごとに分けて数える。",
    "scars": []
@@ -926,7 +1074,7 @@
   {
    "name": "build_fridge.py",
    "group": "atelier-lab / shifter",
-   "age": "08-27 (6日前)",
+   "age": "08-27 (7日前)",
    "head": "冷蔵庫のダッシュボード用データを作り、fridge.html に流し込む。",
    "body": "冷蔵庫のダッシュボード用データを作り、fridge.html に流し込む。\n\n**生成器とページは必ずセットで置く。** denki.html は生成器が無くて\n6日間データが止まったまま「動いているように見える」状態になっていた。\n\n    python3 build_fridge.py            # 集計して fridge.html に埋め込む\n    python3 build_fridge.py --json     # 全部を標準出力へ(切り詰めない)\n    python3 build_fridge.py --summary  # 要点だけ。人や AI に渡す用\n\n## 判定のしきい値\n\n待機 2.7〜2.9W / コンプレッサ運転 58.9W と実測できているので、\nその間の 20W で切る。**中間の値がほとんど出ない負荷**なので、\nしきい値の置き場所に神経質にならなくてよい。",
    "scars": []
@@ -952,7 +1100,7 @@
   {
    "name": "monitor_tapo.py",
    "group": "atelier-lab / shifter",
-   "age": "08-28 (4日前)",
+   "age": "08-28 (5日前)",
    "head": "スマートプラグの電力を記録する（tapo 実装）。制御はしない。",
    "body": "スマートプラグの電力を記録する（tapo 実装）。制御はしない。\n\n`monitor.py` は python-kasa を使うが、**新しいファームで自動判別に失敗する**\n（`Unsupported device ... encrypt_type='TPAP'`）。同じ機器に対して `tapo` は\n暗号の折衝まで通るので、こちらへ移した（2026-08-28）。\n\n    python3 monitor_tapo.py --host <IP> --label llm-pc\n    python3 monitor_tapo.py --host <IP> --once        # 1回だけ\n\n出力は `data/power-<label または IP>.jsonl`。1行1レコード。\n**挿し替えたら必ず --label を変える。** 同じファイルに別の機器が混ざる。",
    "scars": [
@@ -962,7 +1110,7 @@
   {
    "name": "phone_temp.py",
    "group": "atelier-lab / shifter",
-   "age": "08-21 (11日前)",
+   "age": "08-21 (12日前)",
    "head": "USB で繋いだ Android から温度を読む。室温計が来るまでの代用。",
    "body": "USB で繋いだ Android から温度を読む。室温計が来るまでの代用。\n\n## 正直な限界\n\n**これは室温計ではありません。端末自身の温度計です。**\n\nUSB を挿している間は充電しているので、**周囲より数℃高く出ます**。\nしかも充電電流は残量で変わるので、**オフセットが一定とは限らない**。\nそれでも使えるのは、見たいのが**絶対値ではなく変化**だからです。\n\n条件を揃えると精度が上がります。\n\n- **画面を消しておく**(点いているだけで数℃上がる)\n- **満充電まで待つ。** そこから先はトリクルになり、発熱が小さく安定する\n- **冷蔵庫の放熱が当たらない場所**に置く。1m ほど離す\n- 動かさない。置き場所を変えたらオフセットが変わる\n\n`ambient` という名前のセンサがあれば、それが本物の外気温センサです\n(搭載機種は少ない)。`--list` で確認できる。\n\n    python3 phone_temp.py --list          # 温度ゾーンを全部出す\n    python3 phone_temp.py --zone 12       # そのゾーンを10分ごとに記録\n    python3 phone_temp.py --once --zone 12",
    "scars": []
@@ -970,7 +1118,7 @@
   {
    "name": "plug.py",
    "group": "atelier-lab / shifter",
-   "age": "08-20 (12日前)",
+   "age": "08-20 (13日前)",
    "head": "スマートプラグの薄い層。",
    "body": "スマートプラグの薄い層。\n\n**ここだけが機種に依存する。** 上の charge.py は Plug のインタフェースしか見ないので、\nTapo をやめて別の機種にしても、差し替えるのはこのファイルだけで済む。\n\n対象は TP-Link Tapo P110M(電力計測付き)。python-kasa 経由で **LAN 内から直接**叩く。\nクラウド API を使わないのは、ネットが落ちても充電制御を続けたいため。\n\n認証情報は Tapo アプリのアカウント。リポジトリに入れず\n`~/.claude/secrets/tapo-account` に置く(600)。1行目 email / 2行目 password。",
    "scars": []
@@ -978,7 +1126,7 @@
   {
    "name": "schedule.py",
    "group": "atelier-lab / shifter",
-   "age": "08-20 (12日前)",
+   "age": "08-20 (13日前)",
    "head": "翌日の最安窓を、プラグ自身のスケジュールに書き込む。",
    "body": "翌日の最安窓を、プラグ自身のスケジュールに書き込む。\n\n## なぜこちらが上か\n\n`charge.py` は15分ごとに叩かれて判定する方式で、**叩く側が生きている必要**がある。\nプラグに書き込んでしまえば、**PC が落ちてもネットが切れても充電は動く**。\n必要なのは「1日1回どこかのタイミングで繋がること」だけになる。\n\nラズパイも VPN も、これがあれば充電のためには要らない。\n\n## 併用できる\n\n`charge.py` を併せて回してもぶつからない。\nスケジュールが窓の入口で ON にし、`charge.py` は窓の中でしか ON にしないので、\n**満充電を検出して早めに切る**役だけが上乗せされる。\n\n## ルールの形式(2026-08-20 に実機から読み出して確定)\n\n    {\"enable\": true, \"id\": \"S1\", \"s_type\": \"normal\",\n     \"s_min\": 605,                      # 深夜0時からの分数。605 = 10:05\n     \"e_type\": \"normal\", \"e_min\": 0, \"e_action\": \"none\",\n     \"week_day\": 127,                   # 7日分のビットマスク\n     \"mode\": \"repeat\",\n     \"year\": 2026, \"month\": 8, \"day\": 21,\n     \"time_offset\": 0,\n     \"desired_states\": {\"on\": true}}\n\n**最大32ルール。** ここでは2つ(ON と OFF)だけを使い、毎日上書きする。\n`repeat` にしてあるので、**書き込みに失敗した日は前日の窓がそのまま使われる**。\n何も起きないよりはましなので、この壊れ方を選んでいる。\n\n    python3 schedule.py --host <IP>              # 何を書くか見せるだけ\n    python3 schedule.py --host <IP> --apply      # 実際に書く",
    "scars": [
@@ -988,7 +1136,7 @@
   {
    "name": "setup_plug.py",
    "group": "atelier-lab / shifter",
-   "age": "08-20 (12日前)",
+   "age": "08-20 (13日前)",
    "head": "プラグの初期設定。**冪等**なので何度流してもよい。",
    "body": "プラグの初期設定。**冪等**なので何度流してもよい。\n\nいまやっているのはタイムゾーンだけ。だが、これを手作業にしておくと必ず失われる。\n\n## なぜ要るか\n\nP110M は出荷時 **UTC** で動く(2026-08-20 実測: `time_diff: 0`, `region: \"\"`)。\nそのままだと実害が2つある。\n\n1. **スケジュールが9時間ずれる。** 「01:00 に ON」が日本時間の 10:00 になる\n2. **`today_energy` が朝9時にリセットされる。** UTC の深夜0時なので。\n   夜に充電する日は1回の充電が2日に割れ、日次の使用量が信用できなくなる\n\n工場出荷リセットやファーム更新で戻る可能性があるので、\n**定期的に流しても害が無いように冪等**にしてある。\n\n    python3 setup_plug.py --host 100.64.1.39\n    python3 setup_plug.py --host 100.64.1.39 --check   # 見るだけ",
    "scars": [
@@ -998,7 +1146,7 @@
   {
    "name": "temp.py",
    "group": "atelier-lab / shifter",
-   "age": "08-20 (12日前)",
+   "age": "08-20 (13日前)",
    "head": "外気温を記録する。冷蔵庫の消費と突き合わせるため。",
    "body": "外気温を記録する。冷蔵庫の消費と突き合わせるため。\n\n## なぜ外気温で足りるか\n\n見たいのは「暑いとどれだけ効率が落ちるか」という**傾き**であって、\n室温の絶対値ではない。外気温は室温に対してオフセットを持つが、\n**日変動と季節変動は追える**ので、傾きは出る。\n\n相関が強く出たなら、そこで初めて室温センサを買う価値が確定する。\n**先に買って測るのは順番が逆。**\n\n## 出どころ\n\nOpen-Meteo。**API キー不要**で、緯度経度だけで引ける。\n既定は広島。別の場所なら --lat --lon で渡す。\n\n    python3 temp.py --once\n    python3 temp.py            # 10分ごとに追記",
    "scars": []
@@ -1016,7 +1164,7 @@
   {
    "name": "fugu_offload.py",
    "group": "fugu-lab / 道具",
-   "age": "08-26 (6日前)",
+   "age": "08-26 (7日前)",
    "head": "fugu_offload — Claude(実装エージェント)が機械的な下請けを Fugu base に外注するための CLI。",
    "body": "fugu_offload — Claude(実装エージェント)が機械的な下請けを Fugu base に外注するための CLI。\n\n方針は docs/claude-fugu-offload.md:\n  「生成が重く・検証が軽い」タスクだけを base fugu に投げ、出力は必ずサニタイズしてから使う。\n\n設計上の肝: 既定で **chat アプリ経由**(http://127.0.0.1:PORT/api/chat)で叩く。\nそうすると外注 1 回ごとに UsageRecord が JSONL に追記され、**作業がそのまま測定データになる**。\nアプリが起動していなければ直接 API にフォールバックする(この場合は記録されない旨を警告)。\n\n使い方:\n    python tools/fugu_offload.py --task code     --prompt \"関数 slugify(s) を書け\"\n    python tools/fugu_offload.py --task json     --prompt \"この文から {name, price} を抽出: ...\"\n    python tools/fugu_offload.py --task regex    --prompt \"日本の郵便番号にマッチする正規表現\"\n    python tools/fugu_offload.py --task translate --prompt \"この API は裏で複数モデルを協調させる\"\n    python tools/fugu_offload.py --task summary  --prompt \"次を1文で要約: ...\"\n    echo \"長い原文\" | python tools/fugu_offload.py --task summary --stdin\n\n標準出力にはサニタイズ済みの成果物だけを出す(パイプで繋げる)。実測値は stderr。",
    "scars": []
@@ -1033,7 +1181,7 @@
    "name": "dataviz",
    "scope": "全体",
    "desc": "Use whenever you are about to create ANY chart, graph, plot, dashboard, or data visualization in any medium (HTML/React artifact, SVG, matpl…",
-   "age": "08-13 (19日前)"
+   "age": "08-13 (20日前)"
   },
   {
    "name": "docx",
@@ -1111,7 +1259,7 @@
    "name": "session-start-hook",
    "scope": "全体",
    "desc": "Creating and developing startup hooks for Claude Code on the web.",
-   "age": "08-13 (19日前)"
+   "age": "08-13 (20日前)"
   },
   {
    "name": "skill-creator",
@@ -1159,7 +1307,7 @@
    "name": "tamorian7",
    "scope": "この repo",
    "desc": "Tamorian7 の Knowledge Garden(alinxcy/Tamorian7.com)にコンテンツを足す・整える ときの単一の入口。",
-   "age": "08-31 (1日前)"
+   "age": "08-31 (2日前)"
   },
   {
    "name": "update-state",
@@ -1173,31 +1321,31 @@
    "name": "nudge-scout",
    "scope": "全体",
    "desc": "常時起動セッションのアイドル監視で、起きたときに「いま話しかけてよいか、 話しかけるなら何を」を調べて短く返す偵察役。/loop のアイドル監視から毎時 呼ばれる。判定・キュー確認・inbox 確認のツール出力を親の文脈に入れないための 分離であって、親の代わりに喋る役ではない。",
-   "age": "08-17 (15日前)"
+   "age": "09-02 (今日)"
   },
   {
    "name": "blog-curator",
    "scope": "この repo",
    "desc": "Tamorian7 の興味に合う外部の記事・論文・道具を探し、種の候補としてまとめて返す。 「面白いの探して」「今週の拾いもの」「◯◯まわりで何かない?」と言われたとき、 および seeds の在庫が尽きたときに使う。",
-   "age": "08-17 (16日前)"
+   "age": "08-17 (17日前)"
   },
   {
    "name": "garden-hand",
    "scope": "この repo",
    "desc": "Tamorian7.com のリポジトリを実際に触って、検証まで通して、コミットして返す手。 「STATE.md 直しといて」「/state/ にこれ足して」「check 通して」「あのページ直して」 のように、対象がこのリポジトリの中で完結する編集作業に使う。",
-   "age": "08-18 (14日前)"
+   "age": "08-18 (15日前)"
   },
   {
    "name": "honest-reviewer",
    "scope": "この repo",
    "desc": "公開前の記事・ノートをレビューし、「言いすぎ」と「未確認」を指摘する。公開前や 「これ出して大丈夫?」と聞かれたときに使う。指摘は多くなりがちで会話を埋めるため、 別コンテキストで走らせて指摘リストだけ返す。",
-   "age": "08-17 (16日前)"
+   "age": "08-17 (17日前)"
   },
   {
    "name": "promotion-reviewer",
    "scope": "この repo",
    "desc": "seeds / log / garden の在庫を棚卸しし、昇格と破棄を提案する。「種たまってない?」 「棚卸しして」と言われたとき、および seeds が増えてきたときに使う。全ファイルを 読む重い作業なので会話でやらず、別コンテキストで走らせて結果だけ返す。",
-   "age": "08-17 (16日前)"
+   "age": "08-17 (17日前)"
   }
  ],
  "hooks": [
@@ -1292,6 +1440,22 @@
    "auto": "手動",
    "state": "active",
    "desc": "JEPX の価格を取り直す（11:00 / 失敗したら 15:00・20:00）",
+   "kind": "定期実行",
+   "where": "自宅"
+  },
+  {
+   "name": "daily-log.service",
+   "auto": "手動",
+   "state": "timer駆動",
+   "desc": "前日分の log 記事を書く（無ければ Claude を headless で起こす）",
+   "kind": "定期実行(本体)",
+   "where": "自宅"
+  },
+  {
+   "name": "daily-log.timer",
+   "auto": "手動",
+   "state": "active",
+   "desc": "毎朝3時すぎに前日分の記事を書く",
    "kind": "定期実行",
    "where": "自宅"
   },
