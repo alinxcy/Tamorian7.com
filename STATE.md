@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-09-02T22:44+09:00
-current_focus: "委託先が4つ(Fugu/Local/Codex/Antigravity)になり、どれも実行口が通った。次は振り分けを1箇所にまとめること。9/5 の LAN 振り直しは日付の律速として並走"
+last_updated: 2026-09-07T23:15+09:00
+current_focus: "PX-Q3PE が地上波・衛星とも受信し、Mirakurun/EPGStation まで立ち上がった。次は B-CAS カードリーダー。委託の振り分け(Fugu/Local/Codex/Antigravity)はこの件で実地に使い、当たりは全部 Codex/Antigravity 発だった"
 projects:
   - slug: foundation
     status: active
@@ -16,10 +16,10 @@ projects:
     next_action_at: "src/pages/works/ と spec/site-v3.md"
     link: "/works/knowledge-garden/"
   - slug: q3pe-recorder
-    status: blocked
-    summary: "遊んでいた PX-Q3PE を kernel 7.0 で生き返らせる。ドライバは動いた"
-    next_action: "極細アンテナケーブルと USB カードリーダーを注文する。上物側のバグ2件は洗い出し済み"
-    next_action_at: "~/ptx-q3pe/(パッチ済み) と ~/record_system/(上物)"
+    status: active
+    summary: "遊んでいた PX-Q3PE を kernel 7.0 で生き返らせる。地上波34dB・衛星14dBで受信、Mirakurun 32局/4,895番組、EPGStation 32ch まで到達"
+    next_action: "B-CAS カードリーダーを使えるようにする。EIT は平文なので番組表は既に読めるが、映像・音声は96%が暗号化されていて中身が見られない"
+    next_action_at: "~/record_system/ と ~/ptx-q3pe/docs/"
     link: "https://github.com/knight-rider/ptx"
   - slug: fugu-lab
     status: active
@@ -88,17 +88,21 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **委託の振り分けが実装になった** — `route.py` が「どこへ投げるか」を1箇所で決める。
+1. **PX-Q3PE が映った** — 地上波 34dB / 衛星 14dB、同期エラー0。原因は独立した3件
+   （I2C バッファのヒープ破壊 / `msleep(0)` が kernel 7.0 で待機にならない /
+   電源投入後の 200ms 欠落）＋ アンテナ線の逆挿し。**当たりの指摘は全部委託先発**。
+   Mirakurun/EPGStation まで上がったので、**次は B-CAS**。パイプラインは HDD 増設待ち
+2. **委託の振り分けが実装になった** — `route.py` が「どこへ投げるか」を1箇所で決める。
    試験の母集団は**実際に下した判断**にした（今日の4回）。
    次は使いながら外れを見つけること。**台帳は `foundation/delegation/` に置いた**
-2. **委託先ごとの得手が、測って出てきた** — 下の暗黙知欄。
+3. **委託先ごとの得手が、測って出てきた** — 下の暗黙知欄。
    ただし**母数はまだ足りない**（Codex 5件、他は1〜2件）
-3. **atelier-lab の充電が3段になった** — 95%以上は入れない / 50〜95%は先読み /
+4. **atelier-lab の充電が3段になった** — 95%以上は入れない / 50〜95%は先読み /
    30〜50%は反応的 / 30%未満は無条件。**配線済みで動いている**
-4. **knowledge-garden — 記事が自動で書かれるようになった**。
+5. **knowledge-garden — 記事が自動で書かれるようになった**。
    毎朝3時すぎの systemd timer。**本数は素材の「逆転の数」が決める**（上限3本）
-5. **9/5 の LAN 振り直し** — 日付が律速。並走させる
-6. **q3pe-recorder** / **peak-shifter** — どちらも**物待ち**
+6. **9/5 の LAN 振り直し** — 日付が律速。並走させる
+7. **peak-shifter** — **物待ち**（q3pe-recorder は上の 1 へ移った）
 
 **詰まり方は3種類。** 書けば進むもの、物が届くまで動けないもの、
 **人間が決めれば動くもの**。判断1つで進む方が一番安い。
