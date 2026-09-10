@@ -1,6 +1,6 @@
 ---
 schema_version: 2
-last_updated: 2026-09-07T23:15+09:00
+last_updated: 2026-09-10T07:35+09:00
 current_focus: "PX-Q3PE が地上波・衛星とも受信し、Mirakurun/EPGStation まで立ち上がった。次は B-CAS カードリーダー。委託の振り分け(Fugu/Local/Codex/Antigravity)はこの件で実地に使い、当たりは全部 Codex/Antigravity 発だった"
 projects:
   - slug: foundation
@@ -76,6 +76,9 @@ pending:
   - id: charge-full-by-deadline
     question: "日次満充電の締切 full_by を何時にするか。Codex 案の17:00 は過去7日すべてでその日の最高値の87〜99.9%で、フォールバックが最も高い瞬間に発火する。Claude は14:00 を推奨"
     raised: 2026-09-02
+  - id: kuroko-chat-session-switch
+    question: "kuroko-chat にセッション切り替えを入れるか。2026-09-10 に「会話の履歴が原因で道具が使えなくなり、中からは直せない」状態が実際に起きた。本質は切り替えではなく『書き出してから切り替える』(update-state を走らせ、成功したら新セッション)。Phase 1 の窓より前に来る可能性がある"
+    raised: 2026-09-10
   - id: localllm-at-atelier
     question: "LocalLLM のPCをアトリエに置いて、WoL で安い時間帯だけ起こすか。Fugu が止まったときの受け皿にもなる。peak-shifter にとっては初めての「大きくて時間の自由度がある負荷」"
     raised: 2026-08-28
