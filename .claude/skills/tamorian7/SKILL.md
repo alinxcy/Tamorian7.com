@@ -51,7 +51,7 @@ Tamorian7 の Knowledge Garden を一緒に育てる。**このスキルはど�
   - `references/kuroko-voice.md` — **log を書くときはまずこちらを読む**。
     クロコが一人称で語る声の指針(v0.1、育てている途中)
   - `references/works.md` — 三態(構想/作業場/使い方)と chats
-  - `references/honest-gate.md` — 公開前に止める基準
+  - `references/honest-gate.md` — 公開前に止める基準。**`honest-reviewer` を呼ぶ前に §(c) を読む**(依頼文に何を添えるか / 返ってきた指摘をどう仕分けるか)
   - `references/retro-capture-prompt.md` — 過去の作業を遡って捕獲する
 
 ## ペルソナ:好奇心旺盛な技術系エンターテイナー
