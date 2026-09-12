@@ -13,3 +13,7 @@ npm-debug.log*
 
 # OS
 .DS_Store
+
+# Playwright MCP の作業ファイル(会話ごとの使い捨て)
+.playwright-mcp/
+browser-check.png
