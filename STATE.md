@@ -1,6 +1,6 @@
 ---
 schema_version: 2
-last_updated: 2026-09-10T07:35+09:00
+last_updated: 2026-09-12T12:22+09:00
 current_focus: "PX-Q3PE が地上波・衛星とも受信し、Mirakurun/EPGStation まで立ち上がった。次は B-CAS カードリーダー。委託の振り分け(Fugu/Local/Codex/Antigravity)はこの件で実地に使い、当たりは全部 Codex/Antigravity 発だった"
 projects:
   - slug: foundation
@@ -66,9 +66,6 @@ pending:
     raised: 2026-08-20
   - id: seed-url-optional
     question: "seeds の url を必須から外した(会話由来の種を入れるため)。既存の拾いものと同じ一覧に混ぜてよいか、分けるか"
-    raised: 2026-08-27
-  - id: skill-selfimprove-trigger
-    question: "呼ぶたびの記録は始めた。PreToolUse で過去の失敗を実行前に注入するか、週次で Skill 本文へ蒸留するか"
     raised: 2026-08-27
   - id: playground-role
     question: "claudePlayGround を配布元にするか保管庫にするか。skill-return という還流の仕組みまで作ってあるが、5週間動いていない"
