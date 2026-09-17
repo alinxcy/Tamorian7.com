@@ -1,7 +1,7 @@
 ---
 schema_version: 2
-last_updated: 2026-09-12T12:22+09:00
-current_focus: "PX-Q3PE が地上波・衛星とも受信し、Mirakurun/EPGStation まで立ち上がった。次は B-CAS カードリーダー。委託の振り分け(Fugu/Local/Codex/Antigravity)はこの件で実地に使い、当たりは全部 Codex/Antigravity 発だった"
+last_updated: 2026-09-17T11:05+09:00
+current_focus: "録画が受信からエンコード・退避まで一本でつながった。B-CAS 復号・CM検出・その日の最安30分にアトリエの GPU でエンコードまで自動で回り、録画14本/エンコード済み7本。残る穴は予約が0件なこと。配信が固まる事故(再生中の WiFi→5G 切替)を受けて番犬を10分ごとに走らせている"
 projects:
   - slug: foundation
     status: active
@@ -17,9 +17,9 @@ projects:
     link: "/works/knowledge-garden/"
   - slug: q3pe-recorder
     status: active
-    summary: "遊んでいた PX-Q3PE を kernel 7.0 で生き返らせる。地上波34dB・衛星14dBで受信、Mirakurun 32局/4,895番組、EPGStation 32ch まで到達"
-    next_action: "B-CAS カードリーダーを使えるようにする。EIT は平文なので番組表は既に読めるが、映像・音声は96%が暗号化されていて中身が見られない"
-    next_action_at: "~/record_system/ と ~/ptx-q3pe/docs/"
+    summary: "遊んでいた PX-Q3PE を kernel 7.0 で生き返らせた。B-CAS 復号まで動き、録画14本・エンコード済み7本。録画→CM検出(自宅)→安い枠でアトリエの GPU エンコ→Drive まで一本につながった"
+    next_action: "おすすめ番組を選んで予約を入れる。予約は0件で、放っておくと録画が増えない。毎週の自動予約にするかは本人の判断待ち"
+    next_action_at: "EPGStation の /rules（自動予約は0件）と ~/record_system/tools/"
     link: "https://github.com/knight-rider/ptx"
   - slug: fugu-lab
     status: active
@@ -88,10 +88,11 @@ pending:
 
 ## 1. 今やっていること / 優先順位
 
-1. **PX-Q3PE が映った** — 地上波 34dB / 衛星 14dB、同期エラー0。原因は独立した3件
-   （I2C バッファのヒープ破壊 / `msleep(0)` が kernel 7.0 で待機にならない /
-   電源投入後の 200ms 欠落）＋ アンテナ線の逆挿し。**当たりの指摘は全部委託先発**。
-   Mirakurun/EPGStation まで上がったので、**次は B-CAS**。パイプラインは HDD 増設待ち
+1. **録画が一本の流れになった** — 受信（地上波34dB/衛星14dB）から B-CAS 復号、
+   録画後の CM 検出（自宅・1本4分半）、**その日の最安30分にアトリエの GPU でエンコード**、
+   Google Drive への退避と EPGStation への登録まで自動で回っている。
+   録画14本・エンコード済み7本。**1枠に2本入ることを実測**（45分番組で8〜15分）。
+   **残る穴は予約が0件なこと** — 仕組みは回るが、録る番組を誰も決めていない
 2. **委託の振り分けが実装になった** — `route.py` が「どこへ投げるか」を1箇所で決める。
    試験の母集団は**実際に下した判断**にした（今日の4回）。
    次は使いながら外れを見つけること。**台帳は `foundation/delegation/` に置いた**
