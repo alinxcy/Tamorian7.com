@@ -217,6 +217,58 @@ for (const { c, f } of files) {
   }
 }
 
+// --- 画像 ---
+// **参照先が無い画像は、ビルドを通らずに落ちるとは限らない。** 壊れた枠だけが
+// 残って本文は出る。リンク切れと同じ種類なので機械で止める。
+// alt を必須にするのは、後から自分で探すときに効くため(検索・読み上げ以前の話)。
+{
+  const assetsDir = join(ROOT, 'src/assets');
+  const referenced = new Set();
+  let imageCount = 0;
+  for (const { f } of files) {
+    const rel = relative(ROOT, f);
+    const src = readFileSync(f, 'utf8');
+    const lines = src.split('\n');
+    lines.forEach((ln, i) => {
+      for (const m of ln.matchAll(/!\[([^\]]*)\]\(([^)\s]+)/g)) {
+        const [, alt, target] = m;
+        if (/^(https?:)?\/\//.test(target)) continue;  // 外部は追わない
+        imageCount++;
+        if (!alt.trim()) {
+          add('error', rel, i + 1, '画像に alt が無い',
+            '何の図かを一言。後から自分で探すときに効く');
+        }
+        const abs = target.startsWith('/')
+          ? join(ROOT, 'public', target)
+          : join(f, '..', target);
+        if (!existsSync(abs)) {
+          add('error', rel, i + 1, `画像が見つからない: ${target}`,
+            '本文は出るが枠だけが残る。パスは記事ファイルからの相対');
+        } else {
+          referenced.add(abs);
+        }
+      }
+    });
+  }
+  // **置いたのに使っていない画像**は、次に見たとき何のためのものか分からなくなる
+  if (existsSync(assetsDir)) {
+    for (const p of walk(assetsDir, '.png').concat(
+      walk(assetsDir, '.jpg'), walk(assetsDir, '.webp'), walk(assetsDir, '.svg'))) {
+      if (!referenced.has(p)) {
+        add('warn', relative(ROOT, p), 1, 'どの記事からも参照されていない画像',
+          '使うか消すか。残すなら、なぜ残すかを記事側に書く');
+      }
+    }
+  }
+  // **0件なら「検査した」ことにしない。** 空のループは常に通る
+  if (imageCount === 0 && existsSync(assetsDir) &&
+      walk(assetsDir, '.png').length > 0) {
+    add('error', 'scripts/check.mjs', 1,
+      'src/assets に画像があるのに、本文の参照が0件',
+      '正規表現が噛み合っていない可能性');
+  }
+}
+
 // --- 出力 ---
 const errors = issues.filter((i) => i.level === 'error');
 const warns = issues.filter((i) => i.level === 'warn');
