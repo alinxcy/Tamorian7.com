@@ -1,38 +1,38 @@
-# 道具の棚卸し  2026-10-10 01:15
+# 道具の棚卸し  2026-10-11 01:15
 
 ## Skill  (24)
 
-- **code-helper**（全体・08-27 (43日前)）— コードをきれいにする
-- **dataviz**（全体・08-13 (57日前)）— Use whenever you are about to create ANY chart, graph, plot, dashboard, or data visualization in any medium (HTML/React artifact, SVG, matpl…
-- **docx**（全体・08-27 (43日前)）— Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx files).
-- **file-reading**（全体・08-27 (43日前)）— Use this skill when a file has been uploaded but its content is NOT in your context — only its path at /mnt/user-data/uploads/ is listed in…
-- **frontend-design**（全体・08-27 (43日前)）— Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one.
-- **garden-muse**（全体・08-27 (43日前)）— 個人ナレッジガーデン(Knowledge Garden)に知見を捕獲・追記し、好奇心ドリブンで 面白い方向を提案する相棒。
-- **md**（全体・08-27 (43日前)）— Author standalone written deliverables as Markdown (.md) files — reports, guides, READMEs, technical documentation, how-tos, notes, plans, a…
-- **memory-sync**（全体・08-27 (43日前)）— claude.ai 側で増えた Skill / Agent / Memory と claudePlayGround の差分を突き合わせて取り込む棚卸し手順。ユーザーが「棚卸しして」「claude.ai と同期して」「スキルの差分を見て」と言ったときに使用する。
-- **offload**（全体・10-02 (7日前)）— 大きな入力（ログ・長いファイル・多数のファイル）を読む前、または「外注して」「分業して」「Fuguに」「アングラさんに」「ローカルLLMで」「サブエージェントに」「調べておいて」「棚卸しして」「ログを索引化して」と言われたときに引く。
-- **pdf**（全体・08-27 (43日前)）— Use this skill whenever the user wants to do anything with PDF files.
-- **pdf-reading**（全体・08-27 (43日前)）— Use this skill when you need to read, inspect, or extract content from PDF files — especially when file content is NOT in your context and y…
-- **playground-spawn**（全体・08-27 (43日前)）— claudePlayGround（ベースリポジトリ）から新しいプロジェクトリポジトリを切り出す手順。必要なSkill/Agentを選定してコピーし、由来マニフェストを残し、新規CLAUDE.mdを書くところまでを行う。
-- **pptx**（全体・08-27 (43日前)）— Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both.
-- **product-self-knowledge**（全体・08-27 (43日前)）— Stop and consult this skill whenever your response would include specific facts about Anthropic's products.
-- **session-start-hook**（全体・08-13 (57日前)）— Creating and developing startup hooks for Claude Code on the web.
-- **skill-creator**（全体・08-27 (43日前)）— Create new skills, modify and improve existing skills, and measure skill performance.
-- **skill-harvester**（全体・08-27 (43日前)）— Skill化すべき手順・パターンを検出して提案する。ユーザーが「スキルにできそうなものを探して」「繰り返してる作業を洗い出して」と言ったとき、またはCLAUDE.mdが手順書化して肥大していると感じたときに使用する。
-- **skill-optimizer**（全体・08-27 (43日前)）— 既存のSkill(SKILL.md)を診断・改善する。ユーザーが「スキルを見直して」「descriptionを改善して」「スキルが自動起動しない」と言ったとき、またはスキルの整理・統合・ブラッシュアップを依頼されたときに使用する。
-- **skill-return**（全体・08-27 (43日前)）— 派生リポジトリで改良・新規作成したSkillやAgentを、claudePlayGround（ベースリポジトリ）に還流させる手順。
-- **tamorian7**（全体・08-13 (57日前)）— Tamorian7 の Knowledge Garden(alinxcy/Tamorian7.com)にコンテンツを足す・整える ときの単一の入口。
-- **update-state**（全体・08-13 (57日前)）— Tamorian7 の STATE.md（現在の状態のスナップショット）を規定スキーマどおりに 更新し、検証してから書く。作業を止める前、区切りがついたとき、前提が変わった とき、次の一手が変わったとき、試してダメだった方法が分かったときに使う。
-- **xlsx**（全体・08-27 (43日前)）— Use this skill any time a spreadsheet file is the primary input or output.
-- **tamorian7**（この repo・09-12 (27日前)）— Tamorian7 の Knowledge Garden(alinxcy/Tamorian7.com)にコンテンツを足す・整える ときの単一の入口。
-- **update-state**（この repo・08-20 (50日前)）— Tamorian7 の STATE.md（現在の状態のスナップショット）を規定スキーマどおりに 更新し、検証してから書く。作業を止める前、区切りがついたとき、前提が変わった とき、次の一手が変わったとき、試してダメだった方法が分かったときに使う。
+- **code-helper**（全体・08-27 (44日前)）— コードをきれいにする
+- **dataviz**（全体・08-13 (58日前)）— Use whenever you are about to create ANY chart, graph, plot, dashboard, or data visualization in any medium (HTML/React artifact, SVG, matpl…
+- **docx**（全体・08-27 (44日前)）— Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx files).
+- **file-reading**（全体・08-27 (44日前)）— Use this skill when a file has been uploaded but its content is NOT in your context — only its path at /mnt/user-data/uploads/ is listed in…
+- **frontend-design**（全体・08-27 (44日前)）— Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one.
+- **garden-muse**（全体・08-27 (44日前)）— 個人ナレッジガーデン(Knowledge Garden)に知見を捕獲・追記し、好奇心ドリブンで 面白い方向を提案する相棒。
+- **md**（全体・08-27 (44日前)）— Author standalone written deliverables as Markdown (.md) files — reports, guides, READMEs, technical documentation, how-tos, notes, plans, a…
+- **memory-sync**（全体・08-27 (44日前)）— claude.ai 側で増えた Skill / Agent / Memory と claudePlayGround の差分を突き合わせて取り込む棚卸し手順。ユーザーが「棚卸しして」「claude.ai と同期して」「スキルの差分を見て」と言ったときに使用する。
+- **offload**（全体・10-02 (8日前)）— 大きな入力（ログ・長いファイル・多数のファイル）を読む前、または「外注して」「分業して」「Fuguに」「アングラさんに」「ローカルLLMで」「サブエージェントに」「調べておいて」「棚卸しして」「ログを索引化して」と言われたときに引く。
+- **pdf**（全体・08-27 (44日前)）— Use this skill whenever the user wants to do anything with PDF files.
+- **pdf-reading**（全体・08-27 (44日前)）— Use this skill when you need to read, inspect, or extract content from PDF files — especially when file content is NOT in your context and y…
+- **playground-spawn**（全体・08-27 (44日前)）— claudePlayGround（ベースリポジトリ）から新しいプロジェクトリポジトリを切り出す手順。必要なSkill/Agentを選定してコピーし、由来マニフェストを残し、新規CLAUDE.mdを書くところまでを行う。
+- **pptx**（全体・08-27 (44日前)）— Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both.
+- **product-self-knowledge**（全体・08-27 (44日前)）— Stop and consult this skill whenever your response would include specific facts about Anthropic's products.
+- **session-start-hook**（全体・08-13 (58日前)）— Creating and developing startup hooks for Claude Code on the web.
+- **skill-creator**（全体・08-27 (44日前)）— Create new skills, modify and improve existing skills, and measure skill performance.
+- **skill-harvester**（全体・08-27 (44日前)）— Skill化すべき手順・パターンを検出して提案する。ユーザーが「スキルにできそうなものを探して」「繰り返してる作業を洗い出して」と言ったとき、またはCLAUDE.mdが手順書化して肥大していると感じたときに使用する。
+- **skill-optimizer**（全体・08-27 (44日前)）— 既存のSkill(SKILL.md)を診断・改善する。ユーザーが「スキルを見直して」「descriptionを改善して」「スキルが自動起動しない」と言ったとき、またはスキルの整理・統合・ブラッシュアップを依頼されたときに使用する。
+- **skill-return**（全体・08-27 (44日前)）— 派生リポジトリで改良・新規作成したSkillやAgentを、claudePlayGround（ベースリポジトリ）に還流させる手順。
+- **tamorian7**（全体・08-13 (58日前)）— Tamorian7 の Knowledge Garden(alinxcy/Tamorian7.com)にコンテンツを足す・整える ときの単一の入口。
+- **update-state**（全体・08-13 (58日前)）— Tamorian7 の STATE.md（現在の状態のスナップショット）を規定スキーマどおりに 更新し、検証してから書く。作業を止める前、区切りがついたとき、前提が変わった とき、次の一手が変わったとき、試してダメだった方法が分かったときに使う。
+- **xlsx**（全体・08-27 (44日前)）— Use this skill any time a spreadsheet file is the primary input or output.
+- **tamorian7**（この repo・09-12 (28日前)）— Tamorian7 の Knowledge Garden(alinxcy/Tamorian7.com)にコンテンツを足す・整える ときの単一の入口。
+- **update-state**（この repo・08-20 (51日前)）— Tamorian7 の STATE.md（現在の状態のスナップショット）を規定スキーマどおりに 更新し、検証してから書く。作業を止める前、区切りがついたとき、前提が変わった とき、次の一手が変わったとき、試してダメだった方法が分かったときに使う。
 
 ## サブエージェント  (4)
 
-- **nudge-scout**（全体・09-02 (37日前)）— 常時起動セッションのアイドル監視で、起きたときに「いま話しかけてよいか、 話しかけるなら何を」を調べて短く返す偵察役。/loop のアイドル監視から毎時 呼ばれる。判定・キュー確認・inbox 確認のツール出力を親の文脈に入れないための 分離であって、親の代わりに喋る役ではない。
-- **garden-hand**（この repo・08-18 (52日前)）— Tamorian7.com のリポジトリを実際に触って、検証まで通して、コミットして返す手。 「STATE.md 直しといて」「/state/ にこれ足して」「check 通して」「あのページ直して」 のように、対象がこのリポジトリの中で完結する編集作業に使う。
-- **honest-reviewer**（この repo・08-17 (54日前)）— 公開前の記事・ノートをレビューし、「言いすぎ」と「未確認」を指摘する。公開前や 「これ出して大丈夫?」と聞かれたときに使う。指摘は多くなりがちで会話を埋めるため、 別コンテキストで走らせて指摘リストだけ返す。
-- **promotion-reviewer**（この repo・08-17 (54日前)）— seeds / log / garden の在庫を棚卸しし、昇格と破棄を提案する。「種たまってない?」 「棚卸しして」と言われたとき、および seeds が増えてきたときに使う。全ファイルを 読む重い作業なので会話でやらず、別コンテキストで走らせて結果だけ返す。
+- **nudge-scout**（全体・09-02 (38日前)）— 常時起動セッションのアイドル監視で、起きたときに「いま話しかけてよいか、 話しかけるなら何を」を調べて短く返す偵察役。/loop のアイドル監視から毎時 呼ばれる。判定・キュー確認・inbox 確認のツール出力を親の文脈に入れないための 分離であって、親の代わりに喋る役ではない。
+- **garden-hand**（この repo・08-18 (53日前)）— Tamorian7.com のリポジトリを実際に触って、検証まで通して、コミットして返す手。 「STATE.md 直しといて」「/state/ にこれ足して」「check 通して」「あのページ直して」 のように、対象がこのリポジトリの中で完結する編集作業に使う。
+- **honest-reviewer**（この repo・08-17 (55日前)）— 公開前の記事・ノートをレビューし、「言いすぎ」と「未確認」を指摘する。公開前や 「これ出して大丈夫?」と聞かれたときに使う。指摘は多くなりがちで会話を埋めるため、 別コンテキストで走らせて指摘リストだけ返す。
+- **promotion-reviewer**（この repo・08-17 (55日前)）— seeds / log / garden の在庫を棚卸しし、昇格と破棄を提案する。「種たまってない?」 「棚卸しして」と言われたとき、および seeds が増えてきたときに使う。全ファイルを 読む重い作業なので会話でやらず、別コンテキストで走らせて結果だけ返す。
 
 ## フック  (6)
 
@@ -45,176 +45,176 @@
 
 ## 道具  (170)
 
-- **adapters.py**（08-26 (44日前)）— サービスごとの読み取り。**ここだけがサービスに依存する。**
-- **agy_safe.sh**（10-06 (3日前)）— アングラさん(Antigravity CLI = agy)を、**書き込みを作業フォルダだけに限って**起動する。2026-10-06。
-- **agy_usage.sh**（09-04 (35日前)）— **agy(Antigravity CLI)の残り枠を見る。** headless(-p)には /usage が無いので、 対話セッションへパイプで1コマンドだけ流して終わらせる（2026-09-04 に確認した手）。
-- **ai_status.py**（10-06 (3日前)）— 各 AI が「いま何をしていて、何が宙に浮いているか」を MQTT に貼る。週次の棚卸しが読む。
-- **ai_weekly.py**（10-06 (3日前)）— 週次の棚卸し。各 AI が MQTT(ai/<話題>/status) に貼った状態と、機械が拾える事実を1ページにまとめる。
-- **analyze_export.py**（08-25 (45日前)）— 書き出しの**形式**を Fugu に分析させる。中身は送らない。
-- **batch_index.py**（08-26 (44日前)）— 選んだ会話にだけ議事録を作る。**全部はやらない。**
-- **build_inventory.py**（09-02 (37日前)）— **「できたもの」の目録を、道具そのものから生成する。**
-- **catalog.py**（08-26 (44日前)）— 会話の**目次**を作る。3段の一番上。
-- **claude_usage.py**（08-22 (48日前)）— Claude Code の消費トークンを、トランスクリプトから集計する。
-- **codex_safe.sh**（10-02 (7日前)）— Codex（コデちゃん）を、**書き込みを作業フォルダだけに限って**起動する。2026-10-02。
-- **context_cost.py**（08-26 (44日前)）— **文脈に入れたものが、その後いくらかかり続けるか**を実測する。
-- **convo.py**（08-26 (44日前)）— 会話ログの中間形式。仕様は ../FORMAT.md。
-- **daily.sh**（08-26 (44日前)）— 定期タスクを走らせ、**成功したら印を置く。**
-- **daily_log.sh**（10-06 (3日前)）— **前日分の log 記事が無ければ、Claude を headless で起こして書かせる。**
-- **describe_artifacts.py**（08-22 (48日前)）— Drive の成果物に一行説明を付ける。中身を少しだけ見て、Fugu に書かせる。
-- **digest.py**（08-27 (44日前)）— 今夜のコミットを、リポジトリごとにまとめる。
-- **distill.py**（09-17 (22日前)）— **大きなログを、Claude へ渡す前に縮める。** 機械で削り、残りをローカル LLM に要約させる。
-- **drive_manifest.py**（08-22 (48日前)）— Drive にある成果物の目録を作る。実体は動かさない。
-- **dump_session.py**（08-27 (43日前)）— Claude Code のトランスクリプトから会話をテキストに起こす。要約しない。
-- **extract_convo.py**（08-17 (53日前)）— Codex の rollout jsonl から会話だけを抜く。要約しない。落とすのはノイズだけ。
-- **fence_emphasis.py**（08-27 (43日前)）— コード塊(```)の中に markdown の強調が残っていないか探す。
-- **fill_index.py**（08-30 (40日前)）— 索引の**穴を埋める**。取り込みのときに落ちたものを後から拾い直す。
-- **find_plug.py**（08-28 (42日前)）— プラグを LAN から探す。**IP が変わっても MAC で見つける。**
-- **fugu_perf.py**（08-27 (44日前)）— Fugu の応答特性を、手元の UsageRecord だけから測る。外注はしない。
-- **handoff.py**（09-02 (37日前)）— **申し送りの「今の事実」を、手書きから生成に変える。**
-- **inbox_watch.py**（10-08 (1日前)）— inbox/ に置かれた会話ログを、索引まで自動で仕上げる。
-- **index_chats.py**（09-18 (21日前)）— **Claude.ai から書き出した会話ログに、機械が引ける索引を付ける。**
-- **inject_pending.py**（08-30 (40日前)）— **次に人が喋ったときに、置き手紙を1回だけ渡す。**
-- **inspect_export.py**（08-25 (45日前)）— 書き出し(claude.ai / ChatGPT)の中身を、形式を仮定せずに報告する。
-- **inventory.py**（09-02 (37日前)）— **Skill / サブエージェント / フック / 常駐サービスの棚卸し。**
-- **limits.py**（09-07 (32日前)）— Claude / Codex / Antigravity の枠の残りを1画面に並べる。
-- **link_articles.py**（09-17 (22日前)）— **記事どうしのリンク候補を出す。** 書き込みはしない。提案だけを出す。
-- **make_index.py**（08-30 (40日前)）— 会話ログを塊に割り、各塊の索引を Fugu(base) に作らせる。
-- **notify.py**（08-31 (39日前)）— **次に人が喋ったときに伝えたいことを、置き手紙に足す。**
-- **offload_keep.py**（08-31 (39日前)）— **外注の入力と出力を残す。後から別の相手に同じ問いを投げられるように。**
-- **offload_log.py**（08-30 (40日前)）— **外注を1本の台帳に落とす。Fugu もローカルも同じ行に。**
-- **offload_stat.py**（08-30 (40日前)）— **外注の効果を読む。** `offload.jsonl` だけを見る。外注はしない。
-- **path_deps.py**（08-27 (43日前)）— 道具が cwd に依存しているかを数える。
-- **postcompact_inject.py**（08-30 (40日前)）— compact の直後に、`precompact_snapshot.py` が残した1枚を読み戻す。
-- **precompact_snapshot.py**（08-30 (40日前)）— compact の直前に、**機械で分かる状態だけ**を1枚に落とす。
-- **quarantine_index.py**（08-27 (43日前)）— ゲートに掛かる索引を .rejected へ退避する。**消さない。**
-- **read_gate.py**（08-22 (48日前)）— 重い読み込み(inbox の索引など)をやってよいタイミングかを判定する。
-- **recall.py**（08-26 (44日前)）— **作る前に探す。** 過去の会話・記録・決定を横断して引く。
-- **rederive.py**（08-26 (44日前)）— compact で失った文脈の「見える影」を測る。
-- **render_inventory.py**（08-31 (39日前)）— 目録を1枚の HTML にする。**集める側（build_inventory）と分ける。**
-- **rewrite_past.sh**（10-06 (3日前)）— **枠が余ったときだけ、過去の log 記事を別の執筆者に書き直させ、案として別の場所に置く。** 2026-10-06 本人了承。
-- **route.py**（09-03 (37日前)）— **どこへ投げるかを1箇所で決める。** いままでこの場所が無かった。
-- **safe_write.py**（08-26 (44日前)）— 導出ファイルを**黙って縮ませない**書き出し。
-- **seed_filter.py**（08-27 (44日前)）— 候補199件を Fugu に判定させる。**「他人の成果か、ただの語か」だけ。**
-- **skill_gather.py**（09-02 (37日前)）— Skill を foundation に集め、~/.claude/skills/ からリンクを張る。
-- **skill_log.py**（08-27 (43日前)）— Skill が呼ばれるたびに1行残す。フックから叩かれる。
-- **skill_map.py**（08-27 (43日前)）— **Skill がどこに何個あるか**を、置き場所をまたいで一覧にする。
-- **skill_usage.py**（10-02 (7日前)）— **Skill がどれだけ呼ばれたか**を、会話記録（~/.claude/projects/*/*.jsonl）から数える。
-- **slice_talk.py**（08-31 (39日前)）— **会話ログから「喋った部分」だけを切り出し、秘密を洗って外注に渡す。**
-- **start-chat.sh**（08-17 (53日前)）— fugu-lab の chat アプリを起動する。外注を JSONL に記録させるために要る。 ポートは fugu_offload.py の既定 (8150) に合わせる。README の 8137 とは食い違っている。
-- **state_files.py**（08-27 (43日前)）— 「状態を書いたファイル」が手元にいくつあるかを数える。
-- **state_stale.py**（09-02 (37日前)）— **STATE.md が古びたら、ネタ帳へ1行積む。** 本人には催促しない。
-- **sync_drive.sh**（08-26 (44日前)）— Google Drive の受け渡しフォルダを inbox へ落とす。
-- **test_route.py**（09-03 (37日前)）— 振り分けの試験。**今日 手でやった判断を、実装が再現できるか。**
-- **today.py**（08-26 (44日前)）— **「今日やったこと」を、思い出さずに機械から作る。**
-- **weekly_inventory.sh**（10-08 (1日前)）— 日次の棚卸し。**毎日 01:15**。
-- **window.py**（08-27 (43日前)）— 委託先の「いまの窓」で、あとどれだけ投げられるかを返す。
-- **after_full.py**（10-08 (1日前)）— 今日の満充電（charge-cycle）が終わって、100% まで入ったら、node3 を ON にする。2026-10-08（本人の依頼）。
-- **ask_llm.py**（09-02 (37日前)）— アトリエの LLM に投げる。**Fugu が止まっているときの代役。**
-- **bakeoff.py**（08-30 (40日前)）— ローカルのモデルを、**実際の仕事**で比べる。おもちゃの質問では決めない。
-- **bench_local.py**（09-02 (37日前)）— 同じ入力・同じ指示を複数のローカルモデルへ投げ、Fugu の出力と並べる。
-- **build_magi.py**（09-28 (11日前)）— AIマルチエージェント稼働管制盤（MAGI）の生成スクリプト。 limits.py から各AIの残量・枠を取得し、magi.html と magi-summary.json を出力する。
-- **build_portfolio.py**（09-28 (11日前)）— Google スプレッドシート「お金2026」から資産データを取得し、 portfolio.html と portfolio-summary.json を生成する。
-- **build_power.py**（09-02 (37日前)）— 集めた JSON から、電源まわりの状態ページを書く。**集める側とは分ける。**
-- **build_queue.py**（09-26 (13日前)）— wake/build_queue.py - キュー（後回しの仕事）を1枚の静的 HTML にする生成器。
-- **charge_cheap.py**（10-01 (8日前)）— ポタ電を**安い時間だけ充電する**。
-- **charge_cycle.py**（10-08 (1日前)）— EcoFlow を、2回に分けて充電し、入った Wh（node1）を測る。2026-10-07（本人: 「2でちょっと入れたら3かな」）。
-- **charge_mode.py**（09-02 (37日前)）— 充電の自動制御と、人の停止指示の境界を管理する。
-- **charge_plan.py**（10-01 (8日前)）— **その日の安い連続枠を先に押さえる。** 反応的な判定の手前に置く。
-- **charge_to.py**（10-10 (今日)）— EcoFlow を、指定の時刻に node1 で入れ、画面の SOC が目標に届いたら止める（1回きり）。2026-10-09（本人の許可）。
-- **charge_watch.py**（09-30 (9日前)）— **ポタ電の充電が様子おかしいときにスマホへ知らせる。** ラズパイで10分ごと（charge-watch.timer）。
-- **collect_power.py**（09-02 (37日前)）— 電源まわりの状態を1つの JSON に集める。**描画はしない。**
-- **ctl_dryrun.py**（10-09 (今日)）— node1 投入判定（v2.1 案）のドライラン。2026-10-09。**node1 も node3 も動かさない。記録だけ。**
-- **discharge_test.py**（10-07 (2日前)）— EcoFlow の放電試験を、自動で行う。2026-10-07（本人: 結果だけもらいたい）。
-- **ecoflow_ctl.py**（10-08 (1日前)）— EcoFlow を、SOC 30〜70% に保ちつつ、安い枠で入れる制御（v1）。2026-10-08（本人の方針）。
-- **ecoflow_screen.py**（10-08 (1日前)）— EcoFlow アプリの画面（Redmi、家の LAN の無線 adb）から、SOC と電力を読む。2026-10-07（本人: SOC の監視を滑らかに）。
-- **ef_state.py**（10-09 (今日)）— ef-recorder が書く ~/atelier-lab/ef-state.json を読む（他の道具から共通で）。2026-10-09。
-- **energy.py**（10-01 (8日前)）— **LLM PC が1つの作業で食った電力量を測る。** 2026-10-01、本人「LLM PC、作業ごとの消費電力記録してる？」
-- **fetch_fonts.py**（09-27 (12日前)）— 入口と操作盤のフォントを Google Fonts から取ってきて、ラズパイで配れる形にする。
-- **install-matter-home.sh**（08-30 (40日前)）— **自宅側の Matter コントローラ。** アトリエで通した手順をそのまま持ってくる。
-- **install-matter.sh**（08-30 (40日前)）— ラズパイに Matter のコントローラを入れる。**まず「起動するか」だけを確かめる。**
-- **install-pi.sh**（08-30 (40日前)）— アトリエのラズパイに「起こす係」を仕込む。**Tailscale が載った後に、自宅から1回流す。**
-- **kuroko_guardian.py**（09-29 (10日前)）— kuroko_guardian.py クロコさんのtmuxセッション（claude:0.0）を監視し、 承認待ち（Allow/Approve/y/n等）が発生した場合に安全に承認を入れて最後まで走り切らせるウォッチャー。
-- **local_offload.py**（08-30 (40日前)）— `fugu_offload.py` の差し替え品。**同じ CLI で、アトリエのローカル LLM に投げる。**
-- **log_power.py**（08-30 (40日前)）— **プラグの電力を録り続ける。** 表示は後、記録が先。
-- **log_sensors.py**（10-07 (2日前)）— 温湿度をUSBメモリへ追記する。**1行1レコードのJSONL、日付ごとのファイル。**
-- **matter_commission.py**（08-30 (40日前)）— 共有コードを受け取って、プラグをうちのファブリックに迎える。
-- **matter_home.py**（08-30 (40日前)）— 自宅の Matter 機器を読む／操作する。**アトリエ用と同じ形で、宛先だけ違う。**
-- **matter_read.py**（08-30 (40日前)）— Matter でプラグから**電力を読む**。今日の最後の未確認事項。
-- **matter_toggle.py**（08-30 (40日前)）— プラグを入り切りして、電力が追随するかを見る。**10秒窓で。**
-- **matter_watch.py**（08-30 (40日前)）— プラグの電力を一定間隔で読み続ける。**変化の形を見るためのもの。**
-- **measure_drain.py**（09-02 (37日前)）— **ポタ電に繋がっている負荷を、充電の記録から測る。**
-- **morning_brief.py**（10-01 (9日前)）— **朝の3行。** 録画・電気・キュー・気温から、今日いちばん気にすべき1つを選んで3行にする。
-- **notify_failure.py**（09-30 (9日前)）— **systemd の仕事が失敗したらスマホに知らせる。** `OnFailure=notify-failure@%n.service` から呼ばれる。
-- **notify_kuroko_morning.sh**（09-29 (10日前)）— 
-- **notify_phone.py**（10-01 (9日前)）— **スマホに知らせる。** ラズパイの ntfy（Tailscale の中だけ）へ投げる。
-- **panel.py**（10-08 (1日前)）— ラズパイで配る操作盤。**tailnet の中からだけ見える。**
-- **plan_shadow_report.py**（09-27 (12日前)）— **並走ログを日ごとに比べる。** 同じ窓は一度だけ表示する。
-- **psrun.sh**（08-29 (41日前)）— アトリエの Windows で PowerShell を走らせる。
-- **publish_pages.py**（09-27 (12日前)）— 自宅PCで作ったページを、ラズパイの入口（panel.py の /d/）へ送る。
-- **pull.py**（08-30 (40日前)）— アトリエの Ollama にモデルを落とさせる。**API 経由。SSH の子にしない。**
-- **queue.py**（10-08 (1日前)）— 
-- **release_discharge_load.py**（10-07 (2日前)）— 放電試験の負荷（queue/hold の「放電負荷」ジョブ）を、pending へ放す。2026-10-07。
-- **sleep_guard.py**（08-31 (39日前)）— **番犬。誰も使っていない LLM PC を寝かせる。**
-- **sleep_llm.py**（08-31 (39日前)）— **LLM PC を寝かせて、本当に寝たことを電力で確かめる。**
-- **soc.py**（09-27 (12日前)）— ポタ電の残量を、**満充電からの距離**で追う。
-- **soc_est.py**（10-09 (今日)）— EcoFlow の SOC を、入出力の積算から推定し続ける（v1）。2026-10-08（本人の依頼）。
-- **soc_guard.py**（10-08 (1日前)）— EcoFlow の SOC が 1% 以下になったら、node1 を 1分だけ ON にして、補充電する。2026-10-07（本人の依頼）。
-- **switch_sim.py**（09-03 (36日前)）— **PC の電源を壁とポタ電で切り替えたら、いくら浮くか。** 買う前に机上で回す。
-- **test_build_queue.py**（09-02 (37日前)）— wake/test_build_queue.py - build_queue.py の単体テスト。
-- **test_charge_cheap_mode.py**（09-05 (34日前)）— 
-- **test_charge_mode.py**（09-02 (37日前)）— 
-- **test_charge_plan.py**（10-01 (8日前)）— charge_plan の判定を、値段表を作って確かめる。
-- **test_charge_plan_boundary.py**（09-02 (37日前)）— charge_plan の時刻コード境界を仕様の期待値で検証する。
-- **test_charge_plan_horizon.py**（09-27 (12日前)）— **日をまたぐ先読みと、本番へ影響しない並走を確かめる。**
-- **test_charge_watch.py**（09-30 (9日前)）— **充電の見張りが、言うべきときに1回だけ言う。** 2026-09-30。
-- **test_energy.py**（10-01 (8日前)）— LLM PC の作業ごとの電力量（energy.py と、キューへの記録）。2026-10-01
-- **test_morning_brief.py**（09-29 (10日前)）— **朝の3行の検査。** LLM の答えに事実に無い数字が混ざったら、機械の版に落ちること。
-- **test_panel_charge_control.py**（09-02 (37日前)）— 
-- **test_panel_summaries.py**（09-27 (12日前)）— **自宅PCが送る要点（<名>-summary.json）を、名前の約束だけで /api/hub に載せる。**
-- **test_queue_order.py**（09-30 (9日前)）— キューの順番: **電力の大きい順、同じなら積んだ順**（2026-09-30 本人「一番安い枠を一番消費電力でかい作業に」）
-- **test_soc.py**（09-27 (12日前)）— 
-- **todo_push.py**（10-08 (1日前)）— やりかけ（キューの human）の上位を、ボタンつきの通知でスマホへ送る。2026-10-08。
-- **todo_sync.py**（10-08 (1日前)）— 通知のボタン（やった／あとで／要らない）の記録を、ラズパイから取り寄せて、キューへ適用する。2026-10-08。
-- **vram.py**（08-30 (40日前)）— 11GB に「モデル」と「文脈」をどう配分するかを見る。
-- **waker.py**（08-30 (40日前)）— アトリエのラズパイで10分ごとに走らせる。**読んで、投げるだけ。**
-- **watch_volt.sh**（08-30 (40日前)）— ラズパイの電圧不足を記録し続ける。**「どのくらいでだめになるか」を測る** （2026-08-30、本人が電源をそのままにして様子を見ると決めた）。
-- **write_wake.py**（09-17 (22日前)）— 自宅で走らせる。**「LLM PC を起こしてほしいか」だけを書く。**
-- **atelier_when.py**（08-17 (53日前)）— 「いつアトリエで作業するか」「栽培棚をいつ点けるか」を実データで
-- **battery_eta.py**（08-23 (47日前)）— PC を常にポタ電の AC 出力で動かす（パススルー無し）構成を、 往復効率を振って通しでシミュレーションする。
-- **battery_policy.py**（08-23 (47日前)）— 方針:「高い時間帯に壁から取らない。その時間は SOC100 で迎える」
-- **battery_worth.py**（08-31 (39日前)）— **電池でピークを避けると、月いくら浮くか。** 容量ごとに出す。
-- **best_window.py**（08-30 (40日前)）— **明日の一番安い時間帯**を出す。前日の午後に翌日分が揃うので言える。
-- **breakeven.py**（08-23 (47日前)）— ポタ電で常時起動 PC を賄うときの損益分岐（往復効率）を出す。
-- **build_dashboard.py**（08-27 (43日前)）— denki.html に埋め込む集計を作り直す。
-- **capacity.py**（08-30 (40日前)）— ポタ電の容量について、**分かっていることだけ**を書く。
-- **cheap_now.py**（09-18 (21日前)）— **いま動かしてよい値段か**を返す。重い処理の前に叩く。
-- **grow_light.py**（08-30 (40日前)）— 育成灯をポタ電経由で回したとき、いくらになるか。
-- **inverter.py**（08-30 (40日前)）— ポタ電のインバータのアイドルを実測から年額に直し、裁定に効く形で出す。
-- **jepx.py**（09-03 (36日前)）— JEPX スポット価格(中国エリア)を取ってきて、安いコマを出す。
-- **llm_pc.py**（08-30 (40日前)）— LocalLLM の PC の運用を、実測値で比べる。
-- **load_shift.py**（08-23 (47日前)）— 処理内容(計算)を安い時間に寄せたときの取り分。
-- **peakshift.py**（08-27 (44日前)）— ピークシフターの設計: 電池が要る負荷 / 要らない負荷 の切り分け
-- **plan_vs_react.py**（08-31 (39日前)）— **「安いから入れる」と「安い枠を選んで入れる」で、いくら違うか。**
-- **pota_take.py**（08-27 (44日前)）— ポタ電の充電窓の取り分を、現実的な比較相手で出し直す。
-- **refresh.sh**（08-27 (43日前)）— 価格を取り直し、**そのままダッシュボードも作り直す。**
-- **shift_queue.py**（08-26 (44日前)）— 締切つきのジョブを、安い時間帯に落として実行する。
-- **standby.py**（08-29 (41日前)）— ポタ電の待機損失を、実測から年額に直して、裁定の取り分と比べる。
-- **terasel_check.py**（08-17 (53日前)）— TERASEL 損益分岐リファレンスの閾値を実データに当てる
-- **threshold.py**（08-30 (40日前)）— 「安い時間」の条件を、**通る割合**と**トークン単価**の両方で比べる。
-- **today_battery.py**（08-27 (44日前)）— 今日(08-27)の実価格で、ポタ電を挟む意味があるか確かめる。
-- **when_cheap.py**（08-27 (44日前)）— 毎日の最安2時間が、いつ来ているか。月ごとに分けて数える。
-- **xformula_sim.py**（10-09 (今日)）— node1 投入判定式（v2 / v2.1）を、2026 年のコマ価格で通しシミュレーションする。2026-10-09。
-- **build_fridge.py**（08-27 (44日前)）— 冷蔵庫のダッシュボード用データを作り、fridge.html に流し込む。
-- **charge.py**（08-20 (50日前)）— ピークシフター — 充電部分だけ。
-- **monitor.py**（08-29 (41日前)）— プラグの電力を一定間隔で記録するだけ。制御はしない。
-- **monitor_tapo.py**（08-28 (42日前)）— スマートプラグの電力を記録する（tapo 実装）。制御はしない。
-- **phone_temp.py**（08-21 (49日前)）— USB で繋いだ Android から温度を読む。室温計が来るまでの代用。
-- **plug.py**（08-20 (50日前)）— スマートプラグの薄い層。
-- **schedule.py**（08-20 (50日前)）— 翌日の最安窓を、プラグ自身のスケジュールに書き込む。
-- **setup_plug.py**（08-20 (50日前)）— プラグの初期設定。**冪等**なので何度流してもよい。
-- **temp.py**（08-20 (50日前)）— 外気温を記録する。冷蔵庫の消費と突き合わせるため。
-- **watch_plug.py**（08-29 (41日前)）— プラグが起きたら、通る道を全部試す。**挿した瞬間を捕まえる。**
-- **fugu_offload.py**（08-26 (44日前)）— fugu_offload — Claude(実装エージェント)が機械的な下請けを Fugu base に外注するための CLI。
+- **adapters.py**（08-26 (45日前)）— サービスごとの読み取り。**ここだけがサービスに依存する。**
+- **agy_safe.sh**（10-06 (4日前)）— アングラさん(Antigravity CLI = agy)を、**書き込みを作業フォルダだけに限って**起動する。2026-10-06。
+- **agy_usage.sh**（09-04 (36日前)）— **agy(Antigravity CLI)の残り枠を見る。** headless(-p)には /usage が無いので、 対話セッションへパイプで1コマンドだけ流して終わらせる（2026-09-04 に確認した手）。
+- **ai_status.py**（10-06 (4日前)）— 各 AI が「いま何をしていて、何が宙に浮いているか」を MQTT に貼る。週次の棚卸しが読む。
+- **ai_weekly.py**（10-06 (4日前)）— 週次の棚卸し。各 AI が MQTT(ai/<話題>/status) に貼った状態と、機械が拾える事実を1ページにまとめる。
+- **analyze_export.py**（08-25 (46日前)）— 書き出しの**形式**を Fugu に分析させる。中身は送らない。
+- **batch_index.py**（08-26 (45日前)）— 選んだ会話にだけ議事録を作る。**全部はやらない。**
+- **build_inventory.py**（09-02 (38日前)）— **「できたもの」の目録を、道具そのものから生成する。**
+- **catalog.py**（08-26 (45日前)）— 会話の**目次**を作る。3段の一番上。
+- **claude_usage.py**（08-22 (49日前)）— Claude Code の消費トークンを、トランスクリプトから集計する。
+- **codex_safe.sh**（10-02 (8日前)）— Codex（コデちゃん）を、**書き込みを作業フォルダだけに限って**起動する。2026-10-02。
+- **context_cost.py**（08-26 (45日前)）— **文脈に入れたものが、その後いくらかかり続けるか**を実測する。
+- **convo.py**（08-26 (45日前)）— 会話ログの中間形式。仕様は ../FORMAT.md。
+- **daily.sh**（08-26 (45日前)）— 定期タスクを走らせ、**成功したら印を置く。**
+- **daily_log.sh**（10-06 (4日前)）— **前日分の log 記事が無ければ、Claude を headless で起こして書かせる。**
+- **describe_artifacts.py**（08-22 (49日前)）— Drive の成果物に一行説明を付ける。中身を少しだけ見て、Fugu に書かせる。
+- **digest.py**（08-27 (45日前)）— 今夜のコミットを、リポジトリごとにまとめる。
+- **distill.py**（09-17 (23日前)）— **大きなログを、Claude へ渡す前に縮める。** 機械で削り、残りをローカル LLM に要約させる。
+- **drive_manifest.py**（08-22 (49日前)）— Drive にある成果物の目録を作る。実体は動かさない。
+- **dump_session.py**（08-27 (44日前)）— Claude Code のトランスクリプトから会話をテキストに起こす。要約しない。
+- **extract_convo.py**（08-17 (54日前)）— Codex の rollout jsonl から会話だけを抜く。要約しない。落とすのはノイズだけ。
+- **fence_emphasis.py**（08-27 (44日前)）— コード塊(```)の中に markdown の強調が残っていないか探す。
+- **fill_index.py**（08-30 (41日前)）— 索引の**穴を埋める**。取り込みのときに落ちたものを後から拾い直す。
+- **find_plug.py**（08-28 (43日前)）— プラグを LAN から探す。**IP が変わっても MAC で見つける。**
+- **fugu_perf.py**（08-27 (45日前)）— Fugu の応答特性を、手元の UsageRecord だけから測る。外注はしない。
+- **handoff.py**（09-02 (38日前)）— **申し送りの「今の事実」を、手書きから生成に変える。**
+- **inbox_watch.py**（10-08 (2日前)）— inbox/ に置かれた会話ログを、索引まで自動で仕上げる。
+- **index_chats.py**（09-18 (22日前)）— **Claude.ai から書き出した会話ログに、機械が引ける索引を付ける。**
+- **inject_pending.py**（08-30 (41日前)）— **次に人が喋ったときに、置き手紙を1回だけ渡す。**
+- **inspect_export.py**（08-25 (46日前)）— 書き出し(claude.ai / ChatGPT)の中身を、形式を仮定せずに報告する。
+- **inventory.py**（09-02 (38日前)）— **Skill / サブエージェント / フック / 常駐サービスの棚卸し。**
+- **limits.py**（09-07 (33日前)）— Claude / Codex / Antigravity の枠の残りを1画面に並べる。
+- **link_articles.py**（09-17 (23日前)）— **記事どうしのリンク候補を出す。** 書き込みはしない。提案だけを出す。
+- **make_index.py**（08-30 (41日前)）— 会話ログを塊に割り、各塊の索引を Fugu(base) に作らせる。
+- **notify.py**（08-31 (40日前)）— **次に人が喋ったときに伝えたいことを、置き手紙に足す。**
+- **offload_keep.py**（08-31 (40日前)）— **外注の入力と出力を残す。後から別の相手に同じ問いを投げられるように。**
+- **offload_log.py**（08-30 (41日前)）— **外注を1本の台帳に落とす。Fugu もローカルも同じ行に。**
+- **offload_stat.py**（08-30 (41日前)）— **外注の効果を読む。** `offload.jsonl` だけを見る。外注はしない。
+- **path_deps.py**（08-27 (44日前)）— 道具が cwd に依存しているかを数える。
+- **postcompact_inject.py**（08-30 (41日前)）— compact の直後に、`precompact_snapshot.py` が残した1枚を読み戻す。
+- **precompact_snapshot.py**（08-30 (41日前)）— compact の直前に、**機械で分かる状態だけ**を1枚に落とす。
+- **quarantine_index.py**（08-27 (44日前)）— ゲートに掛かる索引を .rejected へ退避する。**消さない。**
+- **read_gate.py**（08-22 (49日前)）— 重い読み込み(inbox の索引など)をやってよいタイミングかを判定する。
+- **recall.py**（08-26 (45日前)）— **作る前に探す。** 過去の会話・記録・決定を横断して引く。
+- **rederive.py**（08-26 (45日前)）— compact で失った文脈の「見える影」を測る。
+- **render_inventory.py**（08-31 (40日前)）— 目録を1枚の HTML にする。**集める側（build_inventory）と分ける。**
+- **rewrite_past.sh**（10-06 (4日前)）— **枠が余ったときだけ、過去の log 記事を別の執筆者に書き直させ、案として別の場所に置く。** 2026-10-06 本人了承。
+- **route.py**（09-03 (38日前)）— **どこへ投げるかを1箇所で決める。** いままでこの場所が無かった。
+- **safe_write.py**（08-26 (45日前)）— 導出ファイルを**黙って縮ませない**書き出し。
+- **seed_filter.py**（08-27 (45日前)）— 候補199件を Fugu に判定させる。**「他人の成果か、ただの語か」だけ。**
+- **skill_gather.py**（09-02 (38日前)）— Skill を foundation に集め、~/.claude/skills/ からリンクを張る。
+- **skill_log.py**（08-27 (44日前)）— Skill が呼ばれるたびに1行残す。フックから叩かれる。
+- **skill_map.py**（08-27 (44日前)）— **Skill がどこに何個あるか**を、置き場所をまたいで一覧にする。
+- **skill_usage.py**（10-02 (8日前)）— **Skill がどれだけ呼ばれたか**を、会話記録（~/.claude/projects/*/*.jsonl）から数える。
+- **slice_talk.py**（08-31 (40日前)）— **会話ログから「喋った部分」だけを切り出し、秘密を洗って外注に渡す。**
+- **start-chat.sh**（08-17 (54日前)）— fugu-lab の chat アプリを起動する。外注を JSONL に記録させるために要る。 ポートは fugu_offload.py の既定 (8150) に合わせる。README の 8137 とは食い違っている。
+- **state_files.py**（08-27 (44日前)）— 「状態を書いたファイル」が手元にいくつあるかを数える。
+- **state_stale.py**（09-02 (38日前)）— **STATE.md が古びたら、ネタ帳へ1行積む。** 本人には催促しない。
+- **sync_drive.sh**（08-26 (45日前)）— Google Drive の受け渡しフォルダを inbox へ落とす。
+- **test_route.py**（09-03 (38日前)）— 振り分けの試験。**今日 手でやった判断を、実装が再現できるか。**
+- **today.py**（08-26 (45日前)）— **「今日やったこと」を、思い出さずに機械から作る。**
+- **weekly_inventory.sh**（10-08 (2日前)）— 日次の棚卸し。**毎日 01:15**。
+- **window.py**（08-27 (44日前)）— 委託先の「いまの窓」で、あとどれだけ投げられるかを返す。
+- **after_full.py**（10-08 (2日前)）— 今日の満充電（charge-cycle）が終わって、100% まで入ったら、node3 を ON にする。2026-10-08（本人の依頼）。
+- **ask_llm.py**（09-02 (38日前)）— アトリエの LLM に投げる。**Fugu が止まっているときの代役。**
+- **bakeoff.py**（08-30 (41日前)）— ローカルのモデルを、**実際の仕事**で比べる。おもちゃの質問では決めない。
+- **bench_local.py**（09-02 (38日前)）— 同じ入力・同じ指示を複数のローカルモデルへ投げ、Fugu の出力と並べる。
+- **build_magi.py**（09-28 (12日前)）— AIマルチエージェント稼働管制盤（MAGI）の生成スクリプト。 limits.py から各AIの残量・枠を取得し、magi.html と magi-summary.json を出力する。
+- **build_portfolio.py**（09-28 (12日前)）— Google スプレッドシート「お金2026」から資産データを取得し、 portfolio.html と portfolio-summary.json を生成する。
+- **build_power.py**（09-02 (38日前)）— 集めた JSON から、電源まわりの状態ページを書く。**集める側とは分ける。**
+- **build_queue.py**（09-26 (14日前)）— wake/build_queue.py - キュー（後回しの仕事）を1枚の静的 HTML にする生成器。
+- **charge_cheap.py**（10-01 (9日前)）— ポタ電を**安い時間だけ充電する**。
+- **charge_cycle.py**（10-08 (2日前)）— EcoFlow を、2回に分けて充電し、入った Wh（node1）を測る。2026-10-07（本人: 「2でちょっと入れたら3かな」）。
+- **charge_mode.py**（09-02 (38日前)）— 充電の自動制御と、人の停止指示の境界を管理する。
+- **charge_plan.py**（10-01 (9日前)）— **その日の安い連続枠を先に押さえる。** 反応的な判定の手前に置く。
+- **charge_to.py**（10-10 (1日前)）— EcoFlow を、指定の時刻に node1 で入れ、画面の SOC が目標に届いたら止める（1回きり）。2026-10-09（本人の許可）。
+- **charge_watch.py**（09-30 (10日前)）— **ポタ電の充電が様子おかしいときにスマホへ知らせる。** ラズパイで10分ごと（charge-watch.timer）。
+- **collect_power.py**（09-02 (38日前)）— 電源まわりの状態を1つの JSON に集める。**描画はしない。**
+- **ctl_dryrun.py**（10-09 (1日前)）— node1 投入判定（v2.1 案）のドライラン。2026-10-09。**node1 も node3 も動かさない。記録だけ。**
+- **discharge_test.py**（10-07 (3日前)）— EcoFlow の放電試験を、自動で行う。2026-10-07（本人: 結果だけもらいたい）。
+- **ecoflow_ctl.py**（10-08 (2日前)）— EcoFlow を、SOC 30〜70% に保ちつつ、安い枠で入れる制御（v1）。2026-10-08（本人の方針）。
+- **ecoflow_screen.py**（10-08 (2日前)）— EcoFlow アプリの画面（Redmi、家の LAN の無線 adb）から、SOC と電力を読む。2026-10-07（本人: SOC の監視を滑らかに）。
+- **ef_state.py**（10-09 (1日前)）— ef-recorder が書く ~/atelier-lab/ef-state.json を読む（他の道具から共通で）。2026-10-09。
+- **energy.py**（10-01 (9日前)）— **LLM PC が1つの作業で食った電力量を測る。** 2026-10-01、本人「LLM PC、作業ごとの消費電力記録してる？」
+- **fetch_fonts.py**（09-27 (13日前)）— 入口と操作盤のフォントを Google Fonts から取ってきて、ラズパイで配れる形にする。
+- **install-matter-home.sh**（08-30 (41日前)）— **自宅側の Matter コントローラ。** アトリエで通した手順をそのまま持ってくる。
+- **install-matter.sh**（08-30 (41日前)）— ラズパイに Matter のコントローラを入れる。**まず「起動するか」だけを確かめる。**
+- **install-pi.sh**（08-30 (41日前)）— アトリエのラズパイに「起こす係」を仕込む。**Tailscale が載った後に、自宅から1回流す。**
+- **kuroko_guardian.py**（09-29 (11日前)）— kuroko_guardian.py クロコさんのtmuxセッション（claude:0.0）を監視し、 承認待ち（Allow/Approve/y/n等）が発生した場合に安全に承認を入れて最後まで走り切らせるウォッチャー。
+- **local_offload.py**（08-30 (41日前)）— `fugu_offload.py` の差し替え品。**同じ CLI で、アトリエのローカル LLM に投げる。**
+- **log_power.py**（08-30 (41日前)）— **プラグの電力を録り続ける。** 表示は後、記録が先。
+- **log_sensors.py**（10-07 (3日前)）— 温湿度をUSBメモリへ追記する。**1行1レコードのJSONL、日付ごとのファイル。**
+- **matter_commission.py**（08-30 (41日前)）— 共有コードを受け取って、プラグをうちのファブリックに迎える。
+- **matter_home.py**（08-30 (41日前)）— 自宅の Matter 機器を読む／操作する。**アトリエ用と同じ形で、宛先だけ違う。**
+- **matter_read.py**（08-30 (41日前)）— Matter でプラグから**電力を読む**。今日の最後の未確認事項。
+- **matter_toggle.py**（08-30 (41日前)）— プラグを入り切りして、電力が追随するかを見る。**10秒窓で。**
+- **matter_watch.py**（08-30 (41日前)）— プラグの電力を一定間隔で読み続ける。**変化の形を見るためのもの。**
+- **measure_drain.py**（09-02 (38日前)）— **ポタ電に繋がっている負荷を、充電の記録から測る。**
+- **morning_brief.py**（10-01 (10日前)）— **朝の3行。** 録画・電気・キュー・気温から、今日いちばん気にすべき1つを選んで3行にする。
+- **notify_failure.py**（09-30 (10日前)）— **systemd の仕事が失敗したらスマホに知らせる。** `OnFailure=notify-failure@%n.service` から呼ばれる。
+- **notify_kuroko_morning.sh**（09-29 (11日前)）— 
+- **notify_phone.py**（10-01 (10日前)）— **スマホに知らせる。** ラズパイの ntfy（Tailscale の中だけ）へ投げる。
+- **panel.py**（10-08 (2日前)）— ラズパイで配る操作盤。**tailnet の中からだけ見える。**
+- **plan_shadow_report.py**（09-27 (13日前)）— **並走ログを日ごとに比べる。** 同じ窓は一度だけ表示する。
+- **psrun.sh**（08-29 (42日前)）— アトリエの Windows で PowerShell を走らせる。
+- **publish_pages.py**（09-27 (13日前)）— 自宅PCで作ったページを、ラズパイの入口（panel.py の /d/）へ送る。
+- **pull.py**（08-30 (41日前)）— アトリエの Ollama にモデルを落とさせる。**API 経由。SSH の子にしない。**
+- **queue.py**（10-08 (2日前)）— 
+- **release_discharge_load.py**（10-07 (3日前)）— 放電試験の負荷（queue/hold の「放電負荷」ジョブ）を、pending へ放す。2026-10-07。
+- **sleep_guard.py**（08-31 (40日前)）— **番犬。誰も使っていない LLM PC を寝かせる。**
+- **sleep_llm.py**（08-31 (40日前)）— **LLM PC を寝かせて、本当に寝たことを電力で確かめる。**
+- **soc.py**（09-27 (13日前)）— ポタ電の残量を、**満充電からの距離**で追う。
+- **soc_est.py**（10-10 (今日)）— EcoFlow の SOC を、入出力の積算から推定し続ける（v1）。2026-10-08（本人の依頼）。
+- **soc_guard.py**（10-08 (2日前)）— EcoFlow の SOC が 1% 以下になったら、node1 を 1分だけ ON にして、補充電する。2026-10-07（本人の依頼）。
+- **switch_sim.py**（09-03 (37日前)）— **PC の電源を壁とポタ電で切り替えたら、いくら浮くか。** 買う前に机上で回す。
+- **test_build_queue.py**（09-02 (38日前)）— wake/test_build_queue.py - build_queue.py の単体テスト。
+- **test_charge_cheap_mode.py**（09-05 (35日前)）— 
+- **test_charge_mode.py**（09-02 (38日前)）— 
+- **test_charge_plan.py**（10-01 (9日前)）— charge_plan の判定を、値段表を作って確かめる。
+- **test_charge_plan_boundary.py**（09-02 (38日前)）— charge_plan の時刻コード境界を仕様の期待値で検証する。
+- **test_charge_plan_horizon.py**（09-27 (13日前)）— **日をまたぐ先読みと、本番へ影響しない並走を確かめる。**
+- **test_charge_watch.py**（09-30 (10日前)）— **充電の見張りが、言うべきときに1回だけ言う。** 2026-09-30。
+- **test_energy.py**（10-01 (9日前)）— LLM PC の作業ごとの電力量（energy.py と、キューへの記録）。2026-10-01
+- **test_morning_brief.py**（09-29 (11日前)）— **朝の3行の検査。** LLM の答えに事実に無い数字が混ざったら、機械の版に落ちること。
+- **test_panel_charge_control.py**（09-02 (38日前)）— 
+- **test_panel_summaries.py**（09-27 (13日前)）— **自宅PCが送る要点（<名>-summary.json）を、名前の約束だけで /api/hub に載せる。**
+- **test_queue_order.py**（09-30 (10日前)）— キューの順番: **電力の大きい順、同じなら積んだ順**（2026-09-30 本人「一番安い枠を一番消費電力でかい作業に」）
+- **test_soc.py**（09-27 (13日前)）— 
+- **todo_push.py**（10-08 (2日前)）— やりかけ（キューの human）の上位を、ボタンつきの通知でスマホへ送る。2026-10-08。
+- **todo_sync.py**（10-08 (2日前)）— 通知のボタン（やった／あとで／要らない）の記録を、ラズパイから取り寄せて、キューへ適用する。2026-10-08。
+- **vram.py**（08-30 (41日前)）— 11GB に「モデル」と「文脈」をどう配分するかを見る。
+- **waker.py**（08-30 (41日前)）— アトリエのラズパイで10分ごとに走らせる。**読んで、投げるだけ。**
+- **watch_volt.sh**（08-30 (41日前)）— ラズパイの電圧不足を記録し続ける。**「どのくらいでだめになるか」を測る** （2026-08-30、本人が電源をそのままにして様子を見ると決めた）。
+- **write_wake.py**（09-17 (23日前)）— 自宅で走らせる。**「LLM PC を起こしてほしいか」だけを書く。**
+- **atelier_when.py**（08-17 (54日前)）— 「いつアトリエで作業するか」「栽培棚をいつ点けるか」を実データで
+- **battery_eta.py**（08-23 (48日前)）— PC を常にポタ電の AC 出力で動かす（パススルー無し）構成を、 往復効率を振って通しでシミュレーションする。
+- **battery_policy.py**（08-23 (48日前)）— 方針:「高い時間帯に壁から取らない。その時間は SOC100 で迎える」
+- **battery_worth.py**（08-31 (40日前)）— **電池でピークを避けると、月いくら浮くか。** 容量ごとに出す。
+- **best_window.py**（08-30 (41日前)）— **明日の一番安い時間帯**を出す。前日の午後に翌日分が揃うので言える。
+- **breakeven.py**（08-23 (48日前)）— ポタ電で常時起動 PC を賄うときの損益分岐（往復効率）を出す。
+- **build_dashboard.py**（08-27 (44日前)）— denki.html に埋め込む集計を作り直す。
+- **capacity.py**（08-30 (41日前)）— ポタ電の容量について、**分かっていることだけ**を書く。
+- **cheap_now.py**（09-18 (22日前)）— **いま動かしてよい値段か**を返す。重い処理の前に叩く。
+- **grow_light.py**（08-30 (41日前)）— 育成灯をポタ電経由で回したとき、いくらになるか。
+- **inverter.py**（08-30 (41日前)）— ポタ電のインバータのアイドルを実測から年額に直し、裁定に効く形で出す。
+- **jepx.py**（09-03 (37日前)）— JEPX スポット価格(中国エリア)を取ってきて、安いコマを出す。
+- **llm_pc.py**（08-30 (41日前)）— LocalLLM の PC の運用を、実測値で比べる。
+- **load_shift.py**（08-23 (48日前)）— 処理内容(計算)を安い時間に寄せたときの取り分。
+- **peakshift.py**（08-27 (45日前)）— ピークシフターの設計: 電池が要る負荷 / 要らない負荷 の切り分け
+- **plan_vs_react.py**（08-31 (40日前)）— **「安いから入れる」と「安い枠を選んで入れる」で、いくら違うか。**
+- **pota_take.py**（08-27 (45日前)）— ポタ電の充電窓の取り分を、現実的な比較相手で出し直す。
+- **refresh.sh**（08-27 (44日前)）— 価格を取り直し、**そのままダッシュボードも作り直す。**
+- **shift_queue.py**（08-26 (45日前)）— 締切つきのジョブを、安い時間帯に落として実行する。
+- **standby.py**（08-29 (42日前)）— ポタ電の待機損失を、実測から年額に直して、裁定の取り分と比べる。
+- **terasel_check.py**（08-17 (54日前)）— TERASEL 損益分岐リファレンスの閾値を実データに当てる
+- **threshold.py**（08-30 (41日前)）— 「安い時間」の条件を、**通る割合**と**トークン単価**の両方で比べる。
+- **today_battery.py**（08-27 (45日前)）— 今日(08-27)の実価格で、ポタ電を挟む意味があるか確かめる。
+- **when_cheap.py**（08-27 (45日前)）— 毎日の最安2時間が、いつ来ているか。月ごとに分けて数える。
+- **xformula_sim.py**（10-09 (1日前)）— node1 投入判定式（v2 / v2.1）を、2026 年のコマ価格で通しシミュレーションする。2026-10-09。
+- **build_fridge.py**（08-27 (45日前)）— 冷蔵庫のダッシュボード用データを作り、fridge.html に流し込む。
+- **charge.py**（08-20 (51日前)）— ピークシフター — 充電部分だけ。
+- **monitor.py**（08-29 (42日前)）— プラグの電力を一定間隔で記録するだけ。制御はしない。
+- **monitor_tapo.py**（08-28 (43日前)）— スマートプラグの電力を記録する（tapo 実装）。制御はしない。
+- **phone_temp.py**（08-21 (50日前)）— USB で繋いだ Android から温度を読む。室温計が来るまでの代用。
+- **plug.py**（08-20 (51日前)）— スマートプラグの薄い層。
+- **schedule.py**（08-20 (51日前)）— 翌日の最安窓を、プラグ自身のスケジュールに書き込む。
+- **setup_plug.py**（08-20 (51日前)）— プラグの初期設定。**冪等**なので何度流してもよい。
+- **temp.py**（08-20 (51日前)）— 外気温を記録する。冷蔵庫の消費と突き合わせるため。
+- **watch_plug.py**（08-29 (42日前)）— プラグが起きたら、通る道を全部試す。**挿した瞬間を捕まえる。**
+- **fugu_offload.py**（08-26 (45日前)）— fugu_offload — Claude(実装エージェント)が機械的な下請けを Fugu base に外注するための CLI。
 
 ## 常駐（systemd --user）  (73)
 
@@ -237,7 +237,7 @@
 - **drive-sync.service**（自宅・定期実行(本体)・手動・timer駆動）— Google Drive の受け渡しフォルダを inbox へ同期する
 - **drive-sync.timer**（自宅・定期実行・手動・active）— Drive の受け渡しフォルダを10分ごとに同期する
 - **ecoflow-ctl.service**（自宅・一度きり・自動起動・inactive）— EcoFlow 制御: SOC 30〜70%、実質20円未満で100%、node3 の負荷でも node1 を入れる  **← 動いていない**
-- **ecoflow-screen.service**（自宅・サーバ・自動起動・active）— EcoFlow アプリの画面（Redmi）から SOC と電力を 60 秒ごとに読む
+- **ecoflow-screen.service**（自宅・一度きり・自動起動・inactive）— EcoFlow アプリの画面（Redmi）から SOC と電力を 60 秒ごとに読む  **← 動いていない**
 - **epg-ui.service**（自宅・サーバ・自動起動・active）— 番組表 UI（EPGStation の前に置く自前の画面）
 - **fridge-dashboard.service**（自宅・定期実行(本体)・手動・timer駆動）— 冷蔵庫ダッシュボードを作り直す
 - **fridge-dashboard.timer**（自宅・定期実行・手動・inactive）— 冷蔵庫ダッシュボードを1分ごとに作り直す  **← 動いていない**
